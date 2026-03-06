@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 const baseNavItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Home' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
   { to: '/trading', icon: TrendingUp, label: 'Trade' },
   { to: '/portfolio', icon: Briefcase, label: 'Portfolio' },
   { to: '/learning', icon: GraduationCap, label: 'Learn' },
@@ -47,12 +47,12 @@ export function TopNav() {
             {/* Desktop Nav Links */}
             <nav className="flex items-center gap-1 lg:gap-2">
               {[...baseNavItems, ...(isAdmin ? [adminNavItem] : [])].map(item => {
-                const isActive = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
+                const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
                 return (
                   <NavLink
                     key={item.to}
                     to={item.to}
-                    end={item.to === '/'}
+                    end={item.to === '/dashboard'}
                     className={cn(
                       'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-150',
                       isActive
@@ -109,7 +109,7 @@ export function TopNav() {
       <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden glass border-t border-border safe-bottom">
         <div className={cn('h-14 grid', isAdmin ? 'grid-cols-7' : 'grid-cols-6')}>
           {[...baseNavItems, ...(isAdmin ? [adminNavItem] : [])].map(item => {
-            const isActive = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
+            const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
             return (
               <NavLink
                 key={item.to}

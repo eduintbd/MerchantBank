@@ -11,6 +11,7 @@ import { LearningPage } from '@/pages/LearningPage';
 import { KycPage } from '@/pages/KycPage';
 import { MarketingPage } from '@/pages/MarketingPage';
 import { AdminOrdersPage } from '@/pages/AdminOrdersPage';
+import { LandingPage } from '@/pages/LandingPage';
 import type { ReactNode } from 'react';
 
 const queryClient = new QueryClient({
@@ -49,7 +50,11 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/auth" element={isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />} />
+      {/* Public routes */}
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
+      <Route path="/auth" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
+
+      {/* Protected routes */}
       <Route
         element={
           <ProtectedRoute>
@@ -57,7 +62,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/trading" element={<TradingPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
         <Route path="/learning" element={<LearningPage />} />
