@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HeroStock.AI - Vendor Meeting Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; background: #ffffff; color: #0f172a; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+  :root {
+    --primary: #1a73e8;
+    --primary-light: #4285f4;
+    --primary-dark: #1557b0;
+    --success: #0ecb81;
+    --danger: #f6465d;
+    --warning: #f0b90b;
+    --gold: #d97706;
+    --purple: #7c3aed;
+    --foreground: #0f172a;
+    --muted: #64748b;
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.06);
+  }
+
+  .slide {
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .slide:last-child { page-break-after: auto; }
+
+  /* Branded header bar on each slide */
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+  }
+  .slide-header .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slide-header .logo-group img {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+  .slide-header .logo-group .brand-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--foreground);
+    letter-spacing: -0.3px;
+  }
+  .slide-header .logo-group .brand-name span {
+    color: var(--primary);
+  }
+  .slide-header .slide-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .slide-body {
+    flex: 1;
+    padding: 40px 56px 32px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Footer */
+  .slide-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 56px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .slide-footer .page-num {
+    background: var(--primary);
+    color: white;
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 10px;
+  }
+
+  /* Decorative stripe */
+  .accent-stripe {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 35%, var(--success) 65%, var(--gold) 100%);
+    z-index: 10;
+  }
+
+  /* Decorative dot grid */
+  .dot-pattern {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background-image: radial-gradient(circle, rgba(26,115,232,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Typography */
+  h1 { font-size: 44px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.1; color: var(--foreground); margin-bottom: 12px; }
+  h2 { font-size: 30px; font-weight: 800; letter-spacing: -0.8px; line-height: 1.2; color: var(--foreground); margin-bottom: 8px; }
+  h3 { font-size: 18px; font-weight: 500; color: var(--muted); margin-bottom: 24px; }
+  p { font-size: 15px; line-height: 1.7; color: var(--muted); }
+  .text-primary { color: var(--primary); }
+  .text-success { color: var(--success); }
+  .text-purple { color: var(--purple); }
+  .text-gold { color: var(--gold); }
+  .text-danger { color: var(--danger); }
+
+  /* Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+  .tag-primary { background: rgba(26,115,232,0.08); color: var(--primary); border: 1px solid rgba(26,115,232,0.15); }
+  .tag-success { background: rgba(14,203,129,0.08); color: var(--success); border: 1px solid rgba(14,203,129,0.15); }
+  .tag-purple { background: rgba(124,58,237,0.08); color: var(--purple); border: 1px solid rgba(124,58,237,0.15); }
+  .tag-gold { background: rgba(217,119,6,0.08); color: var(--gold); border: 1px solid rgba(217,119,6,0.15); }
+  .tag-danger { background: rgba(246,70,93,0.08); color: var(--danger); border: 1px solid rgba(246,70,93,0.15); }
+
+  /* Grids */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; margin-top: 20px; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    transition: box-shadow 0.2s;
+  }
+  .card-accent-top {
+    border-top: 3px solid var(--primary);
+  }
+  .card-accent-top.green { border-top-color: var(--success); }
+  .card-accent-top.purple { border-top-color: var(--purple); }
+  .card-accent-top.gold { border-top-color: var(--gold); }
+
+  .card h4 { font-size: 15px; font-weight: 700; color: var(--foreground); margin-bottom: 10px; }
+  .card p { font-size: 13px; }
+
+  .card-sm {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  /* Stats */
+  .stat { text-align: center; }
+  .stat .num { font-size: 34px; font-weight: 900; letter-spacing: -1px; }
+  .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; font-weight: 600; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px; width: 3px; background: linear-gradient(to bottom, var(--primary), var(--success), var(--purple), var(--gold)); border-radius: 3px; }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-item::before { content: ''; position: absolute; left: -28px; top: 6px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px var(--primary); background: var(--primary); }
+  .timeline-item:nth-child(2)::before { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+  .timeline-item:nth-child(3)::before { background: var(--purple); box-shadow: 0 0 0 2px var(--purple); }
+  .timeline-item:nth-child(4)::before { background: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+  .timeline-item h4 { font-size: 15px; font-weight: 700; color: var(--foreground); margin-bottom: 3px; }
+  .timeline-item .date { font-size: 11px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .timeline-item p { font-size: 13px; margin-top: 4px; color: var(--muted); }
+
+  /* Lists */
+  .bullet-list { list-style: none; padding: 0; }
+  .bullet-list li { position: relative; padding-left: 18px; margin-bottom: 8px; font-size: 13px; color: #475569; line-height: 1.6; }
+  .bullet-list li::before { content: ''; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+  .bullet-list.green li::before { background: var(--success); }
+  .bullet-list.purple li::before { background: var(--purple); }
+  .bullet-list.gold li::before { background: var(--gold); }
+
+  .check-list { list-style: none; padding: 0; }
+  .check-list li { padding-left: 26px; margin-bottom: 10px; font-size: 13px; color: #475569; line-height: 1.5; position: relative; }
+  .check-list li::before { content: '\2713'; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 6px; background: rgba(14,203,129,0.1); color: var(--success); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 18px; }
+
+  /* Highlight box */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(26,115,232,0.04), rgba(14,203,129,0.03));
+    border: 1px solid rgba(26,115,232,0.12);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin-top: 20px;
+  }
+  .highlight-box p { color: var(--foreground); text-align: center; font-size: 14px; }
+
+  /* Two columns */
+  .two-col { display: flex; gap: 40px; align-items: flex-start; margin-top: 20px; }
+  .two-col .col { flex: 1; }
+
+  /* Divider */
+  .divider { height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 24px 0; }
+
+  /* Title slide specific */
+  .title-slide .slide-body {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+  }
+  .title-slide .hero-logo {
+    width: 88px;
+    height: 88px;
+    border-radius: 24px;
+    object-fit: cover;
+    box-shadow: 0 8px 32px rgba(26,115,232,0.2), 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 28px;
+    border: 3px solid white;
+  }
+
+  /* Section bg variants */
+  .bg-light .slide-body { background: var(--bg); }
+  .bg-blue-subtle .slide-body { background: linear-gradient(135deg, rgba(26,115,232,0.02) 0%, rgba(66,133,244,0.04) 100%); }
+  .bg-green-subtle .slide-body { background: linear-gradient(135deg, rgba(14,203,129,0.02) 0%, rgba(14,203,129,0.04) 100%); }
+  .bg-purple-subtle .slide-body { background: linear-gradient(135deg, rgba(124,58,237,0.02) 0%, rgba(124,58,237,0.04) 100%); }
+  .bg-gold-subtle .slide-body { background: linear-gradient(135deg, rgba(217,119,6,0.02) 0%, rgba(217,119,6,0.04) 100%); }
+
+  /* CTA slide */
+  .cta-slide .slide-body {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  }
+  .cta-slide .slide-body h1,
+  .cta-slide .slide-body h2,
+  .cta-slide .slide-body h3,
+  .cta-slide .slide-body p { color: white; }
+  .cta-slide .slide-body .tag { background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.25); }
+  .cta-slide .slide-body .card-sm { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+  .cta-slide .slide-body .card-sm h4 { color: white; }
+  .cta-slide .slide-body .card-sm p { color: rgba(255,255,255,0.8); }
+  .cta-slide .slide-footer { background: var(--primary-dark); border-top-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+  .cta-slide .slide-footer .page-num { background: rgba(255,255,255,0.2); }
+
+  .section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .section-icon.blue { background: rgba(26,115,232,0.1); color: var(--primary); }
+  .section-icon.green { background: rgba(14,203,129,0.1); color: var(--success); }
+  .section-icon.purple { background: rgba(124,58,237,0.1); color: var(--purple); }
+  .section-icon.gold { background: rgba(217,119,6,0.1); color: var(--gold); }
+
+  @media print {
+    .slide { height: 100vh; min-height: auto; }
+    body { background: #ffffff; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide title-slide">
+  <div class="accent-stripe"></div>
+  <div class="slide-body">
+    <div class="dot-pattern" style="top: 60px; right: -80px; opacity: 0.6;"></div>
+    <div class="dot-pattern" style="bottom: 40px; left: -60px; opacity: 0.4;"></div>
+    <div style="max-width: 700px; position: relative; z-index: 2;">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" class="hero-logo" />
+      <h1 style="font-size: 52px;">HeroStock<span class="text-primary">.AI</span></h1>
+      <h3 style="font-size: 20px; color: var(--muted); margin-bottom: 8px;">Bangladesh's First AI-Powered Investment Education & Trading Platform</h3>
+      <div class="divider" style="max-width: 200px; margin: 24px auto;"></div>
+      <p style="font-size: 14px; color: var(--foreground); margin-top: 16px; font-weight: 600;">HeroStock.AI &times; QuantBD</p>
+      <p style="font-size: 13px; color: var(--muted); margin-top: 6px;">Partnership & DSE Integration Meeting &middot; March 13, 2026</p>
+      <p style="font-size: 12px; color: #94a3b8; margin-top: 6px;">Confidential &middot; For Discussion Purposes Only</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>herostock.ai &middot; ceo@herostock.ai</span>
+    <span class="page-num">1 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 2: What We've Built (Live Features) -->
+<div class="slide bg-blue-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">Live Product Demo</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-success">&#9679; LIVE NOW</span>
+    <h2>What We've Already Built <span class="text-primary">&mdash; Running in Production</span></h2>
+    <p>Our platform is operational with real DSE data and authenticated users.</p>
+
+    <div class="grid-3">
+      <div class="card card-accent-top">
+        <h4><span class="text-primary">Real-Time Market Data</span></h4>
+        <ul class="bullet-list">
+          <li>417 DSE stocks with live prices</li>
+          <li>DSEX, DSES, DS30 index tracking</li>
+          <li>Market sentiment & strength analysis</li>
+          <li>Top movers, gainers & losers</li>
+          <li>Full searchable stock table with filters</li>
+        </ul>
+      </div>
+      <div class="card card-accent-top green">
+        <h4><span class="text-success">Trading & Portfolio</span></h4>
+        <ul class="bullet-list green">
+          <li>Buy/sell order placement</li>
+          <li>Portfolio tracking with P&L</li>
+          <li>CSV portfolio import</li>
+          <li>Portfolio analysis & risk tools</li>
+          <li>Admin order management</li>
+        </ul>
+      </div>
+      <div class="card card-accent-top purple">
+        <h4><span class="text-purple">Education & Social</span></h4>
+        <ul class="bullet-list purple">
+          <li>5 structured courses (DSE basics to risk)</li>
+          <li>KYC verification system</li>
+          <li>IPO center with applications</li>
+          <li>Social feed for investors</li>
+          <li>Halal stocks, BSEC rules, finance tracker</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p><strong style="color: var(--primary);">Data Infrastructure:</strong> &nbsp; 417 stocks &middot; 397 live prices &middot; 18,746 index records &middot; 1.18M price history rows &middot; 3,415 financial statements &middot; 4,480 dividend records</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">2 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 3: Education-First Differentiator -->
+<div class="slide bg-green-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">Our Differentiator</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-primary">EDUCATION FIRST</span>
+    <h2>An Informational Platform, <span class="text-primary">Not Just Trading</span></h2>
+    <p>We are building an <strong style="color: var(--foreground);">education and empowerment platform</strong> &mdash; not competing on brokerage execution.</p>
+
+    <div class="two-col">
+      <div class="col">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+          <div class="section-icon green">&#10003;</div>
+          <h4 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--success); font-weight: 700;">What We Focus On</h4>
+        </div>
+        <ul class="check-list">
+          <li>Learning Academy with structured courses</li>
+          <li>Zero-to-Hero gamified investment journey</li>
+          <li>Demo trading with Hero Coins (no real money risk)</li>
+          <li>AI-powered stock analysis & recommendations</li>
+          <li>Performance tracking & completion certificates</li>
+          <li>Investor profiles with achievement badges</li>
+          <li>Community-driven social investment feed</li>
+        </ul>
+      </div>
+      <div class="col">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+          <div class="section-icon blue">&#8594;</div>
+          <h4 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); font-weight: 700;">Our Positioning</h4>
+        </div>
+        <ul class="bullet-list">
+          <li>We are <strong>NOT</strong> a brokerage &mdash; no direct order execution</li>
+          <li>We are <strong>NOT</strong> replacing CDBL or DSE systems</li>
+          <li>We complement existing brokers by educating investors</li>
+          <li>Our trading module is educational (demo + guided)</li>
+          <li>Revenue from subscriptions, not commissions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">3 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 4: Key Features to Build (Next 30 Days) -->
+<div class="slide bg-purple-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">30-Day Roadmap</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-purple">PRIORITY BUILD</span>
+    <h2>Launch Features for <span class="text-purple">April 2026</span></h2>
+
+    <div class="grid-2">
+      <div class="card card-accent-top">
+        <h4>Learning & Training Engine</h4>
+        <ul class="bullet-list">
+          <li><strong>AI Learning Agent</strong> &mdash; personalized course recommendations based on user level</li>
+          <li><strong>Interactive Quizzes</strong> &mdash; topic-based assessments with pass/fail logic</li>
+          <li><strong>Video + Text Lessons</strong> &mdash; Bengali & English DSE content</li>
+          <li><strong>Completion Certificates</strong> &mdash; downloadable PDF certificates</li>
+          <li><strong>Progress Tracking</strong> &mdash; visual journey from beginner to expert</li>
+        </ul>
+      </div>
+      <div class="card card-accent-top gold">
+        <h4>Demo Trading & Hero Coins</h4>
+        <ul class="bullet-list gold">
+          <li><strong>Hero Coins</strong> &mdash; virtual currency for risk-free demo trading</li>
+          <li><strong>Paper Portfolio</strong> &mdash; simulated trades with real DSE prices</li>
+          <li><strong>Performance Scoring</strong> &mdash; track P&L, win rate, risk mgmt</li>
+          <li><strong>Leaderboards</strong> &mdash; compete with other learners</li>
+          <li><strong>Graduation to Real</strong> &mdash; unlock real trading after milestones</li>
+        </ul>
+      </div>
+      <div class="card card-accent-top green">
+        <h4>Investor Profile & Achievements</h4>
+        <ul class="bullet-list green">
+          <li><strong>Public Profiles</strong> &mdash; showcase returns, badges, completions</li>
+          <li><strong>XP & Levels</strong> &mdash; earn from learning, trading, community</li>
+          <li><strong>Achievement Badges</strong> &mdash; "First Trade", "Course Master", etc.</li>
+          <li><strong>Streak System</strong> &mdash; daily login and activity streaks</li>
+          <li><strong>Investor Rankings</strong> &mdash; top performers by returns & knowledge</li>
+        </ul>
+      </div>
+      <div class="card card-accent-top purple">
+        <h4>AI Agents & Smart Tools</h4>
+        <ul class="bullet-list purple">
+          <li><strong>Stock Analysis Agent</strong> &mdash; fundamental + technical analysis</li>
+          <li><strong>Portfolio Advisor</strong> &mdash; risk assessment & rebalancing</li>
+          <li><strong>News Sentiment Agent</strong> &mdash; real-time impact scoring</li>
+          <li><strong>Learning Coach</strong> &mdash; adaptive learning paths</li>
+          <li><strong>Market Alert Agent</strong> &mdash; smart price/volume notifications</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">4 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 5: QuantBD Partnership -->
+<div class="slide">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">QuantBD Partnership</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-gold">COLLABORATION PROPOSAL</span>
+    <h2>HeroStock.AI &times; <span class="text-gold">QuantBD Partnership</span></h2>
+    <p>QuantBD's DSE matching engine expertise + HeroStock.AI's education & AI platform = a product neither can build alone.</p>
+
+    <div class="grid-3">
+      <div class="card card-accent-top">
+        <div class="section-icon blue">&#9889;</div>
+        <h4><span class="text-primary">DSE Matching Engine Access</span></h4>
+        <p>QuantBD provides connectivity to the DSE matching engine &mdash; real-time order book, trade executions, and market microstructure data that we need for our platform.</p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(26,115,232,0.05); border-radius: 10px; border: 1px solid rgba(26,115,232,0.08);">
+          <p style="font-size: 11px; color: var(--primary);"><strong>QuantBD provides:</strong> FIX/ITCH protocol gateway, order routing, real-time market data feed from DSE matching engine</p>
+        </div>
+      </div>
+      <div class="card card-accent-top green">
+        <div class="section-icon green">&#9881;</div>
+        <h4><span class="text-success">API & MCP Integration</span></h4>
+        <p>We need QuantBD's data exposed via REST APIs and MCP (Model Context Protocol) servers so our AI agents can consume DSE data for analysis.</p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(14,203,129,0.05); border-radius: 10px; border: 1px solid rgba(14,203,129,0.08);">
+          <p style="font-size: 11px; color: var(--success);"><strong>We build:</strong> AI agents that consume QuantBD data via MCP tools for stock analysis, portfolio advice, and smart alerts</p>
+        </div>
+      </div>
+      <div class="card card-accent-top purple">
+        <div class="section-icon purple">&#9733;</div>
+        <h4><span class="text-purple">Compliance & Advisory</span></h4>
+        <p>QuantBD's domain expertise in DSE regulations, BSEC compliance, and exchange connectivity protocols is critical for our launch.</p>
+        <div style="margin-top: 14px; padding: 12px; background: rgba(124,58,237,0.05); border-radius: 10px; border: 1px solid rgba(124,58,237,0.08);">
+          <p style="font-size: 11px; color: var(--purple);"><strong>Advisory on:</strong> BSEC licensing, data redistribution rights, broker integration, market calendar &amp; trading hours</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p><strong style="color: var(--primary);">Win-Win:</strong> QuantBD provides DSE matching engine connectivity, data APIs &amp; compliance guidance. HeroStock.AI builds the education, AI agents &amp; consumer-facing platform. Together we capture a market neither can serve alone.</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">5 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 6: Detailed API Requirements from QuantBD -->
+<div class="slide bg-blue-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">API Requirements</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-primary">TECHNICAL REQUIREMENTS</span>
+    <h2>What We Need from <span class="text-primary">QuantBD</span></h2>
+    <p>Detailed API &amp; data requirements for DSE matching engine integration.</p>
+
+    <div class="grid-2">
+      <div class="card card-accent-top">
+        <h4 style="display: flex; align-items: center; gap: 8px;"><span style="background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">1</span> Real-Time Market Data API</h4>
+        <ul class="bullet-list" style="margin-top: 10px;">
+          <li><strong>Live Price Feed</strong> &mdash; LTP, bid/ask, volume, change% for all DSE instruments via WebSocket or SSE</li>
+          <li><strong>Market Depth (Level 2)</strong> &mdash; Top 5-10 bid/ask levels with quantities for order book visualization</li>
+          <li><strong>Index Data</strong> &mdash; DSEX, DSES, DS30 real-time values with intraday OHLC</li>
+          <li><strong>Trade Ticker</strong> &mdash; Last N trades stream with price, volume, time, buyer/seller type</li>
+          <li><strong>Market Status</strong> &mdash; Pre-open, continuous, closing, post-close session indicators</li>
+        </ul>
+        <div style="margin-top: 12px; padding: 10px; background: rgba(26,115,232,0.04); border-radius: 8px; border: 1px solid rgba(26,115,232,0.08);">
+          <p style="font-size: 11px; color: var(--primary);"><strong>Format:</strong> JSON via WebSocket (preferred) or REST polling &le;1s latency &middot; <strong>Auth:</strong> API key + HMAC signature</p>
+        </div>
+      </div>
+
+      <div class="card card-accent-top green">
+        <h4 style="display: flex; align-items: center; gap: 8px;"><span style="background: var(--success); color: white; width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">2</span> Historical Data API</h4>
+        <ul class="bullet-list green" style="margin-top: 10px;">
+          <li><strong>OHLCV Bars</strong> &mdash; Daily/weekly/monthly candles for all instruments (min 5 years)</li>
+          <li><strong>Intraday Bars</strong> &mdash; 1min, 5min, 15min, 1hr candles for charting</li>
+          <li><strong>Corporate Actions</strong> &mdash; Dividends, rights, bonuses, splits, AGM dates</li>
+          <li><strong>IPO History</strong> &mdash; Subscription dates, prices, lot sizes, oversubscription ratios</li>
+          <li><strong>Market Indices History</strong> &mdash; Daily DSEX/DSES/DS30 with turnover &amp; volume</li>
+        </ul>
+        <div style="margin-top: 12px; padding: 10px; background: rgba(14,203,129,0.04); border-radius: 8px; border: 1px solid rgba(14,203,129,0.08);">
+          <p style="font-size: 11px; color: var(--success);"><strong>Format:</strong> REST API with pagination &middot; CSV/JSON bulk export for initial backfill &middot; Delta sync for daily updates</p>
+        </div>
+      </div>
+
+      <div class="card card-accent-top purple">
+        <h4 style="display: flex; align-items: center; gap: 8px;"><span style="background: var(--purple); color: white; width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">3</span> Fundamental Data API</h4>
+        <ul class="bullet-list purple" style="margin-top: 10px;">
+          <li><strong>Financial Statements</strong> &mdash; Income statement, balance sheet, cash flow (quarterly + annual)</li>
+          <li><strong>Key Ratios</strong> &mdash; EPS, P/E, NAV, dividend yield, ROE, debt-to-equity</li>
+          <li><strong>Company Profiles</strong> &mdash; Sector, category, listing date, authorized/paid-up capital</li>
+          <li><strong>Shareholding Pattern</strong> &mdash; Sponsor, institutional, foreign, public holdings %</li>
+          <li><strong>News &amp; Announcements</strong> &mdash; DSE/BSEC circulars, company price-sensitive info (PSI)</li>
+        </ul>
+        <div style="margin-top: 12px; padding: 10px; background: rgba(124,58,237,0.04); border-radius: 8px; border: 1px solid rgba(124,58,237,0.08);">
+          <p style="font-size: 11px; color: var(--purple);"><strong>Format:</strong> REST API &middot; Updated within 24hrs of DSE/BSEC publication &middot; Webhook for PSI alerts</p>
+        </div>
+      </div>
+
+      <div class="card card-accent-top gold">
+        <h4 style="display: flex; align-items: center; gap: 8px;"><span style="background: var(--gold); color: white; width: 22px; height: 22px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">4</span> Order & Execution API (Phase 2)</h4>
+        <ul class="bullet-list gold" style="margin-top: 10px;">
+          <li><strong>Order Placement</strong> &mdash; Market/limit orders via FIX protocol or REST gateway to DSE matching engine</li>
+          <li><strong>Order Status</strong> &mdash; Real-time execution reports, partial fills, rejections</li>
+          <li><strong>Portfolio Sync</strong> &mdash; CDBL BO account integration for holdings reconciliation</li>
+          <li><strong>Settlement Info</strong> &mdash; T+2 settlement tracking, margin requirements</li>
+          <li><strong>Broker Routing</strong> &mdash; Multi-broker order routing through QuantBD gateway</li>
+        </ul>
+        <div style="margin-top: 12px; padding: 10px; background: rgba(217,119,6,0.04); border-radius: 8px; border: 1px solid rgba(217,119,6,0.08);">
+          <p style="font-size: 11px; color: var(--gold);"><strong>Phase 2</strong> (Month 7+) &middot; Requires BSEC-licensed broker partnership &middot; FIX 4.4 or REST gateway</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">6 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 7: DSE Matching Engine & Integration Architecture -->
+<div class="slide bg-green-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">Integration Architecture</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-success">DSE CONNECTIVITY</span>
+    <h2>QuantBD &rarr; HeroStock.AI <span class="text-success">Integration Flow</span></h2>
+    <p>How QuantBD's DSE matching engine connectivity feeds into our platform.</p>
+
+    <div class="two-col" style="margin-top: 16px;">
+      <div class="col">
+        <div class="card" style="margin-bottom: 14px; border-left: 4px solid var(--primary); border-top: none;">
+          <h4 style="font-size: 14px;">Data Flow Architecture</h4>
+          <div style="margin-top: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+              <div style="background: var(--primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;">DSE Matching Engine</div>
+              <span style="color: var(--muted);">&rarr;</span>
+              <div style="background: rgba(217,119,6,0.1); color: var(--gold); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;">QuantBD Gateway</div>
+              <span style="color: var(--muted);">&rarr;</span>
+              <div style="background: rgba(14,203,129,0.1); color: var(--success); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;">HeroStock.AI</div>
+            </div>
+          </div>
+          <ul class="bullet-list" style="font-size: 12px;">
+            <li><strong>Market Data:</strong> DSE &rarr; QuantBD normalizes &rarr; WebSocket/REST to HeroStock</li>
+            <li><strong>Orders (Phase 2):</strong> HeroStock &rarr; QuantBD validates &rarr; FIX to DSE engine</li>
+            <li><strong>Fundamentals:</strong> DSE/BSEC filings &rarr; QuantBD parses &rarr; REST API to HeroStock</li>
+            <li><strong>News/PSI:</strong> DSE announcements &rarr; QuantBD webhook &rarr; HeroStock AI agents</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--success); border-top: none;">
+          <h4 style="font-size: 14px;">MCP Server Requirements</h4>
+          <ul class="bullet-list green" style="font-size: 12px; margin-top: 8px;">
+            <li><strong>get_stock_price(symbol)</strong> &mdash; returns LTP, change, volume, bid/ask</li>
+            <li><strong>get_price_history(symbol, from, to, interval)</strong> &mdash; OHLCV candles</li>
+            <li><strong>get_fundamentals(symbol)</strong> &mdash; EPS, P/E, NAV, div yield, financials</li>
+            <li><strong>get_market_summary()</strong> &mdash; indices, breadth, top movers</li>
+            <li><strong>get_company_news(symbol)</strong> &mdash; latest news &amp; PSI with sentiment</li>
+            <li><strong>search_stocks(query)</strong> &mdash; search by name, symbol, sector</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card" style="border-left: 4px solid var(--purple); border-top: none; margin-bottom: 14px;">
+          <h4 style="font-size: 14px;">Technical Specs We Need</h4>
+          <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 8px;">
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground); width: 40%;">API Protocol</td>
+              <td style="padding: 8px 4px; color: var(--muted);">REST (HTTPS) + WebSocket for streaming</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground);">Data Format</td>
+              <td style="padding: 8px 4px; color: var(--muted);">JSON (REST) / Binary (WebSocket optional)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground);">Authentication</td>
+              <td style="padding: 8px 4px; color: var(--muted);">API Key + HMAC-SHA256 signature</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground);">Rate Limits</td>
+              <td style="padding: 8px 4px; color: var(--muted);">Min 100 req/sec REST, unlimited WS</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground);">Latency</td>
+              <td style="padding: 8px 4px; color: var(--muted);">&le;500ms REST, &le;100ms WebSocket</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground);">Uptime SLA</td>
+              <td style="padding: 8px 4px; color: var(--muted);">99.5% during market hours</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground);">Coverage</td>
+              <td style="padding: 8px 4px; color: var(--muted);">All DSE listed instruments (~400+)</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 4px; font-weight: 600; color: var(--foreground);">Sandbox</td>
+              <td style="padding: 8px 4px; color: var(--muted);">Test environment with sample data</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--gold); border-top: none;">
+          <h4 style="font-size: 14px;">Integration Priority</h4>
+          <div style="margin-top: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="background: var(--danger); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">P0</span>
+              <span style="font-size: 12px; color: var(--foreground);">Live prices + Market indices (Week 1)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="background: var(--gold); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">P1</span>
+              <span style="font-size: 12px; color: var(--foreground);">Historical OHLCV + Fundamentals (Week 2)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">P2</span>
+              <span style="font-size: 12px; color: var(--foreground);">MCP server + News/PSI feeds (Week 3)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="background: var(--muted); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">P3</span>
+              <span style="font-size: 12px; color: var(--foreground);">Order execution gateway (Month 7+)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">7 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 8: Legal & Compliance -->
+<div class="slide bg-gold-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">Legal & Compliance</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-danger">COMPLIANCE</span>
+    <h2>Regulatory Roadmap & <span class="text-gold">Legal Considerations</span></h2>
+
+    <div class="two-col">
+      <div class="col">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+          <div class="section-icon gold">!</div>
+          <h4 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); font-weight: 700;">Key Legal Requirements</h4>
+        </div>
+        <ul class="bullet-list gold">
+          <li><strong>BSEC Registration</strong> &mdash; Required for investment advisory platforms in Bangladesh</li>
+          <li><strong>Data Usage License</strong> &mdash; DSE/CSE data redistribution requires formal agreement</li>
+          <li><strong>KYC/AML Compliance</strong> &mdash; Bangladesh Bank guidelines for user verification</li>
+          <li><strong>Consumer Protection</strong> &mdash; Clear disclaimers: education &#8800; financial advice</li>
+          <li><strong>Data Privacy</strong> &mdash; User data handling per Digital Security Act 2018</li>
+          <li><strong>Company Registration</strong> &mdash; RJSC registration as fintech company</li>
+        </ul>
+      </div>
+      <div class="col">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+          <div class="section-icon green">&#10003;</div>
+          <h4 style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--success); font-weight: 700;">Our Mitigation Strategy</h4>
+        </div>
+        <ul class="check-list">
+          <li><strong>Education-first positioning</strong> avoids brokerage licensing initially</li>
+          <li>Demo trading with virtual coins = no real financial risk</li>
+          <li>Partnership with licensed broker for eventual real trading</li>
+          <li>Legal counsel engaged for BSEC advisory registration</li>
+          <li>KYC system already built and operational</li>
+          <li>All content carries "not financial advice" disclaimers</li>
+          <li>QuantBD data partnership solves DSE licensing cleanly</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">8 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 7: Timeline -->
+<div class="slide bg-light">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">Launch Timeline</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-primary">30-DAY SPRINT</span>
+    <h2>Sprint to <span class="text-primary">Public Launch</span></h2>
+
+    <div class="two-col">
+      <div class="col">
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="date">Week 1 (Mar 13 - 19)</span>
+            <h4>Data & Infrastructure</h4>
+            <p>Finalize API integration with QuantBD, set up DSE matching engine data sync, deploy to production hosting, configure CDN and SSL</p>
+          </div>
+          <div class="timeline-item">
+            <span class="date" style="color: var(--success);">Week 2 (Mar 20 - 26)</span>
+            <h4>Learning & Demo Trading</h4>
+            <p>Build Hero Coins system, implement demo trading engine, create 10+ course modules with quizzes, add certificates</p>
+          </div>
+          <div class="timeline-item">
+            <span class="date" style="color: var(--purple);">Week 3 (Mar 27 - Apr 2)</span>
+            <h4>AI Agents & Profiles</h4>
+            <p>Deploy stock analysis agent, build investor profiles with XP/achievements, integrate QuantBD MCP tools for AI insights</p>
+          </div>
+          <div class="timeline-item">
+            <span class="date" style="color: var(--gold);">Week 4 (Apr 3 - 12)</span>
+            <h4>Polish & Launch</h4>
+            <p>QA testing, performance optimization, beta user feedback, marketing prep, soft launch to 500 users</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card" style="margin-bottom: 16px; text-align: center; border-top: 3px solid var(--primary);">
+          <h4 style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted);">Launch Target</h4>
+          <div style="margin: 16px 0;">
+            <div style="font-size: 36px; font-weight: 900; color: var(--primary); letter-spacing: -1px;">April 12, 2026</div>
+            <div style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; font-weight: 600;">Public Soft Launch</div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 0;">
+          <div class="card-sm">
+            <div class="stat">
+              <div class="num text-success" style="font-size: 26px;">500</div>
+              <div class="label">Beta Users</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="stat">
+              <div class="num text-purple" style="font-size: 26px;">10+</div>
+              <div class="label">Course Modules</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="stat">
+              <div class="num text-gold" style="font-size: 26px;">5</div>
+              <div class="label">AI Agents</div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div class="stat">
+              <div class="num text-primary" style="font-size: 26px;">417</div>
+              <div class="label">DSE Stocks</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">9 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 8: Business Model -->
+<div class="slide bg-blue-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">Business Model</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-success">REVENUE STRATEGY</span>
+    <h2>Revenue Strategy & <span class="text-success">Growth Plan</span></h2>
+
+    <div class="grid-3">
+      <div class="card card-accent-top">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(26,115,232,0.1); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--primary);">1</div>
+          <h4 style="margin: 0;">Free Education</h4>
+        </div>
+        <p style="color: var(--primary); font-size: 11px; font-weight: 700; margin-bottom: 10px;">MONTH 1-3</p>
+        <ul class="bullet-list">
+          <li>Free access to all learning content</li>
+          <li>Demo trading with Hero Coins</li>
+          <li>Market data and analysis tools</li>
+          <li>Build user base: target 5,000 users</li>
+          <li>Revenue: None (growth phase)</li>
+        </ul>
+      </div>
+      <div class="card card-accent-top green">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(14,203,129,0.1); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--success);">2</div>
+          <h4 style="margin: 0;">Premium Features</h4>
+        </div>
+        <p style="color: var(--success); font-size: 11px; font-weight: 700; margin-bottom: 10px;">MONTH 4-6</p>
+        <ul class="bullet-list green">
+          <li>AI Agent access (premium tier)</li>
+          <li>Advanced portfolio analytics</li>
+          <li>Priority alerts & signals</li>
+          <li>Expert investor profiles</li>
+          <li>Revenue: BDT 299-999/month</li>
+        </ul>
+      </div>
+      <div class="card card-accent-top purple">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(124,58,237,0.1); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: var(--purple);">3</div>
+          <h4 style="margin: 0;">Brokerage Integration</h4>
+        </div>
+        <p style="color: var(--purple); font-size: 11px; font-weight: 700; margin-bottom: 10px;">MONTH 7-12</p>
+        <ul class="bullet-list purple">
+          <li>Partner with licensed DSE broker</li>
+          <li>One-click real trading (post-cert)</li>
+          <li>Commission revenue sharing</li>
+          <li>Institutional investor tools</li>
+          <li>Revenue: Commissions + subscriptions</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 20px;">
+      <div class="grid-4" style="margin-top: 0;">
+        <div class="stat">
+          <div class="num text-primary" style="font-size: 26px;">5K</div>
+          <div class="label">Users (3 months)</div>
+        </div>
+        <div class="stat">
+          <div class="num text-success" style="font-size: 26px;">25K</div>
+          <div class="label">Users (6 months)</div>
+        </div>
+        <div class="stat">
+          <div class="num text-purple" style="font-size: 26px;">15%</div>
+          <div class="label">Premium Conversion</div>
+        </div>
+        <div class="stat">
+          <div class="num text-gold" style="font-size: 26px;">100K</div>
+          <div class="label">Users (12 months)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">10 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 9: Tech Architecture -->
+<div class="slide bg-purple-subtle">
+  <div class="accent-stripe"></div>
+  <div class="slide-header">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" />
+      <div class="brand-name">HeroStock<span>.AI</span></div>
+    </div>
+    <div class="slide-label">Technology</div>
+  </div>
+  <div class="slide-body">
+    <span class="tag tag-purple">TECH STACK</span>
+    <h2>Technical Architecture & <span class="text-purple">AI Stack</span></h2>
+
+    <div class="grid-2">
+      <div class="col">
+        <div class="card" style="margin-bottom: 14px; border-top: 3px solid var(--primary);">
+          <h4>Current Stack (Production)</h4>
+          <ul class="bullet-list">
+            <li><strong>Frontend:</strong> React + TypeScript + Vite + TailwindCSS</li>
+            <li><strong>Backend:</strong> Supabase (PostgreSQL + Auth + Realtime)</li>
+            <li><strong>Data:</strong> 2 Supabase projects (Hero + DSE Market)</li>
+            <li><strong>Charts:</strong> Recharts for data visualization</li>
+            <li><strong>State:</strong> TanStack React Query with 30s auto-refresh</li>
+            <li><strong>Deployment:</strong> Ready for Vercel/Netlify</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--success);">
+          <h4>Database Schema (V2 &mdash; Deployed)</h4>
+          <ul class="bullet-list green">
+            <li><strong>instrument</strong> &mdash; canonical stock/security entity</li>
+            <li><strong>market_price_bar</strong> &mdash; historical OHLCV time series</li>
+            <li><strong>fundamental_snapshot + value</strong> &mdash; EAV financials</li>
+            <li><strong>news_article + sentiment</strong> &mdash; news pipeline</li>
+            <li><strong>live_prices + market_indices</strong> &mdash; real-time data</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card" style="margin-bottom: 14px; border-top: 3px solid var(--purple);">
+          <h4>AI & Agent Architecture (Planned)</h4>
+          <ul class="bullet-list purple">
+            <li><strong>Claude API</strong> (Anthropic) &mdash; Opus for analysis, Haiku for real-time</li>
+            <li><strong>MCP Protocol</strong> &mdash; Model Context Protocol for tools</li>
+            <li><strong>Agent SDK</strong> &mdash; Autonomous stock/portfolio agents</li>
+            <li><strong>Vector DB</strong> &mdash; Embeddings for news & semantic search</li>
+            <li><strong>Edge Functions</strong> &mdash; Serverless compute for agents</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--gold);">
+          <h4>QuantBD Integration Points</h4>
+          <ul class="check-list">
+            <li>REST API for real-time DSE price feeds</li>
+            <li>MCP Server for AI agent data access</li>
+            <li>WebSocket for live price streaming from matching engine</li>
+            <li>Batch API for historical OHLCV sync</li>
+            <li>Webhook for corporate actions &amp; PSI alerts</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">11 / 12</span>
+  </div>
+</div>
+
+<!-- SLIDE 10: Next Steps (CTA) -->
+<div class="slide cta-slide">
+  <div class="accent-stripe" style="background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);"></div>
+  <div class="slide-header" style="background: transparent; border-bottom-color: rgba(255,255,255,0.1);">
+    <div class="logo-group">
+      <img src="public/herostock-logo.jpeg" alt="HeroStock.AI" style="border: 2px solid rgba(255,255,255,0.3); border-radius: 10px;" />
+      <div class="brand-name" style="color: white;">HeroStock<span style="color: rgba(255,255,255,0.8);">.AI</span></div>
+    </div>
+    <div class="slide-label" style="color: rgba(255,255,255,0.6);">Next Steps</div>
+  </div>
+  <div class="slide-body">
+    <div class="dot-pattern" style="top: 60px; right: -80px; opacity: 0.3; background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);"></div>
+    <div style="max-width: 640px; position: relative; z-index: 2;">
+      <span class="tag" style="background: rgba(255,255,255,0.15); color: white; border-color: rgba(255,255,255,0.25);">PARTNERSHIP</span>
+      <h1 style="font-size: 44px; color: white; margin-bottom: 16px;">HeroStock.AI &times; QuantBD</h1>
+      <p style="font-size: 16px; color: rgba(255,255,255,0.8); margin-bottom: 36px;">
+        HeroStock.AI brings the product vision, AI agents &amp; education platform.<br>
+        QuantBD brings the DSE matching engine connectivity &amp; market expertise.<br>
+        Together, we build Bangladesh's leading investment education platform.
+      </p>
+
+      <div class="grid-3" style="margin-bottom: 36px;">
+        <div class="card-sm" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); text-align: center;">
+          <h4 style="font-size: 13px; color: rgba(255,255,255,0.9); margin-bottom: 6px;">This Week</h4>
+          <p style="font-size: 11px; color: rgba(255,255,255,0.6);">QuantBD shares API docs, sandbox access &amp; data scope</p>
+        </div>
+        <div class="card-sm" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); text-align: center;">
+          <h4 style="font-size: 13px; color: rgba(255,255,255,0.9); margin-bottom: 6px;">Next Week</h4>
+          <p style="font-size: 11px; color: rgba(255,255,255,0.6);">Integration sprint: live prices + MCP server setup</p>
+        </div>
+        <div class="card-sm" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); text-align: center;">
+          <h4 style="font-size: 13px; color: rgba(255,255,255,0.9); margin-bottom: 6px;">April 12</h4>
+          <p style="font-size: 11px; color: rgba(255,255,255,0.6);">Joint soft launch with 500 beta users</p>
+        </div>
+      </div>
+
+      <div style="height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent); margin: 20px 0;"></div>
+      <p style="font-size: 15px; color: white; margin-top: 20px;">
+        <strong>HeroStock.AI</strong>
+      </p>
+      <p style="font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px;">
+        herostock.ai &middot; ceo@herostock.ai
+      </p>
+      <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 10px;">Thank you for your time. We look forward to a productive partnership.</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span style="color: rgba(255,255,255,0.5);">HeroStock.AI &middot; Confidential</span>
+    <span class="page-num">12 / 12</span>
+  </div>
+</div>
+
+</body>
+</html>

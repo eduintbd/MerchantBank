@@ -30,6 +30,7 @@ const ZeroToHeroPage = lazy(() => import('@/pages/ZeroToHeroPage').then(m => ({ 
 const MorePage = lazy(() => import('@/pages/MorePage').then(m => ({ default: m.MorePage })));
 const PortfolioAnalysisPage = lazy(() => import('@/pages/PortfolioAnalysisPage').then(m => ({ default: m.PortfolioAnalysisPage })));
 const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
+const MarketPage = lazy(() => import('@/pages/MarketPage').then(m => ({ default: m.MarketPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,6 +80,9 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/auth" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
+
+      {/* Public market page - no auth required */}
+      <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
 
       {/* Protected routes */}
       <Route

@@ -303,34 +303,109 @@ export interface IpoApplication {
   created_at: string;
 }
 
-// Company Data Types
+// Instrument (canonical entity for tradable securities)
+export interface Instrument {
+  id: string;
+  symbol: string;
+  exchange: string;
+  instrument_type: string;
+  isin?: string;
+  status: string;
+  sector?: string;
+  industry?: string;
+  company_name: string;
+  category?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Historical OHLCV price bars
+export interface MarketPriceBar {
+  id: string;
+  instrument_id: string;
+  ts: string;
+  timeframe: 'D1' | 'H1' | 'M5';
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  vwap?: number;
+  turnover?: number;
+  source?: string;
+}
+
+// Fundamental snapshot (period-level container)
+export interface FundamentalSnapshot {
+  id: string;
+  instrument_id: string;
+  report_type: 'annual' | 'quarterly' | 'TTM';
+  fiscal_year: number;
+  fiscal_period?: string;
+  period_start?: string;
+  period_end?: string;
+  currency: string;
+  source?: string;
+}
+
+// Fundamental metric value (EAV)
+export interface FundamentalValue {
+  id: string;
+  fundamental_snapshot_id: string;
+  metric_code: string;
+  metric_value: number | null;
+  unit?: string;
+}
+
+// News article
+export interface NewsArticle {
+  id: string;
+  provider?: string;
+  external_id?: string;
+  headline: string;
+  summary?: string;
+  body_url?: string;
+  language?: string;
+  published_at: string;
+  ingested_at: string;
+  source_type?: string;
+}
+
+// Company Data Types (backward-compatible display interfaces)
 export interface CompanyFinancial {
   id: string;
-  stock_symbol: string;
+  symbol: string;
   year: number;
-  quarter?: number;
-  report_type: 'balance_sheet' | 'income_statement' | 'cash_flow';
-  data: Record<string, number>;
-  published_at: string;
+  revenue?: number;
+  net_income?: number;
+  eps?: number;
+  nav_per_share?: number;
+  pe_ratio?: number;
+  dividend_yield?: number;
+  total_assets?: number;
+  total_liabilities?: number;
+  operating_profit?: number;
 }
 
 export interface CompanyNews {
   id: string;
-  stock_symbol?: string;
+  symbol?: string;
   title: string;
-  content?: string;
-  source_url?: string;
-  image_url?: string;
+  summary?: string;
+  source?: string;
+  url?: string;
   published_at: string;
+  created_at: string;
 }
 
 export interface CompanyManagement {
   id: string;
-  stock_symbol: string;
+  symbol: string;
   name: string;
   designation?: string;
   bio?: string;
-  photo_url?: string;
+  image_url?: string;
+  order?: number;
 }
 
 // Notification Types
