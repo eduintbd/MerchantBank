@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
@@ -71,9 +71,14 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+// Public routes that don't need auth to load
+const PUBLIC_PATHS = ['/market'];
+
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) return <LoadingScreen />;
+  const location = useLocation();
+  const isPublicRoute = PUBLIC_PATHS.some(p => location.pathname.startsWith(p));
+  if (loading && !isPublicRoute) return <LoadingScreen />;
 
   return (
     <Routes>
