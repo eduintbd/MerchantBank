@@ -12,6 +12,7 @@ import { KycPage } from '@/pages/KycPage';
 import { MarketingPage } from '@/pages/MarketingPage';
 import { AdminOrdersPage } from '@/pages/AdminOrdersPage';
 import { LandingPage } from '@/pages/LandingPage';
+import { OurStoryPage } from '@/pages/OurStoryPage';
 import type { ReactNode } from 'react';
 
 const queryClient = new QueryClient({
@@ -27,9 +28,7 @@ function LoadingScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center animate-fade-in">
-        <div className="w-12 h-12 bg-gradient-to-br from-primary to-info rounded-xl flex items-center justify-center text-white font-bold text-lg mx-auto mb-4 shadow-lg shadow-primary/30">
-          H
-        </div>
+        <img src="/logo.jpeg" alt="HeroStock.AI" className="w-12 h-12 rounded-xl object-cover mx-auto mb-4 shadow-lg" />
         <div className="w-8 h-8 border-2 border-info border-t-transparent rounded-full animate-spin mx-auto" />
         <p className="text-xs text-muted mt-3">Loading...</p>
       </div>
@@ -53,6 +52,7 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/auth" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
+      <Route path="/our-story" element={<OurStoryPage />} />
 
       {/* Protected routes */}
       <Route

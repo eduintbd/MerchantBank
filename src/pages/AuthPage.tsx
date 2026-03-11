@@ -39,14 +39,12 @@ export function AuthPage() {
       <div className="w-full max-w-md relative animate-fade-in">
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-2xl shadow-black/20">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 bg-gradient-to-br from-primary to-info rounded-xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-4 shadow-lg shadow-primary/30">
-              H
-            </div>
+            <img src="/logo.jpeg" alt="HeroStock.AI" className="w-16 h-16 rounded-xl object-cover mx-auto mb-4 shadow-lg" />
             <h1 className="text-2xl font-bold text-foreground">
               {mode === 'login' ? 'Welcome back' : 'Create your account'}
             </h1>
             <p className="text-sm text-muted mt-1">
-              {mode === 'login' ? 'Sign in to Hero Investment Platform' : 'Start your investment journey'}
+              {mode === 'login' ? 'Sign in to HeroStock.AI' : 'Start your investment journey'}
             </p>
           </div>
 

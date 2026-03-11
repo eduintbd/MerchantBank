@@ -56,6 +56,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .single();
 
     if (error || !data) {
+      // Profile missing — create a basic one from auth metadata
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const meta = authUser.user_metadata || {};
+        const fallback = {
+          id: userId,
+          email: authUser.email || '',
+          full_name: meta.full_name || '',
+          phone: meta.phone || '',
+          role: 'investor' as const,
+          kyc_status: 'pending' as const,
+          referral_code: 'HERO-' + userId.substring(0, 6).toUpperCase(),
+        };
+        await supabase.from('profiles').upsert(fallback, { onConflict: 'id' });
+        setState({
+          user: { ...fallback, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), is_approved: false } as User,
+          loading: false,
+          isAuthenticated: true,
+          isAdmin: false,
+          isInvestor: true,
+        });
+        return;
+      }
       setState(s => ({ ...s, loading: false }));
       return;
     }
@@ -77,12 +100,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signUp(email: string, password: string, fullName: string, phone?: string) {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName, phone } },
     });
     if (error) return { error: error.message };
+
+    // Auto-create profile (fallback if DB trigger doesn't exist)
+    if (data.user) {
+      const code = 'HERO-' + data.user.id.substring(0, 6).toUpperCase();
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        email,
+        full_name: fullName,
+        phone: phone || '',
+        role: 'investor',
+        kyc_status: 'pending',
+        referral_code: code,
+      }, { onConflict: 'id' });
+    }
+
+    // If email confirmation is required, user won't be auto-logged-in
+    if (data.user && !data.session) {
+      return { error: 'Check your email to confirm your account, then login.' };
+    }
+
     return {};
   }
 

@@ -34,13 +34,11 @@ export function TopNav() {
         <div className="px-6 md:px-8 lg:px-12">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-info flex items-center justify-center text-white font-bold text-sm">
-                H
-              </div>
+            <div className="flex items-center gap-2.5 shrink-0">
+              <img src="/logo.jpeg" alt="HeroStock.AI" className="w-9 h-9 rounded-xl object-cover" />
               <div>
-                <span className="font-semibold text-base text-foreground">Hero</span>
-                <p className="text-[10px] text-muted leading-none mt-0.5">Investment Platform</p>
+                <span className="font-semibold text-sm text-foreground">HeroStock.AI</span>
+                <p className="text-[10px] text-muted leading-none mt-0.5">Fintech Bangladesh</p>
               </div>
             </div>
 
@@ -94,10 +92,8 @@ export function TopNav() {
       <header className="fixed top-0 left-0 right-0 z-40 sm:hidden glass border-b border-border safe-top">
         <div className="flex items-center justify-between px-4 h-12">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-info flex items-center justify-center text-white font-bold text-[10px]">
-              H
-            </div>
-            <span className="font-semibold text-sm text-foreground">Hero</span>
+            <img src="/logo.jpeg" alt="HeroStock.AI" className="w-7 h-7 rounded-lg object-cover" />
+            <span className="font-semibold text-sm text-foreground">HeroStock</span>
           </div>
           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-info flex items-center justify-center text-white text-[9px] font-semibold">
             {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}

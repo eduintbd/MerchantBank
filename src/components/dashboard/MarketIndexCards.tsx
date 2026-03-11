@@ -1,6 +1,6 @@
 import { StatCard } from '@/components/ui/Card';
 import { formatNumber, formatVolume, formatValueBn } from '@/lib/utils';
-import { TrendingUp, BarChart3, Activity, ArrowUpCircle, ArrowDownCircle, Repeat } from 'lucide-react';
+import { TrendingUp, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import type { MarketIndex, MarketStats } from '@/types';
 
 interface Props {
@@ -14,70 +14,50 @@ export function MarketIndexCards({ indices, stats }: Props) {
   const ds30 = indices.find(i => i.index_name === 'DS30');
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-      {/* Row 1: Indices + Total Trade */}
-      <StatCard
-        title="DSEX Index"
-        value={dsex ? dsex.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
-        icon={<TrendingUp size={20} />}
-        iconColor="bg-info/15 text-info"
-        gradient="grad-info"
-        trend={dsex ? { value: dsex.change_pct } : undefined}
-      />
-      <StatCard
-        title="DSES Index"
-        value={dses ? dses.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
-        icon={<TrendingUp size={20} />}
-        iconColor="bg-success/15 text-success"
-        gradient="grad-success"
-        trend={dses ? { value: dses.change_pct } : undefined}
-      />
-      <StatCard
-        title="DS30 Index"
-        value={ds30 ? ds30.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
-        icon={<TrendingUp size={20} />}
-        iconColor="bg-purple/15 text-purple"
-        gradient="grad-purple"
-        trend={ds30 ? { value: ds30.change_pct } : undefined}
-      />
-      <StatCard
-        title="Total Trades"
-        value={formatNumber(stats.totalTrades)}
-        icon={<Repeat size={20} />}
-        iconColor="bg-warning/15 text-warning"
-        gradient="grad-warning"
-        subtitle={`${stats.totalStocks} stocks`}
-      />
+    <div className="space-y-3 sm:space-y-4">
+      {/* Index Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <StatCard
+          title="DSEX Index"
+          value={dsex ? dsex.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
+          icon={<TrendingUp size={20} />}
+          iconColor="bg-info/15 text-info"
+          gradient="grad-info"
+          trend={dsex ? { value: dsex.change_pct } : undefined}
+        />
+        <StatCard
+          title="DSES Index"
+          value={dses ? dses.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
+          icon={<TrendingUp size={20} />}
+          iconColor="bg-success/15 text-success"
+          gradient="grad-success"
+          trend={dses ? { value: dses.change_pct } : undefined}
+        />
+        <StatCard
+          title="DS30 Index"
+          value={ds30 ? ds30.value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '—'}
+          icon={<TrendingUp size={20} />}
+          iconColor="bg-purple/15 text-purple"
+          gradient="grad-purple"
+          trend={ds30 ? { value: ds30.change_pct } : undefined}
+        />
+      </div>
 
-      {/* Row 2: Volume, Value, Advancers, Decliners */}
-      <StatCard
-        title="Total Volume"
-        value={formatVolume(stats.totalVolume)}
-        icon={<BarChart3 size={20} />}
-        iconColor="bg-info/15 text-info"
-        gradient="grad-info"
-      />
-      <StatCard
-        title="Total Value"
-        value={formatValueBn(stats.totalValue)}
-        icon={<Activity size={20} />}
-        iconColor="bg-success/15 text-success"
-        gradient="grad-success"
-      />
-      <StatCard
-        title="Advancers"
-        value={stats.advancers}
-        icon={<ArrowUpCircle size={20} />}
-        iconColor="bg-success/15 text-success"
-        gradient="grad-success"
-      />
-      <StatCard
-        title="Decliners"
-        value={stats.decliners}
-        icon={<ArrowDownCircle size={20} />}
-        iconColor="bg-danger/15 text-danger"
-        gradient="grad-danger"
-      />
+      {/* Compact stats strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+        {[
+          { label: 'Volume', value: formatVolume(stats.totalVolume) },
+          { label: 'Value', value: formatValueBn(stats.totalValue) },
+          { label: 'Trades', value: formatNumber(stats.totalTrades) },
+          { label: 'Advancers', value: String(stats.advancers), icon: ArrowUpCircle, color: 'text-success' },
+          { label: 'Decliners', value: String(stats.decliners), icon: ArrowDownCircle, color: 'text-danger' },
+        ].map(s => (
+          <div key={s.label} className="rounded-xl border border-border bg-card/60 px-3 py-2.5 flex items-center justify-between">
+            <span className="text-[10px] text-muted uppercase tracking-wider">{s.label}</span>
+            <span className={`text-sm font-bold font-num ${s.color || 'text-foreground'}`}>{s.value}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

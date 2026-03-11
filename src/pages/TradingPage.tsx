@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useStocks, usePlaceOrder, useOrders } from '@/hooks/useStocks';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { formatCurrency, formatPercent, getChangeColor, formatDateTime, cn } from '@/lib/utils';
-import { Search, TrendingUp, TrendingDown, ShoppingCart } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Stock, OrderType } from '@/types';
+
+const PAGE_SIZE = 20;
 
 export function TradingPage() {
   const [search, setSearch] = useState('');
@@ -14,10 +16,18 @@ export function TradingPage() {
   const [orderType, setOrderType] = useState<OrderType>('buy');
   const [quantity, setQuantity] = useState('');
   const [price, setPrice] = useState('');
+  const [page, setPage] = useState(1);
 
   const { data: stocks, isLoading } = useStocks(search);
   const { data: orders } = useOrders();
   const placeOrder = usePlaceOrder();
+
+  const totalPages = Math.max(1, Math.ceil((stocks?.length || 0) / PAGE_SIZE));
+  const paginatedStocks = useMemo(() => {
+    if (!stocks) return [];
+    const start = (page - 1) * PAGE_SIZE;
+    return stocks.slice(start, start + PAGE_SIZE);
+  }, [stocks, page]);
 
   function handleSelectStock(stock: Stock) {
     setSelectedStock(stock);
@@ -57,7 +67,7 @@ export function TradingPage() {
               type="text"
               placeholder="Search stocks by symbol or company..."
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
               className="w-full pl-11 pr-4 py-3 bg-card border border-border rounded-2xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
@@ -84,10 +94,10 @@ export function TradingPage() {
                         <span className="text-sm">Loading stocks...</span>
                       </div>
                     </td></tr>
-                  ) : stocks?.length === 0 ? (
+                  ) : paginatedStocks.length === 0 ? (
                     <tr><td colSpan={7} className="px-5 py-10 text-center text-muted">No stocks found</td></tr>
                   ) : (
-                    stocks?.map(stock => (
+                    paginatedStocks.map(stock => (
                       <tr
                         key={stock.id}
                         className={cn(
@@ -119,6 +129,31 @@ export function TradingPage() {
                 </tbody>
               </table>
             </div>
+            {/* Pagination */}
+            {stocks && stocks.length > PAGE_SIZE && (
+              <div className="flex items-center justify-between px-5 sm:px-6 py-3 border-t border-border">
+                <span className="text-xs text-muted">
+                  {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, stocks.length)} of {stocks.length}
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <span className="text-xs font-medium text-muted px-2">{page}/{totalPages}</span>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
 

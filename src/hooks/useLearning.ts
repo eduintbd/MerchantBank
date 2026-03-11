@@ -12,7 +12,7 @@ export function useCourses() {
       const { data: courses, error } = await supabase
         .from('courses')
         .select('*')
-        .order('order');
+        .order('sort_order');
       if (error) throw error;
 
       const { data: progress } = await supabase
@@ -42,7 +42,7 @@ export function useLessons(courseId: string) {
         .from('lessons')
         .select('*')
         .eq('course_id', courseId)
-        .order('order');
+        .order('sort_order');
       if (error) throw error;
 
       const { data: progress } = await supabase
@@ -91,13 +91,17 @@ export function useQuiz(courseId: string) {
   return useQuery({
     queryKey: ['quiz', courseId],
     queryFn: async (): Promise<Quiz | null> => {
-      const { data, error } = await supabase
-        .from('quizzes')
-        .select('*')
-        .eq('course_id', courseId)
-        .single();
-      if (error) return null;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('quizzes')
+          .select('*')
+          .eq('course_id', courseId)
+          .single();
+        if (error) return null;
+        return data;
+      } catch {
+        return null;
+      }
     },
     enabled: !!courseId,
   });

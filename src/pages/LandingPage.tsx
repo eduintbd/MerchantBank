@@ -17,54 +17,12 @@ import {
 } from 'lucide-react';
 
 const features = [
-  {
-    icon: BarChart3,
-    title: 'Live Market Data',
-    desc: 'Real-time DSE indices, stock prices, and market statistics updated every 30 seconds.',
-    gradient: 'grad-info',
-    color: 'text-info',
-    bg: 'bg-info/15',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Trade Stocks',
-    desc: 'Buy and sell DSE-listed stocks with a simple, intuitive trading interface.',
-    gradient: 'grad-success',
-    color: 'text-success',
-    bg: 'bg-success/15',
-  },
-  {
-    icon: Briefcase,
-    title: 'Portfolio Tracking',
-    desc: 'Track your investments with real-time P/L calculations and performance charts.',
-    gradient: 'grad-purple',
-    color: 'text-purple',
-    bg: 'bg-purple/15',
-  },
-  {
-    icon: GraduationCap,
-    title: 'Learning Academy',
-    desc: 'Complete courses and quizzes to qualify for trading. Learn before you invest.',
-    gradient: 'grad-warning',
-    color: 'text-warning',
-    bg: 'bg-warning/15',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'KYC Verification',
-    desc: 'Secure document verification process to comply with regulatory requirements.',
-    gradient: 'grad-danger',
-    color: 'text-danger',
-    bg: 'bg-danger/15',
-  },
-  {
-    icon: Users,
-    title: 'Referral Program',
-    desc: 'Earn commissions by referring friends. Track referrals and earnings in real-time.',
-    gradient: 'grad-primary',
-    color: 'text-info',
-    bg: 'bg-info/15',
-  },
+  { icon: BarChart3, title: 'Live Market Data', desc: 'Real-time DSE indices, stock prices, and market statistics updated every 30 seconds.', color: 'text-info', bg: 'bg-info/15' },
+  { icon: TrendingUp, title: 'Trade Stocks', desc: 'Buy and sell DSE-listed stocks with a simple, intuitive trading interface.', color: 'text-success', bg: 'bg-success/15' },
+  { icon: Briefcase, title: 'Portfolio Tracking', desc: 'Track your investments with real-time P/L calculations and performance charts.', color: 'text-purple', bg: 'bg-purple/15' },
+  { icon: GraduationCap, title: 'Learning Academy', desc: 'Complete courses and quizzes to qualify for trading. Learn before you invest.', color: 'text-warning', bg: 'bg-warning/15' },
+  { icon: ShieldCheck, title: 'KYC Verification', desc: 'Secure document verification process to comply with regulatory requirements.', color: 'text-danger', bg: 'bg-danger/15' },
+  { icon: Users, title: 'Referral Program', desc: 'Earn commissions by referring friends. Track referrals and earnings in real-time.', color: 'text-info', bg: 'bg-info/15' },
 ];
 
 export function LandingPage() {
@@ -85,18 +43,16 @@ export function LandingPage() {
 
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-info flex items-center justify-center text-white font-bold text-sm">
-                H
-              </div>
-              <div>
-                <span className="font-semibold text-base">Hero</span>
-                <p className="text-[10px] text-muted leading-none mt-0.5">Investment Platform</p>
-              </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center gap-2.5">
+              <img src="/logo.jpeg" alt="HeroStock.AI" className="w-8 h-8 rounded-lg object-cover" />
+              <span className="font-semibold text-sm">HeroStock.AI</span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Link to="/our-story">
+                <Button variant="ghost" size="sm">Our Story</Button>
+              </Link>
               <Link to="/auth">
                 <Button variant="ghost" size="sm">Login</Button>
               </Link>
@@ -109,8 +65,8 @@ export function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-40 pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto text-center animate-fade-in">
+      <section className="relative pt-28 sm:pt-36 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto text-center animate-fade-in">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-info/10 border border-info/20 text-info text-xs font-medium mb-6">
             <Activity size={14} className="animate-pulse" />
             Live DSE Market Data
@@ -136,8 +92,8 @@ export function LandingPage() {
       </section>
 
       {/* Live Market Preview */}
-      <section id="market" className="relative pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+      <section id="market" className="relative pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <h2 className="text-sm font-semibold text-muted uppercase tracking-wider">Live Market</h2>
           </div>
@@ -199,27 +155,21 @@ export function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="relative pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold">Everything You Need to Invest</h2>
-            <p className="text-muted mt-2 text-sm sm:text-base">A complete platform built for the Dhaka Stock Exchange</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+      <section className="relative pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6">Everything You Need</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {features.map((f, i) => (
               <div
                 key={f.title}
-                className={cn(
-                  'rounded-2xl border border-border p-5 sm:p-6 animate-slide-up',
-                  f.gradient
-                )}
-                style={{ animationDelay: `${i * 80}ms` }}
+                className="rounded-xl border border-border bg-card/50 p-4 sm:p-5 animate-slide-up hover:bg-card-hover transition-all"
+                style={{ animationDelay: `${i * 60}ms` }}
               >
-                <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center mb-4', f.bg)}>
-                  <f.icon size={22} className={f.color} />
+                <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center mb-3', f.bg)}>
+                  <f.icon size={18} className={f.color} />
                 </div>
-                <h3 className="font-semibold text-base mb-1.5">{f.title}</h3>
-                <p className="text-muted text-sm leading-relaxed">{f.desc}</p>
+                <h3 className="font-semibold text-sm mb-1">{f.title}</h3>
+                <p className="text-muted text-xs leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -227,14 +177,14 @@ export function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="relative pb-20 sm:pb-28 px-4 sm:px-6 lg:px-8">
+      <section className="relative pb-16 sm:pb-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="rounded-2xl border border-border grad-info p-8 sm:p-12">
-            <h2 className="text-2xl sm:text-3xl font-bold">Ready to Start Investing?</h2>
-            <p className="text-muted mt-3 text-sm sm:text-base">
+          <div className="rounded-xl border border-border grad-info p-6 sm:p-10">
+            <h2 className="text-xl sm:text-2xl font-bold">Ready to Start Investing?</h2>
+            <p className="text-muted mt-2 text-xs sm:text-sm">
               Join thousands of investors on Hero. Create your free account today.
             </p>
-            <div className="mt-8 flex items-center justify-center gap-4">
+            <div className="mt-5 flex items-center justify-center gap-3">
               <Link to="/auth">
                 <Button size="lg" icon={<ArrowRight size={16} />}>Create Account</Button>
               </Link>
@@ -247,8 +197,8 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8 px-4 text-center">
-        <p className="text-muted text-xs">&copy; {new Date().getFullYear()} Hero Investment Platform. All rights reserved.</p>
+      <footer className="border-t border-border py-6 px-4 text-center">
+        <p className="text-muted text-[10px]">&copy; {new Date().getFullYear()} HeroStock.AI &middot; Fintech Bangladesh &middot; DSE &amp; CSE</p>
       </footer>
     </div>
   );

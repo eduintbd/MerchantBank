@@ -5,10 +5,10 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// DSE Portal Supabase — read-only access to live stock data
+// UCB CSM — DSE Market Data (read-only: stocks, live_prices, fundamentals, price_history)
 const dseUrl = import.meta.env.VITE_DSE_SUPABASE_URL;
 const dseKey = import.meta.env.VITE_DSE_SUPABASE_ANON_KEY;
 
 export const dseSupabase = dseUrl && dseKey
   ? createClient(dseUrl, dseKey)
-  : null;
+  : supabase;
