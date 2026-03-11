@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
-import { ShieldCheck, Upload, CheckCircle, Clock, XCircle, FileText, Camera, CreditCard } from 'lucide-react';
+import { ShieldCheck, Upload, CheckCircle, Clock, XCircle, FileText, Camera, CreditCard, UserPlus, Trash2 } from 'lucide-react';
 
 const documentTypes = [
   { type: 'nid_front', label: 'NID Front', icon: CreditCard, description: 'Front side of your National ID card' },
@@ -21,7 +21,9 @@ export function KycPage() {
   const [uploading, setUploading] = useState<string | null>(null);
   const [uploadedDocs, setUploadedDocs] = useState<Record<string, boolean>>({});
   const [nidNumber, setNidNumber] = useState('');
+  const [tinNumber, setTinNumber] = useState('');
   const [boAccount, setBoAccount] = useState('');
+  const [familyMembers, setFamilyMembers] = useState<{ name: string; relation: string; nid: string; phone: string }[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleUpload(docType: string, file: File) {
@@ -40,7 +42,7 @@ export function KycPage() {
   async function handleSubmitKyc() {
     setSubmitting(true);
     try {
-      await supabase.from('profiles').update({ kyc_status: 'submitted', nid_number: nidNumber, bo_account: boAccount }).eq('id', user?.id);
+      await supabase.from('profiles').update({ kyc_status: 'submitted', nid_number: nidNumber, tin_number: tinNumber, bo_account: boAccount, family_info: familyMembers.length > 0 ? familyMembers : undefined }).eq('id', user?.id);
       await supabase.from('kyc_submissions').insert({ user_id: user?.id, status: 'submitted', submitted_at: new Date().toISOString() });
     } catch (err) { console.error('Submit failed:', err); }
     finally { setSubmitting(false); }
@@ -98,8 +100,39 @@ export function KycPage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <Input label="NID Number" value={nidNumber} onChange={e => setNidNumber(e.target.value)} placeholder="Enter your NID number" />
+              <Input label="TIN (Tax Identification Number)" value={tinNumber} onChange={e => setTinNumber(e.target.value)} placeholder="Enter your TIN" />
               <Input label="BO Account Number" value={boAccount} onChange={e => setBoAccount(e.target.value)} placeholder="Enter your BO account number" />
             </div>
+          </Card>
+
+          {/* Family Information */}
+          <Card>
+            <h2 className="font-semibold text-base mb-5 flex items-center gap-2">
+              <UserPlus size={20} className="text-info" />
+              Family Information
+            </h2>
+            <p className="text-sm text-muted mb-4">Add family members or nominees for your investment account.</p>
+            {familyMembers.map((member, idx) => (
+              <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-3 p-4 bg-surface rounded-xl border border-border">
+                <Input label="Name" value={member.name} onChange={e => { const updated = [...familyMembers]; updated[idx].name = e.target.value; setFamilyMembers(updated); }} placeholder="Full name" />
+                <Input label="Relation" value={member.relation} onChange={e => { const updated = [...familyMembers]; updated[idx].relation = e.target.value; setFamilyMembers(updated); }} placeholder="e.g. Spouse" />
+                <Input label="NID" value={member.nid} onChange={e => { const updated = [...familyMembers]; updated[idx].nid = e.target.value; setFamilyMembers(updated); }} placeholder="NID number" />
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <Input label="Phone" value={member.phone} onChange={e => { const updated = [...familyMembers]; updated[idx].phone = e.target.value; setFamilyMembers(updated); }} placeholder="Phone" />
+                  </div>
+                  <button onClick={() => setFamilyMembers(familyMembers.filter((_, i) => i !== idx))} className="mb-1 w-9 h-9 flex items-center justify-center rounded-lg text-danger hover:bg-danger/10 transition-colors shrink-0">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={() => setFamilyMembers([...familyMembers, { name: '', relation: '', nid: '', phone: '' }])}
+              className="flex items-center gap-2 text-sm font-medium text-info hover:text-info/80 transition-colors mt-2"
+            >
+              <UserPlus size={16} /> Add Family Member
+            </button>
           </Card>
 
           {/* Document Upload */}

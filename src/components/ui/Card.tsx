@@ -6,15 +6,19 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   padding?: boolean;
   hover?: boolean;
+  variant?: 'default' | 'elevated' | 'glass';
 }
 
-export function Card({ children, className, padding = true, hover, ...props }: CardProps) {
+export function Card({ children, className, padding = true, hover, variant = 'default', ...props }: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-2xl border border-border bg-card',
+        'rounded-2xl border transition-all duration-300',
+        variant === 'default' && 'border-border bg-card shadow-[var(--shadow-card)]',
+        variant === 'elevated' && 'border-border bg-card shadow-[var(--shadow-elevated)]',
+        variant === 'glass' && 'glass-card border-white/40',
         padding && 'p-4 sm:p-5',
-        hover && 'hover:bg-card-hover hover:border-border-light transition-all cursor-pointer',
+        hover && 'hover:shadow-[var(--shadow-elevated)] hover:border-border-light hover:-translate-y-0.5 cursor-pointer',
         className
       )}
       {...props}
@@ -33,45 +37,62 @@ interface StatCardProps {
   trend?: { value: number; label?: string };
   gradient?: string;
   className?: string;
+  sparkline?: ReactNode;
 }
 
-export function StatCard({ title, value, subtitle, icon, iconColor, trend, gradient, className }: StatCardProps) {
+export function StatCard({ title, value, subtitle, icon, iconColor, trend, gradient, className, sparkline }: StatCardProps) {
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-border p-4 sm:p-5 lg:p-6 min-h-[120px] sm:min-h-[140px] flex flex-col justify-between',
+        'relative overflow-hidden rounded-2xl border border-border p-4 sm:p-5 min-h-[110px] sm:min-h-[128px] flex flex-col justify-between transition-all duration-300 hover-lift',
         gradient || 'bg-card',
+        'shadow-[var(--shadow-card)]',
         className
       )}
     >
       {/* Icon — top right */}
       {icon && (
         <div className={cn(
-          'absolute top-4 right-4 sm:top-5 sm:right-5 w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center',
-          iconColor || 'bg-white/5 text-muted'
+          'absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center',
+          iconColor || 'bg-black/[0.04] text-muted'
         )}>
           {icon}
         </div>
       )}
 
-      {/* Content — centered */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center">
-        <p className="text-[11px] sm:text-xs font-semibold text-white/60 uppercase tracking-wider mb-2">{title}</p>
-        <p className="text-xl sm:text-2xl lg:text-3xl font-bold font-num leading-none text-white">{value}</p>
+      {/* Content */}
+      <div className="flex-1 flex flex-col justify-center">
+        <p className="text-[10px] sm:text-[11px] font-semibold text-muted uppercase tracking-wider mb-1.5">{title}</p>
+        <p className="text-2xl sm:text-3xl lg:text-[2rem] font-bold font-num leading-none text-foreground tracking-tight">{value}</p>
 
-        {trend && (
-          <p className={cn(
-            'text-xs sm:text-sm font-semibold mt-1.5 font-num',
-            trend.value >= 0 ? 'text-success' : 'text-danger'
-          )}>
-            {trend.value >= 0 ? '+' : ''}{trend.value.toFixed(2)}%
-          </p>
-        )}
+        <div className="flex items-center gap-2 mt-2">
+          {trend && (
+            <span className={cn(
+              'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold font-num',
+              trend.value >= 0
+                ? 'bg-success/10 text-success'
+                : 'bg-danger/10 text-danger'
+            )}>
+              {trend.value >= 0 ? '+' : ''}{trend.value.toFixed(2)}%
+            </span>
+          )}
 
-        {subtitle && !trend && (
-          <p className="text-xs sm:text-sm text-white/50 mt-1.5 truncate">{subtitle}</p>
-        )}
+          {trend?.label && (
+            <span className="text-[10px] sm:text-[11px] text-muted">{trend.label}</span>
+          )}
+
+          {subtitle && !trend && (
+            <p className="text-[11px] sm:text-xs text-muted truncate">{subtitle}</p>
+          )}
+        </div>
       </div>
+
+      {/* Sparkline area */}
+      {sparkline && (
+        <div className="mt-2 h-8 sm:h-10 w-full">
+          {sparkline}
+        </div>
+      )}
     </div>
   );
 }

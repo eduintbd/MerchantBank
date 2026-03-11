@@ -64,7 +64,7 @@ export function LearningPage() {
                 <div className={cn(
                   'w-11 h-11 rounded-full flex items-center justify-center shrink-0',
                   lesson.status === 'completed' ? 'bg-success/15 text-success' :
-                  lesson.status === 'locked' ? 'bg-white/5 text-muted' :
+                  lesson.status === 'locked' ? 'bg-gray-100 text-muted' :
                   'bg-info/15 text-info'
                 )}>
                   {lesson.status === 'completed' ? <CheckCircle size={20} /> :
@@ -112,7 +112,7 @@ export function LearningPage() {
             <span className="text-base font-medium">Overall Progress</span>
             <span className="text-sm text-muted font-num">{progress.completedLessons}/{progress.totalLessons} lessons</span>
           </div>
-          <div className="w-full bg-white/10 rounded-full h-2.5">
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div className="bg-info h-2.5 rounded-full transition-all" style={{ width: `${progress.progressPercent}%` }} />
           </div>
           <p className="text-sm text-muted mt-3">
@@ -158,7 +158,7 @@ export function LearningPage() {
                   <span className="text-muted">{course.total_lessons} lessons</span>
                   <span className="font-medium font-num">{course.completed_lessons}/{course.total_lessons}</span>
                 </div>
-                <div className="w-full bg-white/5 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div className={cn('h-2 rounded-full transition-all', pct === 100 ? 'bg-success' : 'bg-info')} style={{ width: `${pct}%` }} />
                 </div>
               </Card>

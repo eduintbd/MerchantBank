@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatCurrency, formatDateTime, cn } from '@/lib/utils';
 import { ShieldCheck, CheckCircle, XCircle, Clock, ListOrdered } from 'lucide-react';
+import { toast } from 'sonner';
 
 export function AdminOrdersPage() {
   const [tab, setTab] = useState<'pending' | 'all'>('pending');
@@ -110,7 +111,10 @@ export function AdminOrdersPage() {
                           <Button
                             size="sm"
                             variant="success"
-                            onClick={() => executeOrder.mutate(order.id)}
+                            onClick={() => executeOrder.mutate(order.id, {
+                              onSuccess: () => toast.success('Order approved', { description: `${order.stock_symbol} ${order.order_type} order executed` }),
+                              onError: (err: any) => toast.error('Failed to approve', { description: err?.message }),
+                            })}
                             loading={executeOrder.isPending}
                             icon={<CheckCircle size={14} />}
                           >
@@ -119,7 +123,10 @@ export function AdminOrdersPage() {
                           <Button
                             size="sm"
                             variant="danger"
-                            onClick={() => rejectOrder.mutate(order.id)}
+                            onClick={() => rejectOrder.mutate(order.id, {
+                              onSuccess: () => toast.success('Order rejected', { description: `${order.stock_symbol} order rejected` }),
+                              onError: (err: any) => toast.error('Failed to reject', { description: err?.message }),
+                            })}
                             loading={rejectOrder.isPending}
                             icon={<XCircle size={14} />}
                           >

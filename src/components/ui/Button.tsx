@@ -9,11 +9,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: 'bg-primary text-white hover:bg-primary-light shadow-lg shadow-primary/20',
-  secondary: 'bg-card border border-border text-foreground hover:bg-card-hover',
-  danger: 'bg-danger-dim text-danger border border-danger/20 hover:bg-danger/25',
-  ghost: 'text-muted hover:text-foreground hover:bg-white/5',
-  success: 'bg-success-dim text-success border border-success/20 hover:bg-success/25',
+  primary: 'bg-gradient-to-b from-primary-light to-primary text-white shadow-sm shadow-primary/25 hover:shadow-md hover:shadow-primary/30 active:from-primary active:to-primary-dark',
+  secondary: 'bg-white border border-border text-foreground hover:bg-card-hover shadow-[var(--shadow-card)]',
+  danger: 'bg-danger-dim text-danger border border-danger/20 hover:bg-danger/20',
+  ghost: 'text-muted hover:text-foreground hover:bg-black/5',
+  success: 'bg-success-dim text-success border border-success/20 hover:bg-success/20',
 };
 
 const sizes = {
@@ -36,8 +36,9 @@ export function Button({
     <button
       className={cn(
         'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200',
-        'focus:outline-none focus:ring-2 focus:ring-info/30',
-        'disabled:opacity-40 disabled:cursor-not-allowed',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
+        'hover:scale-[1.02] active:scale-[0.98]',
+        'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100',
         variants[variant],
         sizes[size],
         className

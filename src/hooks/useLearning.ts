@@ -15,17 +15,31 @@ export function useCourses() {
         .order('sort_order');
       if (error) throw error;
 
+      // Get completed lessons per course
       const { data: progress } = await supabase
         .from('lesson_progress')
-        .select('lesson_id, completed')
+        .select('lesson_id')
         .eq('user_id', user.id)
         .eq('completed', true);
 
-      const completedLessons = new Set((progress || []).map(p => p.lesson_id));
+      const completedSet = new Set((progress || []).map(p => p.lesson_id));
+
+      // Get lessons grouped by course to count completions
+      const { data: allLessons } = await supabase
+        .from('lessons')
+        .select('id, course_id');
+
+      const lessonsByCourse = new Map<string, string[]>();
+      for (const l of allLessons || []) {
+        const arr = lessonsByCourse.get(l.course_id) || [];
+        arr.push(l.id);
+        lessonsByCourse.set(l.course_id, arr);
+      }
 
       return (courses || []).map(c => ({
         ...c,
-        completed_lessons: (c.lesson_ids || []).filter((id: string) => completedLessons.has(id)).length,
+        order: c.sort_order,
+        completed_lessons: (lessonsByCourse.get(c.id) || []).filter(id => completedSet.has(id)).length,
       }));
     },
   });

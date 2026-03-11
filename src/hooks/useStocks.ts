@@ -2,14 +2,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase, dseSupabase } from '@/lib/supabase';
 import type { Stock, Order, OrderType, PortfolioSummary, PortfolioItem } from '@/types';
 
-// Fetch live stocks from UCB CSM (stocks + live_prices)
+// Fetch live stocks from DSE Portal Supabase (stocks + live_prices)
 export function useStocks(search?: string) {
   return useQuery({
     queryKey: ['stocks', search],
     queryFn: async (): Promise<Stock[]> => {
       if (!dseSupabase) return [];
 
-      // Fetch stocks catalog and live prices in parallel
+      // Fetch stocks and live_prices in parallel
       let stocksQuery = dseSupabase.from('stocks').select('symbol, company_name, sector, category').eq('is_active', true).order('symbol');
       if (search) {
         stocksQuery = stocksQuery.or(`symbol.ilike.%${search}%,company_name.ilike.%${search}%`);
@@ -23,9 +23,13 @@ export function useStocks(search?: string) {
       if (stocksRes.error) throw stocksRes.error;
       if (pricesRes.error) throw pricesRes.error;
 
+      // Index prices by symbol for fast lookup
       const priceMap = new Map<string, any>();
-      for (const p of pricesRes.data || []) priceMap.set(p.symbol, p);
+      for (const p of pricesRes.data || []) {
+        priceMap.set(p.symbol, p);
+      }
 
+      // Merge stocks with live prices
       return (stocksRes.data || []).map((s: any): Stock => {
         const p = priceMap.get(s.symbol);
         return {
@@ -50,7 +54,7 @@ export function useStocks(search?: string) {
   });
 }
 
-// Fetch single stock from UCB CSM
+// Fetch single stock from DSE Portal
 export function useStock(symbol: string) {
   return useQuery({
     queryKey: ['stock', symbol],
@@ -104,7 +108,6 @@ export function usePlaceOrder() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (order: {
-      stock_id?: string;
       stock_symbol: string;
       order_type: OrderType;
       quantity: number;
@@ -113,10 +116,12 @@ export function usePlaceOrder() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { stock_id: _ignored, ...orderData } = order;
       const { data, error } = await supabase.from('orders').insert({
-        ...orderData,
         user_id: user.id,
+        stock_symbol: order.stock_symbol,
+        order_type: order.order_type,
+        quantity: order.quantity,
+        price: order.price,
         total_amount: order.quantity * order.price,
         status: 'pending',
       }).select().single();
@@ -150,7 +155,7 @@ export function usePortfolio(userId?: string) {
         return { total_invested: 0, current_value: 0, total_profit_loss: 0, total_profit_loss_percent: 0, total_stocks: 0, items: [] };
       }
 
-      // Fetch live prices + stock names from UCB CSM
+      // Fetch live prices + stock names from DSE Portal
       let priceMap = new Map<string, any>();
       let nameMap = new Map<string, string>();
       if (dseSupabase) {
@@ -170,9 +175,9 @@ export function usePortfolio(userId?: string) {
         return {
           id: item.id,
           user_id: item.user_id,
-          stock_id: item.id,
+          stock_id: item.stock_symbol,
           stock_symbol: item.stock_symbol,
-          company_name: nameMap.get(item.stock_symbol) || item.company_name || item.stock_symbol,
+          company_name: nameMap.get(item.stock_symbol) || item.stock_symbol,
           quantity: item.quantity,
           avg_buy_price: item.avg_buy_price,
           current_price: currentPrice,

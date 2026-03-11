@@ -1,13 +1,17 @@
+import { useState } from 'react';
 import { usePortfolio } from '@/hooks/useStocks';
 import { Card, StatCard } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatPercent, getChangeColor } from '@/lib/utils';
-import { Briefcase, TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import { Briefcase, TrendingUp, TrendingDown, BarChart3, Upload } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PortfolioUploadModal } from '@/components/portfolio/PortfolioUploadModal';
 
 const COLORS = ['#4fa3e0', '#00d09c', '#ffa502', '#ff4757', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'];
 
 export function PortfolioPage() {
   const { data: portfolio, isLoading } = usePortfolio();
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -25,10 +29,17 @@ export function PortfolioPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Portfolio</h1>
-        <p className="text-muted text-sm sm:text-base mt-1">Track your investment performance</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
+        <div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Portfolio</h1>
+          <p className="text-muted text-sm sm:text-base mt-1">Track your investment performance</p>
+        </div>
+        <Button onClick={() => setUploadOpen(true)} variant="secondary" icon={<Upload size={16} />}>
+          Import Portfolio
+        </Button>
       </div>
+
+      <PortfolioUploadModal open={uploadOpen} onClose={() => setUploadOpen(false)} />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6">
@@ -85,7 +96,7 @@ export function PortfolioPage() {
                   </Pie>
                   <Tooltip
                     formatter={(value: any) => formatCurrency(Number(value))}
-                    contentStyle={{ background: '#1a1a35', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, color: '#fff', fontSize: 13, padding: '10px 14px' }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 12, color: '#1a1a2e', fontSize: 13, padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -95,12 +106,12 @@ export function PortfolioPage() {
               <h3 className="font-semibold text-base mb-5">Profit/Loss by Stock</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={barData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="name" fontSize={12} tick={{ fill: '#8888aa' }} />
-                  <YAxis fontSize={12} tick={{ fill: '#8888aa' }} tickFormatter={(v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(0)}`} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                  <XAxis dataKey="name" fontSize={12} tick={{ fill: '#6b7280' }} />
+                  <YAxis fontSize={12} tick={{ fill: '#6b7280' }} tickFormatter={(v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(0)}`} />
                   <Tooltip
                     formatter={(value: any) => formatCurrency(Number(value))}
-                    contentStyle={{ background: '#1a1a35', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, color: '#fff', fontSize: 13, padding: '10px 14px' }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid #e5e7eb', borderRadius: 12, color: '#1a1a2e', fontSize: 13, padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                   />
                   <Bar dataKey="profit" radius={[6, 6, 0, 0]}>
                     {barData.map((entry, index) => (

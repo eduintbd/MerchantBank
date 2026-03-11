@@ -27,8 +27,8 @@ export function useMarketData() {
       if (!dseSupabase) throw new Error('DSE Supabase not configured');
 
       const [indicesRes, pricesRes] = await Promise.all([
-        dseSupabase.from('market_indices').select('*'),
-        dseSupabase.from('live_prices').select('*'),
+        dseSupabase.from('market_indices').select('*').order('scraped_at', { ascending: false }).limit(3),
+        dseSupabase.from('live_prices').select('*').order('symbol', { ascending: true }),
       ]);
 
       if (indicesRes.error) throw indicesRes.error;

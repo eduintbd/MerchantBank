@@ -1,0 +1,16 @@
+{
+  "DESCO": { "rating": "A", "label": "Clean Energy" },
+  "BPML": { "rating": "A", "label": "Sustainable" },
+  "PADMALIFE": { "rating": "B", "label": "ESG Compliant" },
+  "PREMIERLEA": { "rating": "B", "label": "ESG Compliant" },
+  "DELTALIFE": { "rating": "B", "label": "Social Impact" },
+  "SILCOBD": { "rating": "C", "label": "Improving" },
+  "KPCL": { "rating": "A", "label": "Green Energy" },
+  "GP": { "rating": "A", "label": "Digital Inclusion" },
+  "BRACBANK": { "rating": "B", "label": "Financial Inclusion" },
+  "RENATA": { "rating": "A", "label": "Healthcare" },
+  "SQUAREPHA": { "rating": "A", "label": "Healthcare" },
+  "BEXIMCO": { "rating": "B", "label": "Diversified Green" },
+  "SUMITPOWER": { "rating": "A", "label": "Clean Energy" },
+  "LHBL": { "rating": "C", "label": "Improving" }
+}

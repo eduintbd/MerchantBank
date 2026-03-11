@@ -17,6 +17,7 @@ export interface User {
 
 export interface Profile extends User {
   nid_number?: string;
+  tin_number?: string;
   date_of_birth?: string;
   address?: string;
   bank_name?: string;
@@ -24,6 +25,14 @@ export interface Profile extends User {
   bo_account?: string;
   nominee_name?: string;
   nominee_relation?: string;
+  family_info?: FamilyMember[];
+}
+
+export interface FamilyMember {
+  name: string;
+  relation: string;
+  nid?: string;
+  phone?: string;
 }
 
 // Trading Types
@@ -50,7 +59,6 @@ export interface Stock {
 export interface Order {
   id: string;
   user_id: string;
-  stock_id: string;
   stock_symbol: string;
   order_type: OrderType;
   quantity: number;
@@ -242,3 +250,175 @@ export interface MarketStats {
 
 export type MarketSentiment = 'Bull' | 'Mild Bull' | 'Neutral' | 'Mild Bear' | 'Bear';
 export type TopMoverTab = 'gainer' | 'loser' | 'volume' | 'value' | 'trade';
+
+// Social Feed Types
+export interface Post {
+  id: string;
+  user_id: string;
+  stock_symbol?: string;
+  content: string;
+  image_url?: string;
+  likes_count: number;
+  comments_count: number;
+  created_at: string;
+  author_name?: string;
+  author_avatar?: string;
+  is_liked?: boolean;
+}
+
+export interface PostComment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  author_name?: string;
+}
+
+// IPO Types
+export type IpoStatus = 'upcoming' | 'open' | 'closed' | 'listed';
+
+export interface Ipo {
+  id: string;
+  company_name: string;
+  symbol?: string;
+  sector: string;
+  offer_price: number;
+  lot_size: number;
+  subscription_start: string;
+  subscription_end: string;
+  listing_date?: string;
+  status: IpoStatus;
+  prospectus_url?: string;
+  created_at: string;
+}
+
+export interface IpoApplication {
+  id: string;
+  user_id: string;
+  ipo_id: string;
+  lots_applied: number;
+  amount: number;
+  status: 'pending' | 'allotted' | 'refunded';
+  created_at: string;
+}
+
+// Company Data Types
+export interface CompanyFinancial {
+  id: string;
+  stock_symbol: string;
+  year: number;
+  quarter?: number;
+  report_type: 'balance_sheet' | 'income_statement' | 'cash_flow';
+  data: Record<string, number>;
+  published_at: string;
+}
+
+export interface CompanyNews {
+  id: string;
+  stock_symbol?: string;
+  title: string;
+  content?: string;
+  source_url?: string;
+  image_url?: string;
+  published_at: string;
+}
+
+export interface CompanyManagement {
+  id: string;
+  stock_symbol: string;
+  name: string;
+  designation?: string;
+  bio?: string;
+  photo_url?: string;
+}
+
+// Notification Types
+export interface Notification {
+  id: string;
+  user_id: string;
+  type?: string;
+  title: string;
+  message?: string;
+  is_read: boolean;
+  action_url?: string;
+  created_at: string;
+}
+
+export interface NotificationPreferences {
+  id: string;
+  user_id: string;
+  email_alerts: boolean;
+  sms_alerts: boolean;
+  price_alerts: boolean;
+  order_alerts: boolean;
+  news_alerts: boolean;
+}
+
+// Gamification Types
+export interface Achievement {
+  id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  xp_reward: number;
+  criteria_type?: string;
+  criteria_value?: number;
+  earned?: boolean;
+  earned_at?: string;
+}
+
+export interface UserXp {
+  total_xp: number;
+  level: number;
+  streak_days: number;
+  last_activity?: string;
+}
+
+// Investor Profile Types
+export interface InvestorProfile {
+  id: string;
+  user_id: string;
+  display_name?: string;
+  bio?: string;
+  is_public: boolean;
+  total_return_pct: number;
+  rank?: number;
+  followers_count: number;
+}
+
+// Finance Tracker Types
+export interface IncomeExpense {
+  id: string;
+  user_id: string;
+  type: 'income' | 'expense';
+  category: string;
+  amount: number;
+  description?: string;
+  date: string;
+  created_at: string;
+}
+
+// Portfolio Snapshot
+export interface PortfolioSnapshot {
+  id: string;
+  user_id: string;
+  date: string;
+  total_value: number;
+  total_invested: number;
+  snapshot_data?: Record<string, any>;
+}
+
+// ESG Types
+export interface EsgRating {
+  rating: 'A' | 'B' | 'C';
+  label: string;
+}
+
+// Historical Data
+export interface HistoricalDataPoint {
+  date: string;
+  dsex: number;
+  dses: number;
+  ds30: number;
+}
