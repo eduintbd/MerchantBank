@@ -127,25 +127,46 @@ function AppRoutes() {
   );
 }
 
+function PublicRoutes() {
+  return (
+    <Routes>
+      <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
+    </Routes>
+  );
+}
+
+function AppShell() {
+  const location = useLocation();
+  const isPublicOnly = location.pathname.startsWith('/market');
+
+  if (isPublicOnly) {
+    return <PublicRoutes />;
+  }
+
+  return (
+    <AuthProvider>
+      <AppRoutes />
+      <Toaster
+        position="top-right"
+        richColors
+        toastOptions={{
+          style: {
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            color: '#1e293b',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+          },
+        }}
+      />
+    </AuthProvider>
+  );
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-          <Toaster
-            position="top-right"
-            richColors
-            toastOptions={{
-              style: {
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                color: '#1e293b',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-              },
-            }}
-          />
-        </AuthProvider>
+        <AppShell />
       </BrowserRouter>
     </QueryClientProvider>
   );
