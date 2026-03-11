@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useMarketData } from '@/hooks/useMarketData';
 import { Button } from '@/components/ui/Button';
 import { StatCard } from '@/components/ui/Card';
-import { formatNumber, formatVolume, formatPercent, getChangeColor, cn } from '@/lib/utils';
+import { formatNumber, formatVolume, cn } from '@/lib/utils';
 import {
   TrendingUp,
   Briefcase,
