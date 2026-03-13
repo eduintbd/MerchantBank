@@ -1,209 +1,665 @@
+import { useState, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePortfolio } from '@/hooks/useStocks';
+import { useMarketData } from '@/hooks/useMarketData';
 import { useLearningProgress } from '@/hooks/useLearning';
-import { useMarketingSummary } from '@/hooks/useMarketing';
-import { Card, StatCard } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { MarketOverview } from '@/components/dashboard/MarketOverview';
-import { formatCurrency, formatPercent, getChangeColor } from '@/lib/utils';
+import { formatCurrency, formatPercent, formatDateTime, formatVolume, cn } from '@/lib/utils';
+import type { LivePrice, MarketIndex } from '@/types';
 import {
   TrendingUp,
+  TrendingDown,
   Briefcase,
   GraduationCap,
   ShieldCheck,
-  BarChart3,
+  BarChart2,
   Wallet,
-  Target,
-  Gift,
   ChevronRight,
+  Activity,
+  Zap,
+  DollarSign,
+  Search,
+  ArrowUpDown,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
+// ============================================
+// STOCK TICKER — Animated marquee
+// ============================================
+function StockTicker({ prices }: { prices: LivePrice[] }) {
+  const items = prices.slice(0, 30);
+  if (items.length === 0) return null;
+
+  return (
+    <div className="relative overflow-hidden border-b border-border bg-card-solid/80">
+      <div className="flex animate-marquee whitespace-nowrap py-2">
+        {[...items, ...items].map((p, i) => (
+          <Link
+            key={`${p.symbol}-${i}`}
+            to={`/stock/${p.symbol}`}
+            className="inline-flex items-center gap-1.5 mx-4 text-xs hover:opacity-80 transition-opacity"
+          >
+            <span className="font-semibold text-foreground">{p.symbol}</span>
+            <span className="font-num text-foreground/60">{p.ltp.toFixed(2)}</span>
+            <span className={cn(
+              'font-num font-bold px-1.5 py-0.5 rounded text-[10px]',
+              p.change_pct > 0 ? 'bg-success/15 text-success' : p.change_pct < 0 ? 'bg-danger/15 text-danger' : 'text-muted'
+            )}>
+              {p.change_pct >= 0 ? '+' : ''}{p.change_pct.toFixed(2)}%
+            </span>
+          </Link>
+        ))}
+      </div>
+      <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+      <style>{`
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { animation: marquee 45s linear infinite; }
+        .animate-marquee:hover { animation-play-state: paused; }
+      `}</style>
+    </div>
+  );
+}
+
+// ============================================
+// MARKET SUMMARY — 8 gradient stat cards
+// ============================================
+const SUMMARY_CARDS = [
+  { key: 'dsex',    label: 'DSEX Index',       icon: TrendingUp,   gradient: 'from-[#0a2e2a] to-[#0d3d2e]', border: 'border-success/20', iconBg: 'bg-success/20', iconColor: 'text-success' },
+  { key: 'dses',    label: 'DSES Index',       icon: TrendingUp,   gradient: 'from-[#0a2e2a] to-[#0d3d2e]', border: 'border-success/20', iconBg: 'bg-success/20', iconColor: 'text-success' },
+  { key: 'ds30',    label: 'DS30 Index',       icon: TrendingUp,   gradient: 'from-[#0a2e2a] to-[#0d3d2e]', border: 'border-success/20', iconBg: 'bg-success/20', iconColor: 'text-success' },
+  { key: 'trade',   label: 'Total Trade',      icon: Activity,     gradient: 'from-[#2e1a0a] to-[#3d2a0d]', border: 'border-warning/20', iconBg: 'bg-warning/20', iconColor: 'text-warning' },
+  { key: 'volume',  label: 'Total Volume',     icon: BarChart2,    gradient: 'from-[#0a1a2e] to-[#0d2a3d]', border: 'border-info/20',    iconBg: 'bg-info/20',    iconColor: 'text-info' },
+  { key: 'value',   label: 'Total Value (Bn)', icon: DollarSign,   gradient: 'from-[#1a0a2e] to-[#2a0d3d]', border: 'border-purple-400/20', iconBg: 'bg-purple-400/20', iconColor: 'text-purple-400' },
+];
+
+function MarketSummary({ indices, stats }: { indices: MarketIndex[]; stats: { totalVolume: number; totalValue: number; totalTrades: number; advancers: number; decliners: number } }) {
+  const dsex = indices.find(i => i.index_name === 'DSEX');
+  const dses = indices.find(i => i.index_name === 'DSES');
+  const ds30 = indices.find(i => i.index_name === 'DS30');
+
+  const fmtIdx = (idx?: MarketIndex) => idx ? idx.value.toFixed(2) : '—';
+  const fmtChg = (idx?: MarketIndex) => idx ? `${idx.change >= 0 ? '+' : ''}${idx.change_pct.toFixed(2)}%` : undefined;
+  const trend = (idx?: MarketIndex) => idx ? (idx.change >= 0 ? 'up' : 'down') : null;
+
+  const values: Record<string, { value: string; sub?: string; trend?: 'up' | 'down' | null }> = {
+    dsex:    { value: fmtIdx(dsex),         sub: fmtChg(dsex),         trend: trend(dsex) },
+    dses:    { value: fmtIdx(dses),         sub: fmtChg(dses),         trend: trend(dses) },
+    ds30:    { value: fmtIdx(ds30),         sub: fmtChg(ds30),         trend: trend(ds30) },
+    trade:   { value: formatVolume(stats.totalTrades) },
+    volume:  { value: formatVolume(stats.totalVolume) },
+    value:   { value: `${(stats.totalValue / 1_000_000_000).toFixed(2)}B` },
+  };
+
+  return (
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+      {SUMMARY_CARDS.map(card => {
+        const Icon = card.icon;
+        const val = values[card.key];
+        return (
+          <div key={card.key} className={cn('rounded-xl border bg-gradient-to-br p-3 sm:p-4', card.gradient, card.border)}>
+            <div className="flex items-start justify-between mb-2">
+              <p className="text-xs text-muted font-medium leading-tight">{card.label}</p>
+              <div className={cn('rounded-lg p-1.5 flex-shrink-0', card.iconBg)}>
+                <Icon size={14} className={card.iconColor} />
+              </div>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-foreground font-num">{val.value}</p>
+            {val.sub && (
+              <p className={cn('mt-0.5 text-xs font-semibold font-num', val.trend === 'up' ? 'text-success' : val.trend === 'down' ? 'text-danger' : 'text-muted')}>
+                {val.sub}
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ============================================
+// STRENGTH METER — Donut + Sentiment bar
+// ============================================
+function StrengthMeter({ stats }: { stats: { advancers: number; decliners: number; unchanged: number; totalStocks: number } }) {
+  const { advancers, decliners, unchanged, totalStocks } = stats;
+  const bullPct = totalStocks > 0 ? Math.round((advancers / totalStocks) * 100) : 50;
+
+  let sentiment = 'Neutral';
+  let sentimentColor = '#8888aa';
+  if (bullPct >= 65) { sentiment = 'Bull'; sentimentColor = '#0ecb81'; }
+  else if (bullPct >= 55) { sentiment = 'Mild Bull'; sentimentColor = '#4fa3e0'; }
+  else if (bullPct <= 35) { sentiment = 'Bear'; sentimentColor = '#f6465d'; }
+  else if (bullPct <= 45) { sentiment = 'Mild Bear'; sentimentColor = '#ffa502'; }
+
+  const donutData = [
+    { name: 'Gainers', value: advancers, color: '#0ecb81' },
+    { name: 'Losers', value: decliners, color: '#f6465d' },
+    { name: 'Unchanged', value: unchanged, color: '#8888aa' },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {/* Market Strength donut */}
+      <div className="rounded-xl border border-border bg-card-solid p-4 shadow-[var(--shadow-card)]">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Market Strength</h3>
+        <div className="flex items-center gap-4">
+          <div className="relative w-28 h-28 flex-shrink-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={donutData} cx="50%" cy="50%" innerRadius={32} outerRadius={50} dataKey="value" strokeWidth={0}>
+                  {donutData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-lg font-bold text-foreground">{totalStocks}</span>
+              <span className="text-[10px] text-muted">Stocks</span>
+            </div>
+          </div>
+          <div className="space-y-2 flex-1">
+            {[
+              { label: 'Advancers', value: advancers, color: '#0ecb81' },
+              { label: 'Decliners', value: decliners, color: '#f6465d' },
+              { label: 'Unchanged', value: unchanged, color: '#8888aa' },
+            ].map(item => (
+              <div key={item.label} className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{ background: item.color }} />
+                  <span className="text-xs text-muted">{item.label}</span>
+                </div>
+                <span className="text-xs font-bold font-num" style={{ color: item.color }}>{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Market Sentiment bar */}
+      <div className="rounded-xl border border-border bg-card-solid p-4 shadow-[var(--shadow-card)]">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Market Sentiment</h3>
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-3xl font-black" style={{ color: sentimentColor }}>{sentiment}</p>
+          <div className="w-full">
+            <div className="relative h-3 rounded-full overflow-hidden" style={{ background: 'linear-gradient(to right, #f6465d, #ffa502, #0ecb81)' }}>
+              <div className="absolute top-0 h-full w-1 bg-white rounded-full shadow-lg transition-all duration-500"
+                style={{ left: `calc(${bullPct}% - 2px)` }} />
+            </div>
+            <div className="flex justify-between mt-1 text-[10px] text-muted">
+              <span>Bear</span><span>Neutral</span><span>Bull</span>
+            </div>
+          </div>
+          <p className="text-xs text-muted">
+            Advancer Ratio: <span className="font-bold text-success font-num">{bullPct}%</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// TOP MOVERS — Tabbed table
+// ============================================
+type MoverTab = 'gainer' | 'loser' | 'volume' | 'value' | 'trade';
+const MOVER_TABS: { key: MoverTab; label: string; icon: React.ElementType }[] = [
+  { key: 'gainer', label: 'Top Gainer', icon: TrendingUp },
+  { key: 'loser',  label: 'Top Loser',  icon: TrendingDown },
+  { key: 'volume', label: 'Top Volume', icon: BarChart2 },
+  { key: 'value',  label: 'Top Value',  icon: DollarSign },
+  { key: 'trade',  label: 'Top Trade',  icon: Activity },
+];
+
+function TopMoversSection({ prices }: { prices: LivePrice[] }) {
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<MoverTab>('gainer');
+
+  const rows = useMemo(() => {
+    const arr = [...prices];
+    switch (tab) {
+      case 'gainer': return arr.sort((a, b) => b.change_pct - a.change_pct).slice(0, 10);
+      case 'loser':  return arr.sort((a, b) => a.change_pct - b.change_pct).slice(0, 10);
+      case 'volume': return arr.sort((a, b) => b.volume - a.volume).slice(0, 10);
+      case 'value':  return arr.sort((a, b) => b.value_traded - a.value_traded).slice(0, 10);
+      case 'trade':  return arr.sort((a, b) => b.trades - a.trades).slice(0, 10);
+    }
+  }, [prices, tab]);
+
+  return (
+    <div className="rounded-xl border border-border bg-card-solid overflow-hidden shadow-[var(--shadow-card)]">
+      <div className="p-4 pb-0">
+        <h2 className="text-sm font-semibold text-foreground mb-3">Top Movers</h2>
+        <div className="flex gap-0.5 border-b border-border overflow-x-auto scrollbar-hide">
+          {MOVER_TABS.map(t => {
+            const Icon = t.icon;
+            return (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-2 text-xs font-medium whitespace-nowrap border-b-2 transition-colors',
+                  tab === t.key ? 'border-info text-info' : 'border-transparent text-muted hover:text-foreground'
+                )}
+              >
+                <Icon size={12} /> {t.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted">#</th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted">SYMBOL</th>
+              <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted">LTP</th>
+              <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted">CHG %</th>
+              {(tab === 'volume' || tab === 'trade') && (
+                <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted">
+                  {tab === 'volume' ? 'VOLUME' : 'TRADES'}
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/50">
+            {rows.map((s, i) => (
+              <tr key={s.symbol} className="hover:bg-white/[0.03] cursor-pointer transition-colors" onClick={() => navigate(`/stock/${s.symbol}`)}>
+                <td className="px-4 py-2.5 text-xs text-muted">{i + 1}</td>
+                <td className="px-4 py-2.5 font-bold text-foreground">{s.symbol}</td>
+                <td className="px-4 py-2.5 text-right font-num font-semibold text-foreground">{s.ltp.toFixed(2)}</td>
+                <td className={cn('px-4 py-2.5 text-right font-bold font-num', s.change_pct >= 0 ? 'text-success' : 'text-danger')}>
+                  {s.change_pct >= 0 ? '+' : ''}{s.change_pct.toFixed(2)}%
+                </td>
+                {(tab === 'volume' || tab === 'trade') && (
+                  <td className="px-4 py-2.5 text-right text-xs font-num text-muted">
+                    {tab === 'volume' ? formatVolume(s.volume) : s.trades.toLocaleString()}
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ============================================
+// SECTOR PERFORMANCE — Horizontal bars
+// ============================================
+function SectorPerformance({ prices }: { prices: LivePrice[] }) {
+  const sectors = useMemo(() => {
+    // We need to join with stocks table to get sectors - use LivePrice symbol grouping for now
+    // This is a simplified version; actual sector data comes from the stocks table
+    return [];
+  }, [prices]);
+
+  // Since LivePrice doesn't have sector info, we'll skip this for now
+  // The SectorHeatmap component already handles this with its own hook
+  if (sectors.length === 0) return null;
+  return null;
+}
+
+// ============================================
+// ALL STOCKS TABLE — Sortable + Filterable + Paginated
+// ============================================
+type SortKey = 'symbol' | 'ltp' | 'change_pct' | 'volume' | 'value_traded';
+const PAGE_SIZE = 50;
+
+function AllStocksTable({ prices }: { prices: LivePrice[] }) {
+  const navigate = useNavigate();
+  const [sortKey, setSortKey] = useState<SortKey>('volume');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(0);
+
+  const filtered = prices.filter(s =>
+    !search || s.symbol.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const sorted = [...filtered].sort((a, b) => {
+    const av = a[sortKey] as number;
+    const bv = b[sortKey] as number;
+    if (sortKey === 'symbol') {
+      return sortDir === 'asc' ? a.symbol.localeCompare(b.symbol) : b.symbol.localeCompare(a.symbol);
+    }
+    return sortDir === 'asc' ? av - bv : bv - av;
+  });
+
+  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortKey(key); setSortDir('desc'); }
+    setPage(0);
+  };
+
+  const SortTh = ({ label, k }: { label: string; k: SortKey }) => (
+    <th
+      className="px-3 py-2.5 text-left text-xs font-semibold text-muted uppercase tracking-wide cursor-pointer select-none hover:text-foreground transition-colors"
+      onClick={() => handleSort(k)}
+    >
+      {label}{sortKey === k ? (sortDir === 'asc' ? ' ▲' : ' ▼') : ''}
+    </th>
+  );
+
+  return (
+    <div className="rounded-xl border border-border bg-card-solid overflow-hidden shadow-[var(--shadow-card)]">
+      <div className="p-3 sm:p-4 border-b border-border">
+        <div className="relative max-w-xs">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+          <input
+            type="text"
+            placeholder="Filter stocks..."
+            value={search}
+            onChange={e => { setSearch(e.target.value); setPage(0); }}
+            className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-white/[0.03] text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+          />
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-white/[0.02]">
+            <tr>
+              <SortTh label="Symbol" k="symbol" />
+              <SortTh label="LTP" k="ltp" />
+              <SortTh label="Change %" k="change_pct" />
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted uppercase tracking-wide">Change</th>
+              <SortTh label="Volume" k="volume" />
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted uppercase tracking-wide hidden lg:table-cell">High</th>
+              <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted uppercase tracking-wide hidden lg:table-cell">Low</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/50">
+            {paged.map(s => (
+              <tr
+                key={s.symbol}
+                className="hover:bg-white/[0.03] cursor-pointer transition-colors"
+                onClick={() => navigate(`/stock/${s.symbol}`)}
+              >
+                <td className="px-3 py-2 font-bold text-info">{s.symbol}</td>
+                <td className="px-3 py-2 font-num font-semibold text-foreground">{s.ltp.toFixed(2)}</td>
+                <td className={cn('px-3 py-2 font-semibold font-num', s.change_pct >= 0 ? 'text-success' : 'text-danger')}>
+                  {s.change_pct >= 0 ? '+' : ''}{s.change_pct.toFixed(2)}%
+                </td>
+                <td className={cn('px-3 py-2 font-num text-xs', s.change >= 0 ? 'text-success' : 'text-danger')}>
+                  {s.change >= 0 ? '+' : ''}{s.change.toFixed(2)}
+                </td>
+                <td className="px-3 py-2 text-xs font-num text-muted">{formatVolume(s.volume)}</td>
+                <td className="px-3 py-2 text-xs font-num text-muted hidden lg:table-cell">{s.high.toFixed(2)}</td>
+                <td className="px-3 py-2 text-xs font-num text-muted hidden lg:table-cell">{s.low.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-border px-3 py-2">
+          <span className="text-xs text-muted">
+            Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
+          </span>
+          <div className="flex gap-1">
+            <button
+              onClick={() => setPage(p => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="rounded px-2 py-1 text-xs border border-border hover:bg-white/[0.04] disabled:opacity-40 transition-colors"
+            >Prev</button>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+              disabled={page >= totalPages - 1}
+              className="rounded px-2 py-1 text-xs border border-border hover:bg-white/[0.04] disabled:opacity-40 transition-colors"
+            >Next</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================
+// MAIN DASHBOARD PAGE
+// ============================================
 export function Dashboard() {
   const { user } = useAuth();
   const { data: portfolio } = usePortfolio();
+  const { data: market, isLoading: marketLoading } = useMarketData();
   const { data: learning } = useLearningProgress();
-  const { data: marketing } = useMarketingSummary();
+
+  const lastUpdate = market?.lastUpdated ? new Date(market.lastUpdated) : null;
+  const timeDiffMin = lastUpdate ? (Date.now() - lastUpdate.getTime()) / 60000 : Infinity;
+  const isMarketOpen = timeDiffMin < 10;
 
   return (
-    <div className="animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8 sm:mb-10">
-        <div className="flex items-center gap-4 sm:gap-6">
-          <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">
-              Welcome back, {user?.full_name?.split(' ')[0] || 'Investor'}
-            </h1>
-            <div className="flex items-center gap-3 mt-1.5">
-              <p className="text-muted text-sm sm:text-base">
-                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
-              </p>
-              <span className="text-border">|</span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-0.5 rounded-full bg-success/10 text-success border border-success/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-                Market Open
-              </span>
+    <div className="min-h-screen bg-background animate-fade-in">
+      {/* Stock Ticker */}
+      {market && <StockTicker prices={market.livePrices} />}
+
+      {/* Main content */}
+      <main className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+        <div className="space-y-4 sm:space-y-6">
+
+          {/* ========== HEADER ========== */}
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">
+                Welcome, {user?.full_name?.split(' ')[0] || 'Investor'}
+              </h1>
+              <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                <p className="text-muted text-sm">
+                  {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                </p>
+                <span className={cn(
+                  'inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border',
+                  isMarketOpen
+                    ? 'border-success/30 bg-success/10 text-success'
+                    : 'border-danger/30 bg-danger/10 text-danger'
+                )}>
+                  <span className={cn('w-1.5 h-1.5 rounded-full', isMarketOpen ? 'bg-success animate-pulse' : 'bg-danger')} />
+                  DSE {isMarketOpen ? 'OPEN' : 'CLOSED'}
+                </span>
+                {market?.lastUpdated && (
+                  <span className="text-[10px] text-muted flex items-center gap-1">
+                    <Activity size={10} className={isMarketOpen ? 'text-success' : 'text-muted'} />
+                    {formatDateTime(market.lastUpdated)}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link to="/trading" className="flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm text-primary font-medium hover:bg-primary/20 transition-colors">
+                <TrendingUp size={14} /> Trade
+              </Link>
             </div>
           </div>
-        </div>
-        <Badge status={user?.kyc_status || 'pending'} label={`KYC: ${user?.kyc_status || 'pending'}`} pulse />
-      </div>
 
-      {/* Market Overview */}
-      <MarketOverview />
-
-      {/* Separator */}
-      <div className="my-8 sm:my-10 border-t border-border" />
-
-      {/* Your Portfolio */}
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xs font-semibold text-muted uppercase tracking-[0.12em]">Your Portfolio</h2>
-      </div>
-      <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6">
-        <StatCard
-          title="Portfolio Value"
-          value={formatCurrency(portfolio?.current_value || 0)}
-          icon={<Briefcase size={20} />}
-          iconColor="bg-info/15 text-info"
-          gradient="grad-info"
-          trend={portfolio ? { value: portfolio.total_profit_loss_percent } : undefined}
-        />
-        <StatCard
-          title="Total Invested"
-          value={formatCurrency(portfolio?.total_invested || 0)}
-          subtitle={`${portfolio?.total_stocks || 0} stocks`}
-          icon={<Wallet size={20} />}
-          iconColor="bg-success/15 text-success"
-          gradient="grad-success"
-        />
-        <StatCard
-          title="Learning"
-          value={`${learning?.progressPercent || 0}%`}
-          subtitle={learning?.isQualified ? 'Qualified' : 'In progress'}
-          icon={<GraduationCap size={20} />}
-          iconColor="bg-warning/15 text-warning"
-          gradient="grad-warning"
-        />
-        <StatCard
-          title="Referral Earnings"
-          value={formatCurrency(marketing?.total_commission || 0)}
-          subtitle={`${marketing?.total_referrals || 0} referrals`}
-          icon={<Gift size={20} />}
-          iconColor="bg-purple/15 text-purple"
-          gradient="grad-purple"
-        />
-      </div>
-
-      {/* Alerts Section */}
-      {(user?.kyc_status !== 'verified' || (learning && !learning.isQualified)) && (
-        <div className="mt-8 sm:mt-10 space-y-3">
-          <h2 className="text-xs font-semibold text-muted uppercase tracking-[0.12em]">Action Required</h2>
-
-          {user?.kyc_status !== 'verified' && (
-            <div className="rounded-xl bg-card-solid border border-border p-4 sm:p-5 flex items-center gap-4 border-l-4 border-l-warning">
-              <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
-                <ShieldCheck size={20} className="text-warning" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Complete KYC Verification</p>
-                <p className="text-xs text-muted mt-0.5">Submit your documents to unlock trading</p>
-              </div>
-              <Link to="/kyc">
-                <Button variant="secondary" size="sm" icon={<ChevronRight size={14} />}>Go</Button>
-              </Link>
+          {/* ========== MARKET SUMMARY — 8 Cards ========== */}
+          {marketLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+              {[1,2,3,4,5,6].map(i => <div key={i} className="skeleton rounded-xl h-[90px]" />)}
             </div>
+          ) : market && (
+            <MarketSummary indices={market.indices} stats={market.stats} />
           )}
 
-          {learning && !learning.isQualified && (
-            <div className="rounded-xl bg-card-solid border border-border p-4 sm:p-5 flex items-center gap-4 border-l-4 border-l-info">
-              <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center shrink-0">
-                <GraduationCap size={20} className="text-info" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">Complete Learning Modules</p>
-                <p className="text-xs text-muted mt-0.5">{learning.completedLessons}/{learning.totalLessons} lessons completed</p>
-                <div className="w-full bg-border/40 rounded-full h-1.5 mt-2.5">
-                  <div className="bg-info h-1.5 rounded-full transition-all duration-500 ease-out" style={{ width: `${learning.progressPercent}%` }} />
-                </div>
-              </div>
-              <Link to="/learning">
-                <Button variant="secondary" size="sm" icon={<ChevronRight size={14} />}>Go</Button>
-              </Link>
-            </div>
+          {/* ========== STRENGTH METER ========== */}
+          {market && (
+            <StrengthMeter stats={market.stats} />
           )}
-        </div>
-      )}
 
-      {/* Quick Actions */}
-      <div className="mt-8 sm:mt-10">
-        <h2 className="text-xs font-semibold text-muted uppercase tracking-[0.12em] mb-4 sm:mb-5">Quick Actions</h2>
-        <div className="grid grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-          {[
-            { to: '/trading', icon: TrendingUp, label: 'Trade', color: 'text-success', bg: 'bg-success/10', desc: 'Buy & sell stocks' },
-            { to: '/portfolio', icon: BarChart3, label: 'Portfolio', color: 'text-info', bg: 'bg-info/10', desc: 'View holdings' },
-            { to: '/marketing', icon: Target, label: 'Refer & Earn', color: 'text-warning', bg: 'bg-warning/10', desc: 'Invite friends' },
-          ].map(item => (
-            <Link key={item.to} to={item.to}>
-              <Card hover className="text-center !py-8 sm:!py-10 group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5">
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${item.bg} flex items-center justify-center mx-auto mb-3 transition-transform duration-300 group-hover:scale-110`}>
-                  <item.icon size={26} className={item.color} />
-                </div>
-                <p className="text-sm sm:text-base font-semibold text-foreground">{item.label}</p>
-                <p className="text-[11px] text-muted mt-0.5 hidden sm:block">{item.desc}</p>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Holdings Preview */}
-      {portfolio && portfolio.items.length > 0 && (
-        <div className="mt-8 sm:mt-10">
-          <Card padding={false}>
-            <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-border">
-              <h2 className="text-sm font-semibold text-foreground">Top Holdings</h2>
-              <Link to="/portfolio" className="text-xs text-info hover:text-info/80 transition-colors flex items-center gap-1 font-medium">
-                View all <ChevronRight size={12} />
+          {/* ========== PORTFOLIO OVERVIEW ========== */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm sm:text-lg font-semibold text-foreground">Portfolio Overview</h2>
+              <Link to="/portfolio" className="text-xs text-info hover:text-info/80 flex items-center gap-0.5 font-medium">
+                Details <ChevronRight size={12} />
               </Link>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-muted text-[11px] uppercase tracking-wider border-b border-border bg-white/[0.02]">
-                    <th className="px-5 sm:px-6 py-3 text-left font-medium w-10">#</th>
-                    <th className="px-2 py-3 text-left font-medium">Stock</th>
-                    <th className="px-3 py-3 text-right font-medium">Qty</th>
-                    <th className="px-3 py-3 text-right font-medium hidden sm:table-cell">Price</th>
-                    <th className="px-5 sm:px-6 py-3 text-right font-medium">P/L</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {portfolio.items.slice(0, 5).map((item, idx) => (
-                    <tr key={item.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.03] transition-colors duration-150 group">
-                      <td className="px-5 sm:px-6 py-4 text-xs text-muted font-medium">{idx + 1}</td>
-                      <td className="px-2 py-4">
-                        <span className="font-semibold text-foreground tracking-tight">{item.stock_symbol}</span>
-                      </td>
-                      <td className="px-3 py-4 text-right font-num text-muted">{item.quantity}</td>
-                      <td className="px-3 py-4 text-right font-num text-muted hidden sm:table-cell">{formatCurrency(item.current_price)}</td>
-                      <td className="px-5 sm:px-6 py-4 text-right">
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold font-num ${
-                          item.profit_loss_percent >= 0
-                            ? 'bg-success/10 text-success'
-                            : 'bg-danger/10 text-danger'
-                        }`}>
-                          {formatPercent(item.profit_loss_percent)}
-                        </span>
-                      </td>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {[
+                { label: 'Portfolio Value', value: formatCurrency(portfolio?.current_value || 0), icon: Briefcase, color: 'text-info', bg: 'bg-info/20', gradient: 'from-[#0a1a2e] to-[#0d2a3d]', border: 'border-info/20', sub: portfolio ? `${portfolio.total_profit_loss_percent >= 0 ? '+' : ''}${portfolio.total_profit_loss_percent.toFixed(2)}%` : undefined, subColor: portfolio && portfolio.total_profit_loss_percent >= 0 ? 'text-success' : 'text-danger' },
+                { label: 'Invested', value: formatCurrency(portfolio?.total_invested || 0), icon: Wallet, color: 'text-success', bg: 'bg-success/20', gradient: 'from-[#0a2e1a] to-[#0d3d28]', border: 'border-success/20', sub: `${portfolio?.total_stocks || 0} stocks` },
+                { label: 'Day P&L', value: formatCurrency(portfolio?.total_profit_loss || 0), icon: BarChart2, color: portfolio && portfolio.total_profit_loss >= 0 ? 'text-success' : 'text-danger', bg: portfolio && portfolio.total_profit_loss >= 0 ? 'bg-success/20' : 'bg-danger/20', gradient: portfolio && portfolio.total_profit_loss >= 0 ? 'from-[#0a2e1a] to-[#0d3d28]' : 'from-[#2e0a0a] to-[#3d0d1a]', border: portfolio && portfolio.total_profit_loss >= 0 ? 'border-success/20' : 'border-danger/20' },
+                { label: 'Learning', value: `${learning?.progressPercent || 0}%`, icon: GraduationCap, color: 'text-warning', bg: 'bg-warning/20', gradient: 'from-[#2e1a0a] to-[#3d2a0d]', border: 'border-warning/20', sub: learning?.isQualified ? 'Qualified' : 'In progress' },
+              ].map(card => {
+                const Icon = card.icon;
+                return (
+                  <div key={card.label} className={cn('rounded-xl border bg-gradient-to-br p-3 sm:p-4', card.gradient, card.border)}>
+                    <div className="flex items-start justify-between mb-2">
+                      <p className="text-xs text-muted font-medium leading-tight">{card.label}</p>
+                      <div className={cn('rounded-lg p-1.5 flex-shrink-0', card.bg)}>
+                        <Icon size={14} className={card.color} />
+                      </div>
+                    </div>
+                    <p className={cn('text-lg sm:text-xl font-bold font-num', card.color)}>{card.value}</p>
+                    {card.sub && (
+                      <p className={cn('mt-0.5 text-xs font-semibold font-num', card.subColor || 'text-muted')}>{card.sub}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ========== HOLDINGS PREVIEW ========== */}
+          {portfolio && portfolio.items.length > 0 && (
+            <div className="rounded-xl border border-border bg-card-solid overflow-hidden shadow-[var(--shadow-card)]">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Zap size={14} className="text-warning" /> Holdings
+                </h2>
+                <Link to="/portfolio" className="text-xs text-info hover:text-info/80 flex items-center gap-0.5 font-medium">
+                  View all <ChevronRight size={12} />
+                </Link>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-white/[0.02]">
+                    <tr>
+                      <th className="px-4 py-2.5 text-left text-xs font-semibold text-muted uppercase tracking-wide">Stock</th>
+                      <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted uppercase tracking-wide">Qty</th>
+                      <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted uppercase tracking-wide hidden sm:table-cell">Avg</th>
+                      <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted uppercase tracking-wide">LTP</th>
+                      <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted uppercase tracking-wide">P&L</th>
+                      <th className="px-4 py-2.5 text-right text-xs font-semibold text-muted uppercase tracking-wide">P&L%</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {portfolio.items.slice(0, 8).map(item => (
+                      <tr key={item.id} className="hover:bg-white/[0.03] transition-colors">
+                        <td className="px-4 py-2.5">
+                          <Link to={`/stock/${item.stock_symbol}`} className="font-bold text-info hover:underline">{item.stock_symbol}</Link>
+                        </td>
+                        <td className="px-3 py-2.5 text-right font-num text-muted">{item.quantity}</td>
+                        <td className="px-3 py-2.5 text-right font-num text-muted hidden sm:table-cell">{item.avg_buy_price.toFixed(2)}</td>
+                        <td className="px-3 py-2.5 text-right font-num font-semibold text-foreground">{item.current_price.toFixed(2)}</td>
+                        <td className={cn('px-3 py-2.5 text-right font-num font-semibold', item.profit_loss >= 0 ? 'text-success' : 'text-danger')}>
+                          {formatCurrency(item.profit_loss)}
+                        </td>
+                        <td className="px-4 py-2.5 text-right">
+                          <span className={cn(
+                            'inline-block min-w-[50px] px-2 py-0.5 rounded text-xs font-bold font-num text-center',
+                            item.profit_loss_percent >= 0 ? 'bg-success/15 text-success' : 'bg-danger/15 text-danger'
+                          )}>
+                            {formatPercent(item.profit_loss_percent)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </Card>
+          )}
+
+          {/* ========== TOP MOVERS ========== */}
+          {market && (
+            <div>
+              <h2 className="mb-2 sm:mb-3 text-sm sm:text-lg font-semibold text-foreground">Top Movers</h2>
+              <TopMoversSection prices={market.livePrices} />
+            </div>
+          )}
+
+          {/* ========== ALL STOCKS TABLE ========== */}
+          {market && (
+            <div>
+              <h2 className="mb-2 sm:mb-3 text-sm sm:text-lg font-semibold text-foreground">All Stocks</h2>
+              <AllStocksTable prices={market.livePrices} />
+            </div>
+          )}
+
+          {/* ========== ACTION ALERTS ========== */}
+          {(user?.kyc_status !== 'verified' || (learning && !learning.isQualified)) && (
+            <div className="space-y-2.5">
+              <h2 className="text-sm sm:text-lg font-semibold text-foreground">Action Required</h2>
+              {user?.kyc_status !== 'verified' && (
+                <div className="rounded-xl bg-card-solid border border-border p-4 flex items-center gap-3 border-l-4 border-l-warning shadow-[var(--shadow-card)]">
+                  <div className="w-9 h-9 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
+                    <ShieldCheck size={18} className="text-warning" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Complete KYC Verification</p>
+                    <p className="text-xs text-muted mt-0.5">Submit documents to unlock trading</p>
+                  </div>
+                  <Link to="/kyc" className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-white/[0.04] transition-colors">
+                    Go <ChevronRight size={12} className="inline" />
+                  </Link>
+                </div>
+              )}
+              {learning && !learning.isQualified && (
+                <div className="rounded-xl bg-card-solid border border-border p-4 flex items-center gap-3 border-l-4 border-l-info shadow-[var(--shadow-card)]">
+                  <div className="w-9 h-9 rounded-xl bg-info/10 flex items-center justify-center shrink-0">
+                    <GraduationCap size={18} className="text-info" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Complete Learning</p>
+                    <p className="text-xs text-muted mt-0.5">{learning.completedLessons}/{learning.totalLessons} lessons</p>
+                    <div className="w-full bg-border/40 rounded-full h-1 mt-2">
+                      <div className="bg-info h-1 rounded-full transition-all" style={{ width: `${learning.progressPercent}%` }} />
+                    </div>
+                  </div>
+                  <Link to="/learning" className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-white/[0.04] transition-colors">
+                    Go <ChevronRight size={12} className="inline" />
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ========== QUICK ACTIONS ========== */}
+          <div>
+            <h2 className="text-sm sm:text-lg font-semibold text-foreground mb-3">Quick Actions</h2>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              {[
+                { to: '/trading', icon: TrendingUp, label: 'Trade', color: 'text-success', bg: 'bg-success/10', gradient: 'from-[#0a2e1a] to-[#0d3d28]', border: 'border-success/20' },
+                { to: '/portfolio', icon: BarChart2, label: 'Portfolio', color: 'text-info', bg: 'bg-info/10', gradient: 'from-[#0a1a2e] to-[#0d2a3d]', border: 'border-info/20' },
+                { to: '/ipo', icon: Zap, label: 'IPO', color: 'text-warning', bg: 'bg-warning/10', gradient: 'from-[#2e1a0a] to-[#3d2a0d]', border: 'border-warning/20' },
+              ].map(item => (
+                <Link key={item.to} to={item.to}>
+                  <div className={cn('rounded-xl border bg-gradient-to-br p-5 sm:p-6 text-center group hover:scale-[1.02] transition-transform', item.gradient, item.border)}>
+                    <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2 transition-transform group-hover:scale-110', item.bg)}>
+                      <item.icon size={22} className={item.color} />
+                    </div>
+                    <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* ========== FOOTER ========== */}
+          <footer className="border-t border-border pt-4">
+            <div className="flex flex-col items-center justify-between gap-2 text-center text-[10px] sm:text-xs text-muted md:flex-row md:text-left">
+              <p>&copy; {new Date().getFullYear()} HeroStock.AI</p>
+              {market?.lastUpdated && (
+                <p>Updated: <span className="font-num">{new Date(market.lastUpdated).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span></p>
+              )}
+            </div>
+          </footer>
         </div>
-      )}
+      </main>
     </div>
   );
 }

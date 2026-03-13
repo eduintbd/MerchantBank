@@ -20,7 +20,8 @@ export function LearningPage() {
   // Lesson detail view
   if (selectedLesson && currentLesson) {
     return (
-      <div className="animate-fade-in">
+      <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
         <button onClick={() => setSelectedLesson(null)} className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} /> Back to lessons
         </button>
@@ -37,6 +38,7 @@ export function LearningPage() {
           )}
         </Card>
       </div>
+      </div>
     );
   }
 
@@ -44,7 +46,8 @@ export function LearningPage() {
   if (selectedCourse) {
     const course = courses?.find(c => c.id === selectedCourse);
     return (
-      <div className="animate-fade-in">
+      <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
         <button onClick={() => setSelectedCourse(null)} className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} /> Back to courses
         </button>
@@ -86,12 +89,14 @@ export function LearningPage() {
           )}
         </div>
       </div>
+      </div>
     );
   }
 
   // Courses grid view
   return (
-    <div className="animate-fade-in">
+    <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Learning Center</h1>
@@ -165,6 +170,7 @@ export function LearningPage() {
             );
           })
         )}
+      </div>
       </div>
     </div>
   );

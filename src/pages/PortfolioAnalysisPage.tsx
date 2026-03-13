@@ -45,7 +45,7 @@ export function PortfolioAnalysisPage() {
 
   if (isLoading) {
     return (
-      <div className="text-center py-12 animate-fade-in">
+      <div className="min-h-screen bg-background text-center py-12 animate-fade-in">
         <div className="w-8 h-8 border-2 border-info border-t-transparent rounded-full animate-spin mx-auto" />
         <p className="text-xs text-muted mt-3">Loading portfolio data...</p>
       </div>
@@ -53,7 +53,8 @@ export function PortfolioAnalysisPage() {
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Portfolio Analysis</h1>
@@ -204,7 +205,8 @@ export function PortfolioAnalysisPage() {
             </Card>
           )}
         </div>
-      </div>
+      </div>      </div>
+
     </div>
   );
 }

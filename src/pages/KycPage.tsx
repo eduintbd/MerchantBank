@@ -52,7 +52,8 @@ export function KycPage() {
   const allDocsUploaded = documentTypes.every(d => uploadedDocs[d.type]);
 
   return (
-    <div className="animate-fade-in">
+    <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">KYC Verification</h1>
@@ -178,7 +179,8 @@ export function KycPage() {
             </Button>
           </div>
         </div>
-      )}
+      )}      </div>
+
     </div>
   );
 }

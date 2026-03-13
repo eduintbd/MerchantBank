@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/Card';
 import { formatCurrency, getChangeColor, cn } from '@/lib/utils';
 import type { LivePrice, TopMoverTab } from '@/types';
@@ -84,7 +85,7 @@ export function TopMovers({ prices }: Props) {
                 return (
                   <tr
                     key={p.symbol}
-                    className="border-t border-border/50 hover:bg-card-hover/50 transition-colors group"
+                    className="border-t border-border/50 hover:bg-card-hover/50 transition-colors group cursor-pointer"
                   >
                     {/* Rank with colored left bar */}
                     <td className="pl-4 sm:pl-5 pr-2 py-2.5 relative">
@@ -97,14 +98,14 @@ export function TopMovers({ prices }: Props) {
                       <span className="text-[11px] text-muted/60 font-num">{i + 1}</span>
                     </td>
 
-                    {/* Symbol + company name placeholder */}
+                    {/* Symbol - clickable link */}
                     <td className="px-2 py-2.5">
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-foreground text-[13px] leading-tight">{p.symbol}</span>
+                      <Link to={`/stock/${p.symbol}`} className="flex flex-col hover:opacity-80 transition-opacity">
+                        <span className="font-semibold text-foreground text-[13px] leading-tight group-hover:text-primary transition-colors">{p.symbol}</span>
                         <span className="text-[10px] text-muted leading-tight mt-0.5 truncate max-w-[140px]">
                           {p.symbol}
                         </span>
-                      </div>
+                      </Link>
                     </td>
 
                     {/* LTP */}

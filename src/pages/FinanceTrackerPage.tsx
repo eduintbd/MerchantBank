@@ -68,7 +68,8 @@ export function FinanceTrackerPage() {
   }, []);
 
   return (
-    <div className="animate-fade-in">
+    <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
@@ -231,7 +232,8 @@ export function FinanceTrackerPage() {
             </div>
           </Card>
         </div>
-      </div>
+      </div>      </div>
+
     </div>
   );
 }

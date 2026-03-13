@@ -59,7 +59,8 @@ export function IpoPage() {
   ];
 
   return (
-    <div className="animate-fade-in">
+    <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">IPO Center</h1>
@@ -144,7 +145,8 @@ export function IpoPage() {
             </Card>
           ))}
         </div>
-      )}
+      )}      </div>
+
     </div>
   );
 }

@@ -40,7 +40,8 @@ export function MarketHistoryPage() {
   }, [filteredData]);
 
   return (
-    <div className="animate-fade-in">
+    <div className="min-h-screen bg-background animate-fade-in">
+      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3 mb-1">
           <BarChart3 size={24} className="text-info" />
@@ -147,7 +148,8 @@ export function MarketHistoryPage() {
           icon={<BarChart3 size={20} />}
           iconColor="bg-primary/10 text-primary"
         />
-      </div>
+      </div>      </div>
+
     </div>
   );
 }
