@@ -4,3 +4,7 @@ dist
 .env.local
 .env.production
 *.log
+.git
+*.m4a
+WhatsApp*.jpeg
+Error*.jpeg

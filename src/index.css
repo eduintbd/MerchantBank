@@ -2,43 +2,46 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-title: 'Ubuntu', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
 
-  /* Premium Financial Theme */
-  --color-background: #f5f6f8;
-  --color-surface: #ffffff;
-  --color-card: #ffffff;
-  --color-card-hover: #f0f1f5;
-  --color-border: rgba(0, 0, 0, 0.06);
-  --color-border-light: rgba(0, 0, 0, 0.10);
+  /* Dark Financial Theme — QuantFintech inspired */
+  --color-background: #131928;
+  --color-surface: #1D263A;
+  --color-card: rgba(29, 38, 58, 0.65);
+  --color-card-solid: #1D263A;
+  --color-card-hover: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-light: rgba(255, 255, 255, 0.14);
 
-  --color-primary: #1a73e8;
-  --color-primary-light: #4285f4;
-  --color-primary-dark: #1557b0;
+  --color-primary: #05b804;
+  --color-primary-light: #2dd42c;
+  --color-primary-dark: #049a03;
 
-  --color-foreground: #0f172a;
-  --color-muted: #64748b;
-  --color-muted-foreground: #94a3b8;
+  --color-foreground: #ffffff;
+  --color-muted: rgba(255, 255, 255, 0.5);
+  --color-muted-foreground: rgba(255, 255, 255, 0.35);
+  --color-text: rgba(255, 255, 255, 0.65);
 
   --color-success: #0ecb81;
-  --color-success-dim: rgba(14, 203, 129, 0.10);
+  --color-success-dim: rgba(14, 203, 129, 0.12);
   --color-danger: #f6465d;
-  --color-danger-dim: rgba(246, 70, 93, 0.10);
+  --color-danger-dim: rgba(246, 70, 93, 0.12);
   --color-warning: #f0b90b;
-  --color-warning-dim: rgba(240, 185, 11, 0.10);
-  --color-info: #1a73e8;
-  --color-info-dim: rgba(26, 115, 232, 0.10);
+  --color-warning-dim: rgba(240, 185, 11, 0.12);
+  --color-info: #2563eb;
+  --color-info-dim: rgba(37, 99, 235, 0.12);
   --color-gold: #d97706;
-  --color-purple: #7c3aed;
-  --color-purple-dim: rgba(124, 58, 237, 0.10);
+  --color-purple: #a855f7;
+  --color-purple-dim: rgba(168, 85, 247, 0.12);
 
-  --color-sidebar: #ffffff;
-  --color-sidebar-active: rgba(26, 115, 232, 0.08);
+  --color-sidebar: rgba(19, 25, 40, 0.92);
+  --color-sidebar-active: rgba(5, 184, 4, 0.10);
 
   /* Shadow Tokens */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-elevated: 0 4px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 20px rgba(26, 115, 232, 0.15), 0 0 4px rgba(26, 115, 232, 0.10);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-elevated: 0 4px 24px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-glow: 0 0 20px rgba(5, 184, 4, 0.15), 0 0 4px rgba(5, 184, 4, 0.10);
 }
 
 *,
@@ -57,7 +60,7 @@ html {
 body {
   font-family: var(--font-sans);
   background-color: var(--color-background);
-  color: var(--color-foreground);
+  color: var(--color-text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -67,16 +70,16 @@ body {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
 
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* Glass — white frosted for light theme */
+/* Glass — dark frosted */
 .glass {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(19, 25, 40, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 /* Monospace numbers */
@@ -96,31 +99,31 @@ body {
 }
 
 /* ==========================================
-   GRADIENT CARDS — light pastel versions
+   GRADIENT CARDS — dark versions
    ========================================== */
 .grad-success {
-  background: linear-gradient(135deg, #f0fdf9 0%, #dcfce7 100%);
-  border-color: rgba(14, 203, 129, 0.2) !important;
+  background: linear-gradient(135deg, rgba(14, 203, 129, 0.08) 0%, rgba(14, 203, 129, 0.04) 100%);
+  border-color: rgba(14, 203, 129, 0.15) !important;
 }
 .grad-danger {
-  background: linear-gradient(135deg, #fff5f5 0%, #fee2e2 100%);
-  border-color: rgba(246, 70, 93, 0.2) !important;
+  background: linear-gradient(135deg, rgba(246, 70, 93, 0.08) 0%, rgba(246, 70, 93, 0.04) 100%);
+  border-color: rgba(246, 70, 93, 0.15) !important;
 }
 .grad-info {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-color: rgba(26, 115, 232, 0.2) !important;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.04) 100%);
+  border-color: rgba(37, 99, 235, 0.15) !important;
 }
 .grad-warning {
-  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-  border-color: rgba(240, 185, 11, 0.2) !important;
+  background: linear-gradient(135deg, rgba(240, 185, 11, 0.08) 0%, rgba(240, 185, 11, 0.04) 100%);
+  border-color: rgba(240, 185, 11, 0.15) !important;
 }
 .grad-purple {
-  background: linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%);
-  border-color: rgba(124, 58, 237, 0.2) !important;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(168, 85, 247, 0.04) 100%);
+  border-color: rgba(168, 85, 247, 0.15) !important;
 }
 .grad-primary {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-color: rgba(26, 115, 232, 0.2) !important;
+  background: linear-gradient(135deg, rgba(5, 184, 4, 0.08) 0%, rgba(5, 184, 4, 0.04) 100%);
+  border-color: rgba(5, 184, 4, 0.15) !important;
 }
 
 /* ==========================================
@@ -157,7 +160,7 @@ body {
   100% { background-position: 200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: 6px;
@@ -216,7 +219,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.04),
     transparent
   );
   pointer-events: none;
@@ -255,7 +258,7 @@ body {
 }
 
 /* ==========================================
-   DATA TABLE — professional financial tables
+   DATA TABLE — dark financial tables
    ========================================== */
 .data-table {
   width: 100%;
@@ -271,7 +274,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-muted);
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
   user-select: none;
 }
@@ -282,13 +285,13 @@ body {
   vertical-align: middle;
 }
 .data-table tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.015);
+  background-color: rgba(255, 255, 255, 0.015);
 }
 .data-table tbody tr {
   transition: background-color 0.15s ease;
 }
 .data-table tbody tr:hover {
-  background-color: rgba(26, 115, 232, 0.04);
+  background-color: rgba(5, 184, 4, 0.04);
 }
 .data-table .col-num {
   font-family: var(--font-mono);
@@ -315,16 +318,15 @@ body {
 }
 
 /* ==========================================
-   GLASS CARD — frosted premium card
+   GLASS CARD — dark frosted premium card
    ========================================== */
 .glass-card {
-  background: rgba(255, 255, 255, 0.70);
+  background: rgba(29, 38, 58, 0.60);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.40);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  box-shadow: var(--shadow-card),
-    inset 0 1px 0 rgba(255, 255, 255, 0.50);
+  box-shadow: var(--shadow-card);
 }
 
 /* Safe area insets for notch devices */

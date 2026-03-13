@@ -9,10 +9,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: 'bg-gradient-to-b from-primary-light to-primary text-white shadow-sm shadow-primary/25 hover:shadow-md hover:shadow-primary/30 active:from-primary active:to-primary-dark',
-  secondary: 'bg-white border border-border text-foreground hover:bg-card-hover shadow-[var(--shadow-card)]',
+  primary: 'bg-primary text-white shadow-sm shadow-primary/25 hover:shadow-md hover:shadow-primary/30 hover:brightness-110 active:brightness-90',
+  secondary: 'bg-white/[0.06] border border-border text-foreground hover:bg-white/[0.10] shadow-[var(--shadow-card)]',
   danger: 'bg-danger-dim text-danger border border-danger/20 hover:bg-danger/20',
-  ghost: 'text-muted hover:text-foreground hover:bg-black/5',
+  ghost: 'text-muted hover:text-foreground hover:bg-white/[0.06]',
   success: 'bg-success-dim text-success border border-success/20 hover:bg-success/20',
 };
 

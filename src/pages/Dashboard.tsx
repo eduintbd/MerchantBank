@@ -54,7 +54,7 @@ export function Dashboard() {
       <MarketOverview />
 
       {/* Separator */}
-      <div className="my-8 sm:my-10 border-t border-border/60" />
+      <div className="my-8 sm:my-10 border-t border-border" />
 
       {/* Your Portfolio */}
       <div className="flex items-center justify-between mb-5">
@@ -101,7 +101,7 @@ export function Dashboard() {
           <h2 className="text-xs font-semibold text-muted uppercase tracking-[0.12em]">Action Required</h2>
 
           {user?.kyc_status !== 'verified' && (
-            <div className="rounded-xl bg-card border border-border p-4 sm:p-5 flex items-center gap-4 border-l-4 border-l-warning">
+            <div className="rounded-xl bg-card-solid border border-border p-4 sm:p-5 flex items-center gap-4 border-l-4 border-l-warning">
               <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
                 <ShieldCheck size={20} className="text-warning" />
               </div>
@@ -116,7 +116,7 @@ export function Dashboard() {
           )}
 
           {learning && !learning.isQualified && (
-            <div className="rounded-xl bg-card border border-border p-4 sm:p-5 flex items-center gap-4 border-l-4 border-l-info">
+            <div className="rounded-xl bg-card-solid border border-border p-4 sm:p-5 flex items-center gap-4 border-l-4 border-l-info">
               <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center shrink-0">
                 <GraduationCap size={20} className="text-info" />
               </div>
@@ -170,7 +170,7 @@ export function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-muted text-[11px] uppercase tracking-wider border-b border-border bg-surface/50">
+                  <tr className="text-muted text-[11px] uppercase tracking-wider border-b border-border bg-white/[0.02]">
                     <th className="px-5 sm:px-6 py-3 text-left font-medium w-10">#</th>
                     <th className="px-2 py-3 text-left font-medium">Stock</th>
                     <th className="px-3 py-3 text-right font-medium">Qty</th>
@@ -180,7 +180,7 @@ export function Dashboard() {
                 </thead>
                 <tbody>
                   {portfolio.items.slice(0, 5).map((item, idx) => (
-                    <tr key={item.id} className="border-b border-border/50 last:border-0 hover:bg-surface/60 transition-colors duration-150 group">
+                    <tr key={item.id} className="border-b border-border/50 last:border-0 hover:bg-white/[0.03] transition-colors duration-150 group">
                       <td className="px-5 sm:px-6 py-4 text-xs text-muted font-medium">{idx + 1}</td>
                       <td className="px-2 py-4">
                         <span className="font-semibold text-foreground tracking-tight">{item.stock_symbol}</span>

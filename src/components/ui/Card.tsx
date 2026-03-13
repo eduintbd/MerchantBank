@@ -14,9 +14,9 @@ export function Card({ children, className, padding = true, hover, variant = 'de
     <div
       className={cn(
         'rounded-2xl border transition-all duration-300',
-        variant === 'default' && 'border-border bg-card shadow-[var(--shadow-card)]',
-        variant === 'elevated' && 'border-border bg-card shadow-[var(--shadow-elevated)]',
-        variant === 'glass' && 'glass-card border-white/40',
+        variant === 'default' && 'border-border bg-card-solid shadow-[var(--shadow-card)]',
+        variant === 'elevated' && 'border-border bg-card-solid shadow-[var(--shadow-elevated)]',
+        variant === 'glass' && 'glass-card',
         padding && 'p-4 sm:p-5',
         hover && 'hover:shadow-[var(--shadow-elevated)] hover:border-border-light hover:-translate-y-0.5 cursor-pointer',
         className
@@ -45,7 +45,7 @@ export function StatCard({ title, value, subtitle, icon, iconColor, trend, gradi
     <div
       className={cn(
         'relative overflow-hidden rounded-2xl border border-border p-4 sm:p-5 min-h-[110px] sm:min-h-[128px] flex flex-col justify-between transition-all duration-300 hover-lift',
-        gradient || 'bg-card',
+        gradient || 'bg-card-solid',
         'shadow-[var(--shadow-card)]',
         className
       )}
@@ -54,7 +54,7 @@ export function StatCard({ title, value, subtitle, icon, iconColor, trend, gradi
       {icon && (
         <div className={cn(
           'absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center',
-          iconColor || 'bg-black/[0.04] text-muted'
+          iconColor || 'bg-white/[0.04] text-muted'
         )}>
           {icon}
         </div>
@@ -70,8 +70,8 @@ export function StatCard({ title, value, subtitle, icon, iconColor, trend, gradi
             <span className={cn(
               'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold font-num',
               trend.value >= 0
-                ? 'bg-success/10 text-success'
-                : 'bg-danger/10 text-danger'
+                ? 'bg-success/12 text-success'
+                : 'bg-danger/12 text-danger'
             )}>
               {trend.value >= 0 ? '+' : ''}{trend.value.toFixed(2)}%
             </span>
