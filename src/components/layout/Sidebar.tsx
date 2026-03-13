@@ -16,10 +16,12 @@ import {
   MessageSquare,
   Rocket,
   MoreHorizontal,
+  BarChart3,
 } from 'lucide-react';
 
 const baseNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
+  { to: '/market', icon: BarChart3, label: 'Market' },
   { to: '/trading', icon: TrendingUp, label: 'Trade' },
   { to: '/portfolio', icon: Briefcase, label: 'Portfolio' },
   { to: '/learning', icon: GraduationCap, label: 'Learn' },
@@ -45,9 +47,9 @@ export function TopNav() {
   // Mobile bottom nav: Home, Trade, Portfolio, Social, More
   const mobileBottomItems = [
     baseNavItems[0], // Home
-    baseNavItems[1], // Trade
-    baseNavItems[2], // Portfolio
-    baseNavItems[5], // Social
+    baseNavItems[1], // Market
+    baseNavItems[2], // Trade
+    baseNavItems[3], // Portfolio
     moreNavItem,     // More
   ];
 

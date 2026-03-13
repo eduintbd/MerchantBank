@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
@@ -30,6 +30,7 @@ const ZeroToHeroPage = lazy(() => import('@/pages/ZeroToHeroPage').then(m => ({ 
 const MorePage = lazy(() => import('@/pages/MorePage').then(m => ({ default: m.MorePage })));
 const PortfolioAnalysisPage = lazy(() => import('@/pages/PortfolioAnalysisPage').then(m => ({ default: m.PortfolioAnalysisPage })));
 const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
+const MarketPage = lazy(() => import('@/pages/MarketPage').then(m => ({ default: m.MarketPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,15 +71,23 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+// Public routes that don't need auth to load
+const PUBLIC_PATHS = ['/market'];
+
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) return <LoadingScreen />;
+  const location = useLocation();
+  const isPublicRoute = PUBLIC_PATHS.some(p => location.pathname.startsWith(p));
+  if (loading && !isPublicRoute) return <LoadingScreen />;
 
   return (
     <Routes>
       {/* Public routes */}
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/auth" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
+
+      {/* Public market page - no auth required */}
+      <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
 
       {/* Protected routes */}
       <Route
@@ -118,25 +127,46 @@ function AppRoutes() {
   );
 }
 
+function PublicRoutes() {
+  return (
+    <Routes>
+      <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
+    </Routes>
+  );
+}
+
+function AppShell() {
+  const location = useLocation();
+  const isPublicOnly = location.pathname.startsWith('/market');
+
+  if (isPublicOnly) {
+    return <PublicRoutes />;
+  }
+
+  return (
+    <AuthProvider>
+      <AppRoutes />
+      <Toaster
+        position="top-right"
+        richColors
+        toastOptions={{
+          style: {
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            color: '#1e293b',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+          },
+        }}
+      />
+    </AuthProvider>
+  );
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-          <Toaster
-            position="top-right"
-            richColors
-            toastOptions={{
-              style: {
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                color: '#1e293b',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-              },
-            }}
-          />
-        </AuthProvider>
+        <AppShell />
       </BrowserRouter>
     </QueryClientProvider>
   );

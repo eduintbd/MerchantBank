@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { dseSupabase, supabase } from '@/lib/supabase';
 
 interface CompanyFinancial {
   id: string;
@@ -41,19 +41,55 @@ export function useCompanyFinancials(symbol: string, year?: number) {
   return useQuery({
     queryKey: ['company-financials', symbol, year],
     queryFn: async (): Promise<CompanyFinancial[]> => {
-      let query = supabase
-        .from('company_financials')
+      const client = dseSupabase || supabase;
+
+      // Query financial_statements from DSE data source
+      let query = client
+        .from('financial_statements')
         .select('*')
         .eq('symbol', symbol)
-        .order('year', { ascending: false });
+        .order('period_end', { ascending: false });
 
       if (year) {
-        query = query.eq('year', year);
+        query = query.gte('period_end', `${year}-01-01`).lte('period_end', `${year}-12-31`);
       }
 
       const { data, error } = await query;
       if (error) throw error;
-      return data || [];
+
+      return (data || []).map((s: any) => ({
+        id: s.id?.toString() || s.symbol + s.period_end,
+        symbol: s.symbol,
+        year: new Date(s.period_end).getFullYear(),
+        revenue: s.revenue ?? undefined,
+        net_income: s.net_profit ?? undefined,
+        eps: s.eps ?? undefined,
+        nav_per_share: s.nav_per_share ?? undefined,
+        pe_ratio: undefined,
+        dividend_yield: undefined,
+        total_assets: undefined,
+        total_liabilities: undefined,
+        operating_profit: undefined,
+      }));
+    },
+    enabled: !!symbol,
+  });
+}
+
+export function useCompanyFundamentals(symbol: string) {
+  return useQuery({
+    queryKey: ['company-fundamentals', symbol],
+    queryFn: async () => {
+      const client = dseSupabase || supabase;
+
+      const { data, error } = await client
+        .from('fundamentals')
+        .select('*')
+        .eq('symbol', symbol)
+        .single();
+
+      if (error) throw error;
+      return data;
     },
     enabled: !!symbol,
   });
@@ -63,15 +99,8 @@ export function useCompanyNews(symbol: string) {
   return useQuery({
     queryKey: ['company-news', symbol],
     queryFn: async (): Promise<CompanyNews[]> => {
-      const { data, error } = await supabase
-        .from('company_news')
-        .select('*')
-        .eq('symbol', symbol)
-        .order('published_at', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-      return data || [];
+      // News not available in UCB CSM yet — return empty
+      return [];
     },
     enabled: !!symbol,
   });
