@@ -537,7 +537,7 @@ export function MarketPage() {
     return (
       <div className="min-h-screen bg-background">
         <PublicHeader isMarketOpen={false} />
-        <div className="px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
+        <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
           <div className="animate-fade-in space-y-4">
             <div className="skeleton rounded-xl h-10 w-64" />
             <div className="skeleton rounded-xl h-[40px]" />
@@ -561,7 +561,7 @@ export function MarketPage() {
     <div className="min-h-screen bg-background">
       <PublicHeader isMarketOpen={isMarketOpen} />
 
-      <div className="px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
+      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
         <div className="animate-fade-in space-y-5">
 
           {/* Page Header */}

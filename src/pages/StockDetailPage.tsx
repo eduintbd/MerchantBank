@@ -95,7 +95,7 @@ export function StockDetailPage() {
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12 space-y-4">
+      <div className="mx-auto max-w-3xl px-3 py-4 sm:px-4 sm:py-6 space-y-4">
 
         {/* Back nav */}
         <Link to="/trading" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors">
@@ -442,38 +442,31 @@ export function StockDetailPage() {
                 {dividends && dividends.length > 0 && (
                   <div>
                     <h4 className="text-sm font-bold text-info uppercase tracking-wider mb-2">Dividend History</h4>
-                    <div className="rounded-xl border border-border overflow-hidden">
+                    <div className="overflow-x-auto rounded-xl border border-border">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-[10px] text-muted uppercase tracking-wider border-b border-border bg-white/[0.02]">
-                            <th className="px-4 py-2.5 text-left font-semibold">Year</th>
-                            <th className="px-3 py-2.5 text-right font-semibold">Cash Div. %</th>
-                            <th className="px-3 py-2.5 text-right font-semibold">Stock Div. %</th>
-                            <th className="px-4 py-2.5 text-right font-semibold">Total</th>
+                          <tr className="border-b border-border bg-white/[0.02]">
+                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted">Year</th>
+                            <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted">Cash Div %</th>
+                            <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted">Stock Div %</th>
+                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted">Record Date</th>
+                            <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted">AGM Date</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          {dividends.map((d: any, i: number) => {
-                            const total = (d.cash_dividend_pct || 0) + (d.stock_dividend_pct || 0);
-                            return (
-                              <tr key={i} className="border-b border-border/30 hover:bg-white/[0.02] transition-colors">
-                                <td className="px-4 py-2.5 font-semibold text-foreground">{d.year}</td>
-                                <td className="px-3 py-2.5 text-right font-num">
-                                  {d.cash_dividend_pct ? (
-                                    <span className="px-2 py-0.5 rounded bg-success/10 text-success font-bold text-xs">{d.cash_dividend_pct}%</span>
-                                  ) : <span className="text-muted">—</span>}
-                                </td>
-                                <td className="px-3 py-2.5 text-right font-num">
-                                  {d.stock_dividend_pct ? (
-                                    <span className="px-2 py-0.5 rounded bg-info/10 text-info font-bold text-xs">{d.stock_dividend_pct}%</span>
-                                  ) : <span className="text-muted">—</span>}
-                                </td>
-                                <td className="px-4 py-2.5 text-right font-bold font-num text-foreground">
-                                  {total > 0 ? `${total.toFixed(1)}%` : '—'}
-                                </td>
-                              </tr>
-                            );
-                          })}
+                        <tbody className="divide-y divide-border">
+                          {dividends.slice(0, 5).map((d: any) => (
+                            <tr key={d.year} className="hover:bg-white/[0.02]">
+                              <td className="px-3 py-2 font-semibold">{d.year}</td>
+                              <td className="px-3 py-2 text-right text-success font-medium font-num">
+                                {d.cash_dividend != null ? `${d.cash_dividend}%` : '—'}
+                              </td>
+                              <td className="px-3 py-2 text-right text-info font-medium font-num">
+                                {d.stock_dividend != null ? `${d.stock_dividend}%` : '—'}
+                              </td>
+                              <td className="px-3 py-2 text-xs text-muted">{d.record_date || '—'}</td>
+                              <td className="px-3 py-2 text-xs text-muted">{d.agm_date || '—'}</td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>

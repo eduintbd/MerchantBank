@@ -29,7 +29,7 @@ export function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
+      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Portfolio</h1>

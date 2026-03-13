@@ -54,7 +54,7 @@ const recommendedSectors = [
 export function WomenInvestorsPage() {
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12">
+      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
       {/* Hero Section */}
       <div className="mb-8 sm:mb-10">
         <div className="flex items-center gap-3 mb-1">
