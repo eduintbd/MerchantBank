@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMarketData } from '@/hooks/useMarketData';
+import { useSocialMediaPosts } from '@/hooks/useSocialMedia';
+import { useNewsComments, useCreateNewsComment } from '@/hooks/useNewsComments';
 import { MarketIndexCards } from '@/components/dashboard/MarketIndexCards';
 import { MarketStrength } from '@/components/dashboard/MarketStrength';
 import { MarketSentiment } from '@/components/dashboard/MarketSentiment';
@@ -9,7 +11,7 @@ import { formatCurrency, formatVolume, formatValueBn, formatDateTime, cn } from 
 import {
   BarChart3, Search, TrendingUp, TrendingDown, Activity,
   Layers, Newspaper, Clock, ExternalLink, ArrowRight,
-  ChevronRight, Zap, LogIn,
+  ChevronRight, Zap, LogIn, MessageCircle, ThumbsUp, Share2, Send,
 } from 'lucide-react';
 import type { LivePrice, TopMoverTab } from '@/types';
 
@@ -24,84 +26,15 @@ const topMoverTabs: { key: TopMoverTab; label: string }[] = [
   { key: 'trade', label: 'Most Trades' },
 ];
 
-// Sample market news — will be replaced with QuantBD API feed
-const MARKET_NEWS = [
-  {
-    id: '1',
-    headline: 'DSEX crosses 5,800 mark as banking stocks rally',
-    summary: 'The benchmark DSEX index gained 1.2% driven by strong performance from banking sector stocks including BRACBANK, DUTCHBANGLA, and EBL.',
-    source: 'DSE',
-    category: 'Market',
-    published_at: new Date(Date.now() - 2 * 3600000).toISOString(),
-    symbol: 'DSEX',
-    sentiment: 'positive' as const,
-  },
-  {
-    id: '2',
-    headline: 'BSEC approves new margin loan guidelines for retail investors',
-    summary: 'Bangladesh Securities and Exchange Commission has issued updated guidelines allowing higher margin ratios for qualified retail investors.',
-    source: 'BSEC',
-    category: 'Regulation',
-    published_at: new Date(Date.now() - 5 * 3600000).toISOString(),
-    sentiment: 'neutral' as const,
-  },
-  {
-    id: '3',
-    headline: 'GP declares 12% interim cash dividend for FY2025-26',
-    summary: 'Grameenphone Limited has declared 12% interim cash dividend. Record date set for April 5, 2026.',
-    source: 'DSE Filing',
-    category: 'Corporate',
-    published_at: new Date(Date.now() - 8 * 3600000).toISOString(),
-    symbol: 'GP',
-    sentiment: 'positive' as const,
-  },
-  {
-    id: '4',
-    headline: 'Foreign investors net sellers for third consecutive week',
-    summary: 'Foreign institutional investors sold BDT 245Cr worth of stocks this week, with pharma and textile sectors seeing the highest outflows.',
-    source: 'Market Analysis',
-    category: 'Market',
-    published_at: new Date(Date.now() - 12 * 3600000).toISOString(),
-    sentiment: 'negative' as const,
-  },
-  {
-    id: '5',
-    headline: 'BEXIMCO Pharma receives WHO prequalification for new drug',
-    summary: 'BEXIMCO Pharmaceuticals has received WHO prequalification for a new antibiotic formulation, opening up export opportunities.',
-    source: 'Company',
-    category: 'Corporate',
-    published_at: new Date(Date.now() - 18 * 3600000).toISOString(),
-    symbol: 'BXPHARMA',
-    sentiment: 'positive' as const,
-  },
-  {
-    id: '6',
-    headline: 'IPO subscription opens for TechBangla Limited tomorrow',
-    summary: 'TechBangla Limited IPO subscription window opens March 14. Fixed price method at BDT 30 per share, lot size 500 shares.',
-    source: 'DSE',
-    category: 'IPO',
-    published_at: new Date(Date.now() - 24 * 3600000).toISOString(),
-    sentiment: 'neutral' as const,
-  },
-  {
-    id: '7',
-    headline: 'Market turnover hits BDT 1,200Cr — highest in 3 months',
-    summary: 'Daily turnover on DSE reached BDT 1,200 Crore, the highest single-day turnover in the last three months, signaling renewed investor confidence.',
-    source: 'DSE',
-    category: 'Market',
-    published_at: new Date(Date.now() - 30 * 3600000).toISOString(),
-    sentiment: 'positive' as const,
-  },
-  {
-    id: '8',
-    headline: 'Bangladesh Bank keeps policy rate unchanged at 8.5%',
-    summary: 'The central bank maintained its key policy rate at 8.5% in the latest monetary policy review, providing stability for equity markets.',
-    source: 'Bangladesh Bank',
-    category: 'Economy',
-    published_at: new Date(Date.now() - 48 * 3600000).toISOString(),
-    sentiment: 'neutral' as const,
-  },
-];
+const PLATFORM_ICONS: Record<string, { label: string; color: string }> = {
+  twitter: { label: '𝕏', color: 'bg-black/10 text-foreground' },
+  reddit: { label: 'R', color: 'bg-orange-500/10 text-orange-500' },
+  youtube: { label: '▶', color: 'bg-red-500/10 text-red-500' },
+  facebook: { label: 'f', color: 'bg-blue-500/10 text-blue-500' },
+  tiktok: { label: '♪', color: 'bg-pink-500/10 text-pink-500' },
+  linkedin: { label: 'in', color: 'bg-blue-600/10 text-blue-600' },
+  news: { label: 'N', color: 'bg-gray-500/10 text-gray-400' },
+};
 
 function getTopMovers(prices: LivePrice[], tab: TopMoverTab): LivePrice[] {
   const arr = [...prices];
@@ -130,8 +63,9 @@ function timeAgo(dateStr: string): string {
 }
 
 function MoverCard({ price, rank }: { price: LivePrice; rank: number }) {
-  const isGain = price.change_pct > 0;
-  const isLoss = price.change_pct < 0;
+  const changePct = price.change_pct ?? 0;
+  const isGain = changePct > 0;
+  const isLoss = changePct < 0;
 
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border bg-surface hover:bg-card-hover transition-colors">
@@ -146,7 +80,7 @@ function MoverCard({ price, rank }: { price: LivePrice; rank: number }) {
         isLoss && 'bg-danger/15 text-danger',
         !isGain && !isLoss && 'bg-white/5 text-muted'
       )}>
-        {price.change_pct >= 0 ? '+' : ''}{price.change_pct.toFixed(2)}%
+        {changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%
       </span>
     </div>
   );
@@ -225,9 +159,86 @@ function TickerStrip({ prices }: { prices: LivePrice[] }) {
   );
 }
 
+function NewsCommentSection({ postId }: { postId: string }) {
+  const { data: comments = [], isLoading } = useNewsComments(postId);
+  const createComment = useCreateNewsComment();
+  const [text, setText] = useState('');
+
+  const handleSubmit = () => {
+    if (!text.trim()) return;
+    createComment.mutate({ post_id: postId, content: text.trim() }, {
+      onSuccess: () => setText(''),
+    });
+  };
+
+  return (
+    <div className="mt-2 pt-2 border-t border-border/30">
+      {isLoading ? (
+        <p className="text-[10px] text-muted">Loading comments...</p>
+      ) : comments.length > 0 ? (
+        <div className="space-y-1.5 mb-2">
+          {comments.map(c => (
+            <div key={c.id} className="flex gap-2">
+              <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[8px] font-bold text-primary shrink-0">
+                {c.author_name?.charAt(0) || '?'}
+              </div>
+              <div>
+                <span className="text-[10px] font-semibold text-foreground">{c.author_name}</span>
+                <span className="text-[10px] text-muted ml-1.5">{timeAgo(c.created_at)}</span>
+                <p className="text-[11px] text-foreground/80 leading-snug">{c.content}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <div className="flex gap-1.5">
+        <input
+          value={text}
+          onChange={e => setText(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+          placeholder="Add a comment..."
+          className="flex-1 text-[11px] bg-surface border border-border rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-info/50 placeholder:text-muted/50"
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={!text.trim() || createComment.isPending}
+          className="px-2 py-1.5 bg-primary text-white rounded-lg text-[10px] font-medium disabled:opacity-40 hover:bg-primary/90 transition-colors"
+        >
+          <Send size={11} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function MarketNews() {
+  const { data: posts = [], isLoading } = useSocialMediaPosts({ limit: 20 });
   const [showAll, setShowAll] = useState(false);
-  const displayNews = showAll ? MARKET_NEWS : MARKET_NEWS.slice(0, 4);
+  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+
+  const displayPosts = showAll ? posts : posts.slice(0, 5);
+
+  const toggleComments = (id: string) => {
+    setExpandedComments(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <div className="flex items-center gap-2 mb-4">
+          <Newspaper size={16} className="text-info" />
+          <h3 className="text-sm font-semibold tracking-wide">Market News & Updates</h3>
+        </div>
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => <div key={i} className="skeleton rounded-lg h-16" />)}
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -236,67 +247,107 @@ function MarketNews() {
           <Newspaper size={16} className="text-info" />
           <h3 className="text-sm font-semibold tracking-wide">Market News & Updates</h3>
         </div>
-        <span className="text-[10px] text-muted bg-surface px-2 py-0.5 rounded-full font-num">{MARKET_NEWS.length} articles</span>
+        <span className="text-[10px] text-muted bg-surface px-2 py-0.5 rounded-full font-num">
+          {posts.length} posts · Auto-refreshes
+        </span>
       </div>
 
-      <div className="space-y-0">
-        {displayNews.map((news, i) => (
-          <div key={news.id} className={cn(
-            'group py-3 flex gap-3',
-            i > 0 && 'border-t border-border/50'
-          )}>
-            {/* Sentiment indicator */}
-            <div className="flex-shrink-0 mt-1">
-              <div className={cn(
-                'w-2 h-2 rounded-full',
-                news.sentiment === 'positive' && 'bg-success',
-                news.sentiment === 'negative' && 'bg-danger',
-                news.sentiment === 'neutral' && 'bg-warning',
-              )} />
-            </div>
+      {posts.length === 0 ? (
+        <p className="text-sm text-muted text-center py-8">No posts yet. Scanner runs every 30 min.</p>
+      ) : (
+        <div className="space-y-0">
+          {displayPosts.map((post, i) => {
+            const platform = PLATFORM_ICONS[post.platform] || PLATFORM_ICONS.news;
+            return (
+              <div key={post.id} className={cn('py-3', i > 0 && 'border-t border-border/50')}>
+                <div className="flex gap-3">
+                  {/* Platform icon + sentiment */}
+                  <div className="flex flex-col items-center gap-1.5 shrink-0">
+                    <div className={cn('w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold', platform.color)}>
+                      {platform.label}
+                    </div>
+                    <div className={cn(
+                      'w-2 h-2 rounded-full',
+                      post.sentiment === 'positive' && 'bg-success',
+                      post.sentiment === 'negative' && 'bg-danger',
+                      post.sentiment === 'neutral' && 'bg-warning',
+                      post.sentiment === 'mixed' && 'bg-info',
+                    )} />
+                  </div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start gap-2">
-                <h4 className="text-[13px] font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors flex-1">
-                  {news.headline}
-                </h4>
+                  <div className="flex-1 min-w-0">
+                    {/* Author + time */}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[12px] font-semibold text-foreground">{post.author_name}</span>
+                      {post.author_verified && <span className="text-[9px] text-info">✓</span>}
+                      {post.author_handle && <span className="text-[10px] text-muted">{post.author_handle}</span>}
+                      <span className="text-[10px] text-muted flex items-center gap-1 ml-auto">
+                        <Clock size={9} />
+                        {timeAgo(post.posted_at)}
+                      </span>
+                    </div>
+
+                    {/* Content */}
+                    <p className="text-[12px] text-foreground/90 leading-relaxed line-clamp-3 whitespace-pre-line">{post.content}</p>
+
+                    {/* Symbols + category */}
+                    <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                      {(post.symbols || []).map(s => (
+                        <span key={s} className="text-[10px] font-bold text-primary bg-primary/8 px-1.5 py-0.5 rounded">{s}</span>
+                      ))}
+                      <span className={cn(
+                        'text-[10px] font-medium px-1.5 py-0.5 rounded capitalize',
+                        post.category === 'market' && 'bg-info/10 text-info',
+                        post.category === 'stock' && 'bg-purple/10 text-purple',
+                        post.category === 'regulation' && 'bg-warning/10 text-warning',
+                        post.category === 'ipo' && 'bg-success/10 text-success',
+                        post.category === 'breaking' && 'bg-danger/10 text-danger',
+                        post.category === 'analysis' && 'bg-purple/10 text-purple',
+                        (!post.category || post.category === 'general' || post.category === 'opinion') && 'bg-white/5 text-muted',
+                      )}>
+                        {post.category || 'general'}
+                      </span>
+                    </div>
+
+                    {/* Engagement + comment toggle */}
+                    <div className="flex items-center gap-3 mt-2">
+                      {post.likes_count > 0 && (
+                        <span className="text-[10px] text-muted flex items-center gap-1"><ThumbsUp size={10} />{post.likes_count}</span>
+                      )}
+                      <button
+                        onClick={() => toggleComments(post.id)}
+                        className="text-[10px] text-muted flex items-center gap-1 hover:text-foreground transition-colors"
+                      >
+                        <MessageCircle size={10} />
+                        Comment
+                      </button>
+                      {post.shares_count > 0 && (
+                        <span className="text-[10px] text-muted flex items-center gap-1"><Share2 size={10} />{post.shares_count}</span>
+                      )}
+                      {post.post_url && (
+                        <a href={post.post_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-muted flex items-center gap-1 hover:text-info transition-colors ml-auto">
+                          <ExternalLink size={10} />
+                          Source
+                        </a>
+                      )}
+                    </div>
+
+                    {/* Comments section */}
+                    {expandedComments.has(post.id) && <NewsCommentSection postId={post.id} />}
+                  </div>
+                </div>
               </div>
+            );
+          })}
+        </div>
+      )}
 
-              <p className="text-[11px] text-muted leading-relaxed mt-1 line-clamp-2">{news.summary}</p>
-
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                {news.symbol && (
-                  <span className="text-[10px] font-bold text-primary bg-primary/8 px-1.5 py-0.5 rounded">
-                    {news.symbol}
-                  </span>
-                )}
-                <span className={cn(
-                  'text-[10px] font-medium px-1.5 py-0.5 rounded',
-                  news.category === 'Market' && 'bg-info/10 text-info',
-                  news.category === 'Corporate' && 'bg-purple/10 text-purple',
-                  news.category === 'Regulation' && 'bg-warning/10 text-warning',
-                  news.category === 'IPO' && 'bg-success/10 text-success',
-                  news.category === 'Economy' && 'bg-gold/10 text-gold',
-                )}>
-                  {news.category}
-                </span>
-                <span className="text-[10px] text-muted flex items-center gap-1">
-                  <Clock size={9} />
-                  {timeAgo(news.published_at)}
-                </span>
-                <span className="text-[10px] text-muted/60">{news.source}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {MARKET_NEWS.length > 4 && (
+      {posts.length > 5 && (
         <button
           onClick={() => setShowAll(v => !v)}
           className="w-full mt-3 pt-3 border-t border-border text-xs font-medium text-primary hover:text-primary/80 flex items-center justify-center gap-1 transition-colors"
         >
-          {showAll ? 'Show less' : `View all ${MARKET_NEWS.length} articles`}
+          {showAll ? 'Show less' : `View all ${posts.length} posts`}
           <ChevronRight size={12} className={cn('transition-transform', showAll && 'rotate-90')} />
         </button>
       )}
@@ -427,8 +478,9 @@ function StockTable({ prices }: { prices: LivePrice[] }) {
               </tr>
             ) : (
               filtered.map((p, i) => {
-                const isGain = p.change_pct > 0;
-                const isLoss = p.change_pct < 0;
+                const changePct = p.change_pct ?? 0;
+                const isGain = changePct > 0;
+                const isLoss = changePct < 0;
                 return (
                   <tr
                     key={p.symbol}
@@ -455,7 +507,7 @@ function StockTable({ prices }: { prices: LivePrice[] }) {
                         isLoss && 'bg-danger/15 text-danger',
                         !isGain && !isLoss && 'bg-white/5 text-muted'
                       )}>
-                        {p.change_pct >= 0 ? '+' : ''}{p.change_pct.toFixed(2)}%
+                        {changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%
                       </span>
                     </td>
                     <td className="px-2 py-2.5 text-right text-[12px] text-muted font-num">{formatCurrency(p.high)}</td>

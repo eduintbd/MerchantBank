@@ -71,14 +71,12 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-// Public routes that don't need auth to load
-const PUBLIC_PATHS = ['/market'];
-
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
+
+  // Don't block /market while auth is loading
   const location = useLocation();
-  const isPublicRoute = PUBLIC_PATHS.some(p => location.pathname.startsWith(p));
-  if (loading && !isPublicRoute) return <LoadingScreen />;
+  if (loading && !location.pathname.startsWith('/market')) return <LoadingScreen />;
 
   return (
     <Routes>
@@ -86,7 +84,7 @@ function AppRoutes() {
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
       <Route path="/auth" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
 
-      {/* Public market page - no auth required */}
+      {/* Market page - open to everyone, no auth required */}
       <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
 
       {/* Protected routes */}
@@ -127,22 +125,7 @@ function AppRoutes() {
   );
 }
 
-function PublicRoutes() {
-  return (
-    <Routes>
-      <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
-    </Routes>
-  );
-}
-
 function AppShell() {
-  const location = useLocation();
-  const isPublicOnly = location.pathname.startsWith('/market');
-
-  if (isPublicOnly) {
-    return <PublicRoutes />;
-  }
-
   return (
     <AuthProvider>
       <AppRoutes />

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset='utf-8'>
+<title>HeroStock.AI x Monarch x Quant - Partnership Strategy</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1a1a2e; line-height: 1.6; font-size: 13px; }
+  h1 { font-size: 18px; color: #0f172a; border-bottom: 3px solid #05b804; padding-bottom: 8px; }
+  h2 { font-size: 15px; color: #1e293b; margin-top: 28px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+  h3 { font-size: 13px; color: #334155; margin-top: 20px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; }
+  th, td { border: 1px solid #e2e8f0; padding: 6px 10px; text-align: left; }
+  th { background: #f1f5f9; font-weight: 600; }
+  code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-size: 11px; }
+  pre { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 11px; }
+  strong { color: #0f172a; }
+  hr { border: none; border-top: 2px solid #e2e8f0; margin: 20px 0; }
+  @media print { body { margin: 20px; } }
+  @page { margin: 1.5cm; }
+</style>
+</head><body><h1>HeroStock.AI x Monarch Holdings Ltd. x Quant Fintech Limited — Partnership Strategy & API Integration Requirements</h1>
+
+<strong>Date:</strong> March 16, 2026
+<strong>From:</strong> HeroStock.AI (EduInt BD)
+<strong>To:</strong> Monarch Holdings Ltd. (DSE TREC Holder & Brokerage) & Quant Fintech Limited (Trading Platform & OMS Provider)
+<strong>Subject:</strong> Tri-Party API Integration Partnership for DSE Trading, Market Data & Investor Education Platform
+
+<hr>
+
+<h2>PAGE 1: STRATEGIC OVERVIEW</h2>
+
+<h3>1.1 Who We Are</h3>
+
+<strong>HeroStock.AI</strong> is Bangladesh's emerging investor education and portfolio management platform targeting first-time retail investors on the Dhaka Stock Exchange (DSE). We are building a full-stack fintech experience that combines:
+
+- <strong>Investor Education</strong> — Structured learning modules, quizzes, and certificates (BSEC compliance, fundamental analysis, technical analysis, Islamic finance/Halal investing)
+- <strong>AI-Powered Onboarding</strong> — Intelligent agent that guides new investors through KYC, risk profiling, and account setup
+- <strong>Social Intelligence</strong> — Automated social media aggregation (Twitter, Reddit, YouTube, Facebook, TikTok) scanning Bangladesh stock market sentiment every 30 minutes
+- <strong>Portfolio Tracking & Analysis</strong> — Real-time portfolio valuation, sector allocation, P&L tracking
+- <strong>Demo Trading</strong> — Paper trading environment for learners before going live
+- <strong>Marketing & Referral Engine</strong> — Gamified referral system, campaign management, and community growth tools
+
+<h3>1.2 Partner Roles</h3>
+
+<strong>Monarch Holdings Ltd.</strong> (monarchholdingsbd.com) — DSE TREC holder providing regulated brokerage services: BO account management, trade execution, settlement, IPO processing, custody services, and BSEC compliance. Monarch is the licensed broker through which all trades are executed.
+
+<strong>Quant Fintech Limited</strong> (quantfintech.ai) — Technology partner providing OMS (Order Management System), FIX protocol connectivity, and trading platform infrastructure (qTrader). Quant powers the technical layer that connects our platform to DSE/CSE via their certified OMS.
+
+<h3>1.3 What We Need from Monarch + Quant</h3>
+
+We are <strong>not</strong> building a brokerage or trading engine. We need Monarch as our <strong>licensed execution partner</strong> and Quant as our <strong>technology bridge</strong> — together providing the regulated, real-time infrastructure that powers our user-facing platform. Specifically:
+
+<tr><td>Capability</td><td>Priority</td><td>Description</td></tr>
+|---|---|---|
+<tr><td>Real-Time Market Data</td><td>P0</td><td>Live prices, indices (DSEX/DSES/DS30), market depth</td></tr>
+<tr><td>Historical Price Data</td><td>P0</td><td>OHLCV candles (1min, 5min, 1hr, 1D) for charting</td></tr>
+<tr><td>Fundamental Data</td><td>P1</td><td>EPS, P/E, NAV, dividend history, financial statements</td></tr>
+<tr><td>Order Execution API</td><td>P1</td><td>Buy/sell order placement via Quant OMS on behalf of Monarch-verified users</td></tr>
+<tr><td>Account/KYC Bridge</td><td>P2</td><td>BO account creation via Monarch, KYC status sync</td></tr>
+<tr><td>Portfolio Sync</td><td>P1</td><td>Real-time holdings, cash balance, transaction history</td></tr>
+<tr><td>IPO Subscription API</td><td>P2</td><td>Apply for IPOs on behalf of users</td></tr>
+<tr><td>News/Announcements Feed</td><td>P2</td><td>Official DSE filings, corporate announcements</td></tr>
+
+<h3>1.4 Value Proposition for Monarch & Quant</h3>
+
+<strong>For Monarch Holdings Ltd.:</strong>
+- <strong>New Client Acquisition</strong> — HeroStock.AI brings educated, KYC-ready investors directly into Monarch BO accounts. Our learning funnel converts curious users into active traders.
+- <strong>Reduced Support Load</strong> — Users arrive pre-educated on market basics, order types, and risk management through our certification program.
+- <strong>Increased Trading Volume</strong> — Social intelligence, AI-powered stock analysis, and community features keep users engaged and trading daily.
+- <strong>Young Demographic</strong> — Access to first-time investors (18-35) who are mobile-first and underserved by traditional brokers.
+
+<strong>For Quant Fintech Limited:</strong>
+- <strong>Platform Showcase</strong> — HeroStock.AI becomes a flagship consumer-facing product built on Quant's OMS infrastructure.
+- <strong>API Revenue</strong> — Monthly API licensing fee or per-transaction charges for OMS access.
+- <strong>Market Expansion</strong> — Proves Quant's technology can power B2C fintech apps, not just broker back-offices.
+- <strong>Revenue Share Model</strong> — Commission sharing on trades executed through our platform, premium subscription tiers.
+
+<hr>
+
+<h2>PAGE 2: TECHNICAL API REQUIREMENTS</h2>
+
+<h3>2.1 Real-Time Market Data API</h3>
+
+<strong>Endpoint Requirements:</strong>
+
+<pre>
+GET /api/v1/market/live-prices
+  → Returns: symbol, ltp, high, low, open, close, change, change_pct, volume, value, trades
+  → Refresh: WebSocket preferred, or REST polling at 5-second intervals
+  → Coverage: All DSE-listed instruments (400+ stocks)
+
+GET /api/v1/market/indices
+  → Returns: DSEX, DSES, DS30 current values, change, change_pct
+  → Refresh: Real-time or 10-second polling
+
+GET /api/v1/market/depth/:symbol
+  → Returns: Top 5 bid/ask levels with quantity
+  → Use case: Order book visualization in trading page
+
+WebSocket /ws/market
+  → Subscribe to symbol-level price ticks
+  → Subscribe to index updates
+  → Subscribe to trade notifications
+</pre>
+
+<strong>Data Format:</strong> JSON. We need consistent field naming across endpoints. Preferred schema:
+
+<pre>json
+{
+  "symbol": "GP",
+  "ltp": 345.50,
+  "high": 348.00,
+  "low": 342.10,
+  "open": 343.00,
+  "close_prev": 344.20,
+  "change": 1.30,
+  "change_pct": 0.3776,
+  "volume": 125430,
+  "value_traded": 43250000,
+  "trades": 1245,
+  "timestamp": "2026-03-16T10:30:00+06:00"
+}
+</pre>
+
+<h3>2.2 Historical Data API</h3>
+
+<pre>
+GET /api/v1/history/:symbol?interval=1D&from=2025-01-01&to=2026-03-16
+  → Returns: Array of OHLCV candles
+  → Intervals needed: 1min, 5min, 15min, 1hr, 1D, 1W, 1M
+  → Use case: TradingView-style charts, backtesting, technical indicators
+
+GET /api/v1/fundamentals/:symbol
+  → Returns: EPS, P/E, P/B, NAV, market_cap, sector, 52w_high, 52w_low,
+             dividend_yield, shares_outstanding, free_float
+  → Refresh: Daily
+
+GET /api/v1/financials/:symbol
+  → Returns: Income statement, balance sheet, cash flow (quarterly + annual)
+  → Use case: Fundamental analysis in learning modules
+</pre>
+
+<h3>2.3 Trading / Order Execution API</h3>
+
+<pre>
+POST /api/v1/orders
+  → Body: { symbol, side: "buy"|"sell", quantity, price, order_type: "limit"|"market", user_token }
+  → Returns: order_id, status, filled_qty, avg_price
+  → Auth: OAuth2 or API key per user (issued after KYC)
+
+GET /api/v1/orders/:order_id
+  → Returns: Order status, fill history
+
+DELETE /api/v1/orders/:order_id
+  → Cancel pending order
+
+GET /api/v1/portfolio
+  → Returns: Holdings array with symbol, qty, avg_cost, current_value, unrealized_pnl
+  → Also: cash_balance, total_value, margin_used
+
+GET /api/v1/transactions
+  → Returns: Trade history, deposits, withdrawals
+  → Pagination: cursor-based or offset
+</pre>
+
+<h3>2.4 Authentication & User Bridge</h3>
+
+<pre>
+POST /api/v1/auth/register
+  → Create trading account linked to HeroStock user
+  → Body: { herostock_user_id, full_name, email, phone, nid_number }
+
+POST /api/v1/auth/kyc-status
+  → Sync KYC verification status back to HeroStock
+  → Returns: { status: "pending"|"verified"|"rejected", bo_account_id }
+
+POST /api/v1/auth/token
+  → Exchange HeroStock session for Quant API token
+  → OAuth2 authorization_code flow preferred
+</pre>
+
+<h3>2.5 Integration Architecture</h3>
+
+<pre>
+┌─────────────────────┐       ┌────────────────────┐       ┌──────────────────┐
+│   HeroStock.AI      │       │  Quant Fintech Ltd │       │ Monarch Holdings │
+│   (Frontend + BFF)  │◄─────►│  (OMS + Tech)      │◄─────►│ (Licensed Broker)│
+│                     │ REST/ │                    │  FIX  │                  │
+│ • React SPA         │  WS   │ • qTrader OMS      │Protocol│ • TREC Holder    │
+│ • Supabase Backend  │       │ • Market Data Feed │       │ • BO Accounts    │
+│ • Edge Functions    │       │ • Order Routing    │       │ • Settlement     │
+│ • Social Scanner    │       │ • WebSocket Server │       │ • Custody (CDBL) │
+│ • Learning LMS      │       │ • API Gateway      │       │ • IPO Processing │
+│ • AI Onboarding     │       │                    │       │ • BSEC Compliance│
+└─────────────────────┘       └────────────────────┘       └──────────────────┘
+         │                              │                          │
+         └──────────── Supabase DB ─────┘                          │
+              (user profiles, learning                    DSE / CSE Exchange
+               progress, social posts)
+</pre>
+
+<strong>Our Supabase Edge Functions</strong> will act as a Backend-for-Frontend (BFF) layer — calling Quant's OMS APIs server-side, never exposing API keys to the browser. Orders flow: HeroStock → Quant OMS → Monarch → DSE.
+
+<hr>
+
+<h2>PAGE 3: COMMUNICATION PLAN & NEXT STEPS</h2>
+
+<h3>3.1 What We Need from Quant — Immediate (Week 1-2)</h3>
+
+<tr><td>#</td><td>Deliverable</td><td>Details</td></tr>
+|---|---|---|
+<tr><td>1</td><td><strong>API Documentation</strong></td><td>Full Swagger/OpenAPI spec for all available endpoints</td></tr>
+<tr><td>2</td><td><strong>Sandbox Environment</strong></td><td>Test API with mock data for development and demo trading</td></tr>
+<tr><td>3</td><td><strong>API Keys</strong></td><td>Sandbox credentials (API key + secret) for HeroStock dev team</td></tr>
+<tr><td>4</td><td><strong>WebSocket Spec</strong></td><td>Connection URL, subscription format, message schema</td></tr>
+<tr><td>5</td><td><strong>Rate Limits</strong></td><td>Requests per second/minute per endpoint</td></tr>
+<tr><td>6</td><td><strong>Data Dictionary</strong></td><td>Complete list of available fields, data types, update frequencies</td></tr>
+
+<h3>3.2 What We Provide to Quant — Immediate</h3>
+
+<tr><td>#</td><td>Deliverable</td><td>Details</td></tr>
+|---|---|---|
+<tr><td>1</td><td><strong>User Flow Diagrams</strong></td><td>How users onboard, learn, and start trading on our platform</td></tr>
+<tr><td>2</td><td><strong>Webhook Endpoints</strong></td><td>URLs for Quant to push order fills, KYC updates, price alerts</td></tr>
+<tr><td>3</td><td><strong>Branding Guidelines</strong></td><td>How Quant is presented to our users (co-branded or white-label)</td></tr>
+<tr><td>4</td><td><strong>Test Users</strong></td><td>5 test accounts for Quant to verify integration end-to-end</td></tr>
+<tr><td>5</td><td><strong>Traffic Projections</strong></td><td>Expected API call volumes at launch and 3/6/12 month milestones</td></tr>
+
+<h3>3.3 Integration Milestones</h3>
+
+<tr><td>Phase</td><td>Timeline</td><td>Scope</td><td>Dependencies</td></tr>
+|---|---|---|---|
+<tr><td><strong>Phase 1: Data</strong></td><td>Week 1-3</td><td>Replace our DSE scraper with Quant's real-time data API. Display live prices, indices, and charts powered by Quant.</td><td>API docs, sandbox keys</td></tr>
+<tr><td><strong>Phase 2: Portfolio</strong></td><td>Week 3-5</td><td>Portfolio sync — users see real holdings in HeroStock UI. Read-only initially.</td><td>Auth bridge, portfolio API</td></tr>
+<tr><td><strong>Phase 3: Trading</strong></td><td>Week 5-8</td><td>Order placement from HeroStock trading page. Buy/sell with limit orders.</td><td>Order API, KYC bridge, compliance review</td></tr>
+<tr><td><strong>Phase 4: Advanced</strong></td><td>Week 8-12</td><td>Market depth, IPO subscriptions, margin info, advanced order types, price alerts via WebSocket.</td><td>WebSocket, IPO API</td></tr>
+
+<h3>3.4 Commercial Discussion Points</h3>
+
+- <strong>Revenue Model:</strong> Commission sharing on executed trades? Flat monthly API fee? Hybrid?
+- <strong>SLA Requirements:</strong> 99.9% uptime for data APIs during market hours (Sun-Thu 10:00-14:30 BST)
+- <strong>Data Ownership:</strong> HeroStock retains user data (profiles, learning, social). Quant retains trading data. Shared: portfolio/order data accessible to both.
+- <strong>Compliance:</strong> BSEC regulatory requirements for API-based trading. Who holds the broker license? Is Quant providing a white-label broker service or acting as executing broker?
+- <strong>Exclusivity:</strong> Is this partnership exclusive or can HeroStock integrate with other data/broker providers?
+
+<h3>3.5 Key Contacts & Communication</h3>
+
+<tr><td>Role</td><td>HeroStock.AI</td><td>Quant Fintech Ltd.</td><td>Monarch Holdings Ltd.</td></tr>
+|---|---|---|---|
+<tr><td><strong>Project Lead</strong></td><td>[Your Name]</td><td>[TBD]</td><td>[TBD]</td></tr>
+<tr><td><strong>Technical Lead</strong></td><td>[Dev Lead]</td><td>[TBD]</td><td>[TBD]</td></tr>
+<tr><td><strong>Business/Commercial</strong></td><td>[BD Lead]</td><td>[TBD]</td><td>[TBD]</td></tr>
+
+<strong>Communication Channels:</strong>
+- <strong>Weekly Sync:</strong> 30-min video call every Sunday (pre-market) to review integration progress
+- <strong>Slack/Teams Channel:</strong> Shared channel for real-time technical questions
+- <strong>Email:</strong> Formal communications, contracts, and milestone sign-offs
+- <strong>Issue Tracker:</strong> Shared GitHub/Linear project for bug reports and feature requests
+
+<h3>3.6 Immediate Action Items</h3>
+
+<tr><td>#</td><td>Action</td><td>Owner</td><td>Due</td></tr>
+|---|---|---|---|
+<tr><td>1</td><td>Share this strategy note with Quant technical team</td><td>HeroStock</td><td>Today</td></tr>
+<tr><td>2</td><td>Schedule kickoff call</td><td>Both</td><td>This week</td></tr>
+<tr><td>3</td><td>Quant provides API documentation + sandbox access</td><td>Quant</td><td>Week 1</td></tr>
+<tr><td>4</td><td>HeroStock builds data adapter layer (Supabase Edge Function)</td><td>HeroStock</td><td>Week 2</td></tr>
+<tr><td>5</td><td>First live data flowing through Quant API on staging</td><td>Both</td><td>Week 3</td></tr>
+<tr><td>6</td><td>Sign partnership / API usage agreement</td><td>Both</td><td>Week 2</td></tr>
+
+<hr>
+
+*This document is confidential and intended for discussion between HeroStock.AI (EduInt BD), Monarch Holdings Ltd., and Quant Fintech Limited only.*
+
+<strong>HeroStock.AI</strong> — Empowering Bangladesh's Next Generation of Investors
+<strong>Monarch Holdings Ltd.</strong> — monarchholdingsbd.com
+<strong>Quant Fintech Limited</strong> — quantfintech.ai | quantbd.com
+</body></html>

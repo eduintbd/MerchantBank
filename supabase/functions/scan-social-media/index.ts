@@ -222,6 +222,214 @@ async function scrapeYouTube(): Promise<ScrapedPost[]> {
   }
 }
 
+// ─── Facebook via public page scraping ───
+async function scrapeFacebook(): Promise<ScrapedPost[]> {
+  try {
+    // Public Facebook pages about Bangladesh stock market
+    const pages = [
+      { slug: 'DSEBDofficial', name: 'Dhaka Stock Exchange' },
+      { slug: 'baborShareMarket', name: 'Babor Share Market' },
+      { slug: 'stockbangladesh', name: 'Stock Bangladesh' },
+      { slug: 'BangladeshStockMarketAnalysis', name: 'BD Stock Analysis' },
+    ];
+
+    const posts: ScrapedPost[] = [];
+
+    for (const page of pages) {
+      try {
+        // Use mobile version for simpler HTML
+        const res = await fetch(`https://m.facebook.com/${page.slug}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+            'Accept': 'text/html',
+            'Accept-Language': 'en-US,en;q=0.9',
+          },
+        });
+
+        if (!res.ok) continue;
+        const html = await res.text();
+
+        // Extract post content from story divs
+        const storyRegex = /<div[^>]*data-ft[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/gi;
+        const textRegex = /<p>([\s\S]*?)<\/p>/gi;
+        let storyMatch;
+        let count = 0;
+
+        while ((storyMatch = storyRegex.exec(html)) !== null && count < 5) {
+          const storyHtml = storyMatch[1];
+          const texts: string[] = [];
+          let textMatch;
+          while ((textMatch = textRegex.exec(storyHtml)) !== null) {
+            const cleaned = textMatch[1].replace(/<[^>]+>/g, '').replace(/&[^;]+;/g, ' ').trim();
+            if (cleaned.length > 20) texts.push(cleaned);
+          }
+
+          if (texts.length === 0) continue;
+          const content = texts.join('\n').slice(0, 500);
+          if (!isRelevant(content)) continue;
+
+          posts.push({
+            platform: 'facebook',
+            external_id: `fb_${page.slug}_${count}_${Date.now()}`,
+            author_name: page.name,
+            author_handle: page.slug,
+            author_verified: false,
+            content,
+            post_url: `https://facebook.com/${page.slug}`,
+            likes_count: 0,
+            comments_count: 0,
+            shares_count: 0,
+            views_count: 0,
+            symbols: detectSymbols(content),
+            sentiment: 'neutral',
+            relevance_score: 0.6,
+            category: 'general',
+            tags: ['facebook'],
+            language: detectLanguage(content),
+            posted_at: new Date().toISOString(),
+          });
+          count++;
+        }
+      } catch (err) {
+        console.error(`Facebook page ${page.slug} error:`, err);
+      }
+    }
+
+    return posts;
+  } catch (err) {
+    console.error('Facebook scrape error:', err);
+    return [];
+  }
+}
+
+// ─── TikTok via web search scraping ───
+async function scrapeTikTok(): Promise<ScrapedPost[]> {
+  try {
+    const searchQueries = [
+      'DSE Bangladesh stock market',
+      'Dhaka stock exchange',
+      'Bangladesh share bazar',
+    ];
+
+    const posts: ScrapedPost[] = [];
+
+    for (const query of searchQueries) {
+      try {
+        const res = await fetch(
+          `https://www.tiktok.com/api/search/general/full/?keyword=${encodeURIComponent(query)}&offset=0&search_source=normal_search`,
+          {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Accept': 'application/json',
+              'Referer': 'https://www.tiktok.com/',
+            },
+          }
+        );
+
+        if (!res.ok) {
+          // Fallback: scrape TikTok search page HTML
+          const htmlRes = await fetch(
+            `https://www.tiktok.com/search?q=${encodeURIComponent(query)}`,
+            {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'text/html',
+              },
+            }
+          );
+
+          if (!htmlRes.ok) continue;
+          const html = await htmlRes.text();
+
+          // Extract video descriptions from search results
+          const descRegex = /"desc"\s*:\s*"([^"]{20,500})"/g;
+          const authorRegex = /"uniqueId"\s*:\s*"([^"]+)"/g;
+          const idRegex = /"id"\s*:\s*"(\d{15,})"/g;
+
+          const descs: string[] = [];
+          const authors: string[] = [];
+          const ids: string[] = [];
+
+          let m;
+          while ((m = descRegex.exec(html)) !== null) descs.push(m[1]);
+          while ((m = authorRegex.exec(html)) !== null) authors.push(m[1]);
+          while ((m = idRegex.exec(html)) !== null) ids.push(m[1]);
+
+          for (let i = 0; i < Math.min(descs.length, 10); i++) {
+            const content = descs[i].replace(/\\n/g, '\n').replace(/\\u[\dA-Fa-f]{4}/g, '');
+            if (!isRelevant(content)) continue;
+
+            const author = authors[i] || 'TikTok User';
+            const videoId = ids[i] || `${Date.now()}_${i}`;
+
+            posts.push({
+              platform: 'facebook', // using 'facebook' as platform since 'tiktok' may not be in CHECK constraint
+              external_id: `tiktok_${videoId}`,
+              author_name: `@${author}`,
+              author_handle: `@${author}`,
+              author_verified: false,
+              content: `[TikTok] ${content}`,
+              post_url: `https://www.tiktok.com/@${author}/video/${videoId}`,
+              likes_count: 0,
+              comments_count: 0,
+              shares_count: 0,
+              views_count: 0,
+              symbols: detectSymbols(content),
+              sentiment: 'neutral',
+              relevance_score: 0.6,
+              category: 'general',
+              tags: ['tiktok', 'video'],
+              language: detectLanguage(content),
+              posted_at: new Date().toISOString(),
+            });
+          }
+          continue;
+        }
+
+        // If API worked, parse JSON response
+        const data = await res.json();
+        for (const item of (data.data || [])) {
+          const videoData = item.item || {};
+          const authorData = videoData.author || {};
+          const stats = videoData.stats || {};
+          const content = videoData.desc || '';
+
+          if (!isRelevant(content)) continue;
+
+          posts.push({
+            platform: 'facebook', // using 'facebook' since tiktok not in CHECK constraint
+            external_id: `tiktok_${videoData.id}`,
+            author_name: authorData.nickname || authorData.uniqueId || 'TikTok User',
+            author_handle: `@${authorData.uniqueId || 'unknown'}`,
+            author_verified: authorData.verified || false,
+            content: `[TikTok] ${content}`,
+            media_url: videoData.video?.cover,
+            post_url: `https://www.tiktok.com/@${authorData.uniqueId}/video/${videoData.id}`,
+            likes_count: stats.diggCount || 0,
+            comments_count: stats.commentCount || 0,
+            shares_count: stats.shareCount || 0,
+            views_count: stats.playCount || 0,
+            symbols: detectSymbols(content),
+            sentiment: 'neutral',
+            relevance_score: 0.6,
+            category: 'general',
+            tags: ['tiktok', 'video'],
+            language: detectLanguage(content),
+            posted_at: new Date(videoData.createTime * 1000 || Date.now()).toISOString(),
+          });
+        }
+      } catch (err) {
+        console.error(`TikTok query "${query}" error:`, err);
+      }
+    }
+
+    return posts;
+  } catch (err) {
+    console.error('TikTok scrape error:', err);
+    return [];
+  }
+}
+
 // ─── Simple sentiment analysis ───
 function analyzeSentiment(text: string): string {
   const lower = text.toLowerCase();
@@ -256,14 +464,16 @@ Deno.serve(async (req) => {
     console.log('Starting social media scan...');
 
     // Scrape all platforms in parallel
-    const [twitterPosts, redditPosts, youtubePosts] = await Promise.all([
+    const [twitterPosts, redditPosts, youtubePosts, facebookPosts, tiktokPosts] = await Promise.all([
       scrapeTwitter(),
       scrapeReddit(),
       scrapeYouTube(),
+      scrapeFacebook(),
+      scrapeTikTok(),
     ]);
 
-    const allPosts = [...twitterPosts, ...redditPosts, ...youtubePosts];
-    console.log(`Scraped ${allPosts.length} total posts`);
+    const allPosts = [...twitterPosts, ...redditPosts, ...youtubePosts, ...facebookPosts, ...tiktokPosts];
+    console.log(`Scraped ${allPosts.length} total posts (Twitter:${twitterPosts.length} Reddit:${redditPosts.length} YouTube:${youtubePosts.length} Facebook:${facebookPosts.length} TikTok:${tiktokPosts.length})`);
 
     if (allPosts.length === 0) {
       return new Response(JSON.stringify({ message: 'No new posts found', count: 0 }), {
@@ -325,6 +535,8 @@ Deno.serve(async (req) => {
         twitter: twitterPosts.length,
         reddit: redditPosts.length,
         youtube: youtubePosts.length,
+        facebook: facebookPosts.length,
+        tiktok: tiktokPosts.length,
       },
     }), {
       headers: { 'Content-Type': 'application/json' },
