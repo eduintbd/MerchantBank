@@ -41,7 +41,7 @@ export function MarketHistoryPage() {
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3 mb-1">
           <BarChart3 size={24} className="text-info" />
@@ -74,7 +74,7 @@ export function MarketHistoryPage() {
         <div className="h-[300px] sm:h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={filteredData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
               <XAxis
                 dataKey="date"
                 tick={{ fontSize: 11, fill: '#888' }}
@@ -92,7 +92,7 @@ export function MarketHistoryPage() {
               <Tooltip
                 contentStyle={{
                   backgroundColor: 'rgba(17,17,17,0.95)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  border: '1px solid rgba(0,0,0,0.08)',
                   borderRadius: '12px',
                   fontSize: '12px',
                 }}

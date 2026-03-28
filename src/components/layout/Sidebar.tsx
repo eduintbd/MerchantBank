@@ -57,10 +57,11 @@ export function TopNav() {
     <>
       {/* Desktop Top Header */}
       <header className="sticky top-0 z-40 hidden sm:block" style={{
-        background: 'rgba(19,25,40,0.92)',
+        background: 'rgba(255,255,255,0.95)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
       }}>
         <div className="px-6 md:px-8 lg:px-12">
           <div className="flex items-center justify-between h-[60px]">
@@ -128,10 +129,11 @@ export function TopNav() {
 
       {/* Mobile Top Header */}
       <header className="fixed top-0 left-0 right-0 z-50 sm:hidden" style={{
-        background: 'rgba(19,25,40,0.95)',
+        background: 'rgba(255,255,255,0.95)',
+        boxShadow: '0 -1px 3px rgba(0,0,0,0.04)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
       }}>
         <div className="flex items-center justify-between px-3.5" style={{ height: 52 }}>
           <div className="flex items-center gap-2.5">
@@ -145,7 +147,7 @@ export function TopNav() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-300"
-              style={{ background: mobileMenuOpen ? 'rgba(255,255,255,0.08)' : 'transparent' }}
+              style={{ background: mobileMenuOpen ? 'rgba(0,0,0,0.05)' : 'transparent' }}
             >
               {mobileMenuOpen ? <X size={20} className="text-foreground" /> : <Menu size={20} className="text-foreground" />}
             </button>
@@ -160,15 +162,15 @@ export function TopNav() {
           <div
             className="absolute top-[52px] left-0 right-0 max-h-[80vh] overflow-y-auto"
             style={{
-              background: '#1D263A',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+              background: '#ffffff',
+              borderBottom: '1px solid rgba(0,0,0,0.08)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
               animation: 'slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             onClick={e => e.stopPropagation()}
           >
             {/* User info */}
-            <div className="px-4 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="px-4 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold">
                   {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
@@ -195,7 +197,7 @@ export function TopNav() {
                         ? 'text-primary'
                         : 'text-muted hover:text-foreground'
                     )}
-                    style={isActive ? { background: 'rgba(5,184,4,0.08)' } : undefined}
+                    style={isActive ? { background: 'rgba(5,160,3,0.06)' } : undefined}
                   >
                     {isActive && <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary" />}
                     <item.icon size={18} strokeWidth={1.8} />
@@ -206,7 +208,7 @@ export function TopNav() {
             </div>
 
             {/* Sign out */}
-            <div className="px-5 py-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="px-5 py-4" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
               <button
                 onClick={() => { signOut(); setMobileMenuOpen(false); }}
                 className="flex items-center gap-3 text-sm font-medium text-danger w-full py-2 hover:bg-danger/8 rounded-lg px-2 -mx-2 transition-colors duration-300"
@@ -221,10 +223,11 @@ export function TopNav() {
 
       {/* Mobile Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden" style={{
-        background: 'rgba(19,25,40,0.95)',
+        background: 'rgba(255,255,255,0.95)',
+        boxShadow: '0 -1px 3px rgba(0,0,0,0.04)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
+        borderTop: '1px solid rgba(0,0,0,0.08)',
       }}>
         <div className="h-16 grid grid-cols-5 safe-bottom">
           {mobileBottomItems.map(item => {

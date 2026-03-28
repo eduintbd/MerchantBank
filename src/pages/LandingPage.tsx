@@ -2,25 +2,26 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMarketData } from '@/hooks/useMarketData';
 import { formatNumber, formatVolume, cn } from '@/lib/utils';
+import { GlobalExchangeComparison } from '@/components/dashboard/GlobalExchangeComparison';
 import {
   TrendingUp, Briefcase, GraduationCap, ShieldCheck, Users, BarChart3,
   ArrowRight, Activity, ArrowUpCircle, ArrowDownCircle, CheckCircle2,
   ChevronRight, BookOpen, Zap, Lock, Menu, X,
 } from 'lucide-react';
 
-/* ─── Design tokens (QuantFintech-inspired) ──────────────── */
+/* ─── Design tokens (Light theme) ──────────────── */
 const T = {
-  bg:        '#131928',
-  bgLight:   '#1D263A',
-  bgCard:    'rgba(29,38,58,0.65)',
-  accent:    '#05b804',
-  accentDim: 'rgba(5,184,4,0.15)',
+  bg:        '#ffffff',
+  bgLight:   '#f8f9fb',
+  bgCard:    'rgba(255,255,255,0.85)',
+  accent:    '#05a003',
+  accentDim: 'rgba(5,160,3,0.08)',
   blue:      '#2563eb',
   white:     '#ffffff',
-  title:     '#ffffff',
-  titleSub:  'rgba(255,255,255,0.5)',
-  text:      'rgba(255,255,255,0.65)',
-  border:    'rgba(255,255,255,0.08)',
+  title:     '#111827',
+  titleSub:  '#6b7280',
+  text:      '#374151',
+  border:    'rgba(0,0,0,0.08)',
   fontTitle: "'Ubuntu', sans-serif",
   fontBody:  "'Inter', sans-serif",
   fontMono:  "'JetBrains Mono', monospace",
@@ -86,9 +87,10 @@ export function LandingPage() {
       {/* ══════════ NAVBAR ══════════ */}
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: 'rgba(19,25,40,0.85)',
+        background: 'rgba(255,255,255,0.90)',
         backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
         borderBottom: `1px solid ${T.border}`,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
       }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
@@ -114,7 +116,7 @@ export function LandingPage() {
           {/* CTAs + Hamburger */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Link to="/auth" className="hidden sm:block" style={{ padding: '8px 18px', fontSize: 14, fontWeight: 500, color: T.titleSub, textDecoration: 'none', borderRadius: T.radiusSm, transition: 'color .3s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = T.white)}
+              onMouseEnter={e => (e.currentTarget.style.color = T.title)}
               onMouseLeave={e => (e.currentTarget.style.color = T.titleSub as string)}>
               Login
             </Link>
@@ -129,7 +131,7 @@ export function LandingPage() {
             </Link>
             <button onClick={() => setMobileNav(!mobileNav)} className="md:hidden"
               style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: T.radiusSm, border: 'none', background: mobileNav ? T.bgLight : 'transparent', cursor: 'pointer', transition: 'background .3s' }}>
-              {mobileNav ? <X size={22} color={T.white} /> : <Menu size={22} color={T.white} />}
+              {mobileNav ? <X size={22} color={T.title} /> : <Menu size={22} color={T.title} />}
             </button>
           </div>
         </div>
@@ -175,7 +177,7 @@ export function LandingPage() {
           position: 'absolute', top: '50%', left: '50%',
           transform: 'translate(-50%, -50%)',
           width: '60vmin', maxWidth: 600, height: 'auto',
-          objectFit: 'contain', opacity: 0.06, zIndex: 0, pointerEvents: 'none',
+          objectFit: 'contain', opacity: 0.04, zIndex: 0, pointerEvents: 'none',
         }} />
 
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', padding: '48px 0', position: 'relative', zIndex: 2 }}>
@@ -184,7 +186,7 @@ export function LandingPage() {
             {/* Left: Copy */}
             <div>
               {/* Badge */}
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 16px', borderRadius: 999, background: T.accentDim, border: `1px solid rgba(5,184,4,0.25)`, marginBottom: 32 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 16px', borderRadius: 999, background: T.accentDim, border: `1px solid rgba(5,160,3,0.20)`, marginBottom: 32 }}>
                 <span style={{ width: 7, height: 7, borderRadius: '50%', background: T.accent, display: 'inline-block', animation: 'pulse 2s infinite' }} />
                 <span style={{ fontSize: 12, fontWeight: 600, color: T.accent }}>Live on Dhaka Stock Exchange</span>
               </div>
@@ -216,12 +218,12 @@ export function LandingPage() {
                 </Link>
                 <a href="#market" style={{
                   padding: '14px 30px', fontSize: 15, fontWeight: 600, color: T.titleSub,
-                  background: 'rgba(255,255,255,0.05)', border: `1px solid ${T.border}`,
+                  background: 'rgba(0,0,0,0.03)', border: `1px solid ${T.border}`,
                   borderRadius: 12, textDecoration: 'none',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   transition: 'border-color .3s',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)')}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)')}
                   onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}>
                   <BarChart3 size={16} /> Live Market
                 </a>
@@ -243,7 +245,7 @@ export function LandingPage() {
               {/* Hero image */}
               <img src="/herostock-logo.jpeg" alt="HeroStock.AI — Fintech Bangladesh"
                 className="w-48 sm:w-64 lg:w-72"
-                style={{ height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 16px 40px rgba(0,0,0,0.4))', borderRadius: T.radius }} />
+                style={{ height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 16px 40px rgba(0,0,0,0.12))', borderRadius: T.radius }} />
 
               {/* Market card */}
               <div style={{ width: '100%' }}>
@@ -252,7 +254,7 @@ export function LandingPage() {
                   backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
                   borderRadius: 20, padding: 24,
                   border: `1px solid ${T.border}`,
-                  boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                  boxShadow: '0 20px 60px rgba(0,0,0,0.06)',
                 }}>
                   {/* Card header */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -267,7 +269,7 @@ export function LandingPage() {
                       {/* Indices */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
                         {[dsex, dses, ds30].filter(Boolean).map(idx => (
-                          <div key={idx!.index_name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', borderRadius: 12, background: 'rgba(255,255,255,0.04)' }}>
+                          <div key={idx!.index_name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', borderRadius: 12, background: 'rgba(0,0,0,0.03)' }}>
                             <div>
                               <div style={{ fontSize: 13, fontWeight: 700, color: T.title }}>{idx!.index_name}</div>
                               <div style={{ fontSize: 10, color: T.titleSub, marginTop: 1 }}>Dhaka Stock Exchange</div>
@@ -276,7 +278,7 @@ export function LandingPage() {
                               <div style={{ fontSize: 14, fontWeight: 700, fontFamily: T.fontMono, color: T.title }}>
                                 {idx!.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                               </div>
-                              <div style={{ fontSize: 12, fontWeight: 600, fontFamily: T.fontMono, color: idx!.change_pct >= 0 ? T.accent : '#ef4444', marginTop: 1 }}>
+                              <div style={{ fontSize: 12, fontWeight: 600, fontFamily: T.fontMono, color: idx!.change_pct >= 0 ? T.accent : '#dc2626', marginTop: 1 }}>
                                 {idx!.change_pct >= 0 ? '+' : ''}{idx!.change_pct.toFixed(2)}%
                               </div>
                             </div>
@@ -290,14 +292,14 @@ export function LandingPage() {
                           <div style={{ fontSize: 22, fontWeight: 800, color: T.accent, fontFamily: T.fontMono }}>{market.stats.advancers}</div>
                           <div style={{ fontSize: 10, fontWeight: 700, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 2 }}>Advancers</div>
                         </div>
-                        <div style={{ padding: '12px 8px', borderRadius: 12, background: 'rgba(239,68,68,0.12)', textAlign: 'center' }}>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: '#ef4444', fontFamily: T.fontMono }}>{market.stats.decliners}</div>
-                          <div style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 2 }}>Decliners</div>
+                        <div style={{ padding: '12px 8px', borderRadius: 12, background: 'rgba(220,38,38,0.08)', textAlign: 'center' }}>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: '#dc2626', fontFamily: T.fontMono }}>{market.stats.decliners}</div>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 2 }}>Decliners</div>
                         </div>
                       </div>
 
                       {/* Total volume */}
-                      <div style={{ marginTop: 10, padding: '10px 14px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ marginTop: 10, padding: '10px 14px', borderRadius: 12, background: 'rgba(0,0,0,0.03)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span style={{ fontSize: 12, color: T.titleSub, fontWeight: 500 }}>Total Volume</span>
                         <span style={{ fontSize: 13, fontWeight: 700, fontFamily: T.fontMono, color: T.title }}>{formatVolume(market.stats.totalVolume)}</span>
                       </div>
@@ -305,7 +307,7 @@ export function LandingPage() {
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {[1, 2, 3, 4, 5].map(i => (
-                        <div key={i} style={{ height: 52, borderRadius: 12, background: 'rgba(255,255,255,0.05)', animation: 'pulse 2s infinite' }} />
+                        <div key={i} style={{ height: 52, borderRadius: 12, background: 'rgba(0,0,0,0.03)', animation: 'pulse 2s infinite' }} />
                       ))}
                     </div>
                   )}
@@ -340,13 +342,13 @@ export function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, maxWidth: 960, margin: '0 auto' }} className="sm:!grid-cols-4 sm:!gap-20">
             {PRICING.map((p, i) => (
               <div key={p.label} style={{
-                border: i === 0 ? `1.5px solid rgba(5,184,4,0.3)` : `1px solid ${T.border}`,
+                border: i === 0 ? `1.5px solid rgba(5,160,3,0.25)` : `1px solid ${T.border}`,
                 borderRadius: 20, padding: '28px 16px', textAlign: 'center',
                 background: i === 0 ? T.accentDim : 'rgba(255,255,255,0.02)',
                 transition: 'transform .3s, border-color .3s',
               }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = i === 0 ? 'rgba(5,184,4,0.3)' : T.border; }}>
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.15)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = i === 0 ? 'rgba(5,160,3,0.25)' : T.border; }}>
                 <div style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, color: T.accent, fontFamily: T.fontMono, letterSpacing: '-0.03em' }}>{p.value}</div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: T.title, marginTop: 12 }}>{p.label}</div>
                 <div style={{ fontSize: 12, color: T.titleSub, marginTop: 4 }}>{p.sub}</div>
@@ -365,7 +367,7 @@ export function LandingPage() {
               <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 700, color: T.title, margin: 0 }}>Today's Market</h2>
               <p style={{ color: T.titleSub, fontSize: 14, marginTop: 6 }}>Dhaka Stock Exchange — updates every 30s</p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: T.accent, background: T.accentDim, padding: '6px 14px', borderRadius: 999, border: '1px solid rgba(5,184,4,0.25)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: T.accent, background: T.accentDim, padding: '6px 14px', borderRadius: 999, border: '1px solid rgba(5,160,3,0.20)' }}>
               <Activity size={12} /> <span>Live</span>
             </div>
           </div>
@@ -382,7 +384,7 @@ export function LandingPage() {
                       borderRadius: T.radius, padding: '24px', border: `1px solid ${T.border}`,
                       transition: 'border-color .3s',
                     }}
-                      onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)')}
+                      onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.15)')}
                       onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
@@ -395,7 +397,7 @@ export function LandingPage() {
                           <TrendingUp size={18} color={colors[i]} />
                         </div>
                       </div>
-                      <div style={{ marginTop: 12, fontSize: 14, fontWeight: 700, fontFamily: T.fontMono, color: idx!.change_pct >= 0 ? T.accent : '#ef4444' }}>
+                      <div style={{ marginTop: 12, fontSize: 14, fontWeight: 700, fontFamily: T.fontMono, color: idx!.change_pct >= 0 ? T.accent : '#dc2626' }}>
                         {idx!.change_pct >= 0 ? '+' : ''}{idx!.change_pct.toFixed(2)}%
                       </div>
                     </div>
@@ -409,7 +411,7 @@ export function LandingPage() {
                   { label: 'Total Volume', value: formatVolume(market.stats.totalVolume), Icon: BarChart3, accent: T.blue },
                   { label: 'Total Trades', value: formatNumber(market.stats.totalTrades), Icon: Activity, accent: '#f59e0b' },
                   { label: 'Advancers', value: String(market.stats.advancers), Icon: ArrowUpCircle, accent: T.accent },
-                  { label: 'Decliners', value: String(market.stats.decliners), Icon: ArrowDownCircle, accent: '#ef4444' },
+                  { label: 'Decliners', value: String(market.stats.decliners), Icon: ArrowDownCircle, accent: '#dc2626' },
                 ].map(s => (
                   <div key={s.label} style={{
                     background: T.bgCard, backdropFilter: 'blur(12px)',
@@ -427,9 +429,23 @@ export function LandingPage() {
             </>
           ) : (
             <div style={{ display: 'grid', gap: 16 }} className="grid-cols-1 sm:grid-cols-3 sm:gap-20">
-              {[1, 2, 3].map(i => <div key={i} style={{ height: 120, borderRadius: T.radius, background: 'rgba(255,255,255,0.04)', animation: 'pulse 2s infinite' }} />)}
+              {[1, 2, 3].map(i => <div key={i} style={{ height: 120, borderRadius: T.radius, background: 'rgba(0,0,0,0.03)', animation: 'pulse 2s infinite' }} />)}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ══════════ GLOBAL EXCHANGE COMPARISON ══════════ */}
+      <section style={{ padding: 'clamp(56px, 8vw, 96px) 0', background: T.bg }}>
+        <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>Global Markets</div>
+            <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 700, color: T.title, letterSpacing: '-0.02em', margin: '0 0 14px' }}>Stock Exchange Comparison</h2>
+            <p style={{ fontSize: 16, color: T.titleSub, maxWidth: 520, margin: '0 auto' }}>How the world's top exchanges stack up — NASDAQ, DSE, PSX, BSE &amp; CSE.</p>
+          </div>
+          <div style={{ borderRadius: 18, border: `1px solid ${T.border}`, overflow: 'hidden', background: T.bgCard, backdropFilter: 'blur(12px)' }}>
+            <GlobalExchangeComparison variant="dark" />
+          </div>
         </div>
       </section>
 
@@ -445,10 +461,10 @@ export function LandingPage() {
             {WHY.map(w => (
               <div key={w.title} style={{
                 padding: '28px 24px', borderRadius: 18,
-                border: `1px solid ${T.border}`, background: 'rgba(255,255,255,0.02)',
+                border: `1px solid ${T.border}`, background: 'rgba(0,0,0,0.01)',
                 transition: 'border-color .3s, transform .3s',
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(5,184,4,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(5,160,3,0.20)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.transform = 'translateY(0)'; }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: T.accentDim, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
                   <w.icon size={20} color={T.accent} />
@@ -477,7 +493,7 @@ export function LandingPage() {
                 border: `1px solid ${T.border}`,
                 transition: 'border-color .3s, transform .3s',
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.15)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.transform = 'translateY(0)'; }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: T.accentDim, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
                   <f.icon size={20} color={T.accent} />
@@ -495,8 +511,8 @@ export function LandingPage() {
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto' }}>
           <div style={{
             borderRadius: 24, padding: 'clamp(32px, 5vw, 56px)',
-            background: 'linear-gradient(135deg, rgba(5,184,4,0.12) 0%, rgba(37,99,235,0.12) 100%)',
-            border: `1px solid rgba(5,184,4,0.2)`,
+            background: 'linear-gradient(135deg, rgba(5,160,3,0.06) 0%, rgba(37,99,235,0.06) 100%)',
+            border: `1px solid rgba(5,160,3,0.15)`,
             display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 28,
           }}>
             <div style={{ flex: '1 1 320px' }}>
@@ -543,10 +559,10 @@ export function LandingPage() {
             </Link>
             <Link to="/auth" style={{
               padding: '14px 28px', fontSize: 15, fontWeight: 600, color: T.titleSub,
-              background: 'rgba(255,255,255,0.05)', border: `1px solid ${T.border}`,
+              background: 'rgba(0,0,0,0.03)', border: `1px solid ${T.border}`,
               borderRadius: 12, textDecoration: 'none', transition: 'border-color .3s',
             }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)')}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}>
               Login
             </Link>

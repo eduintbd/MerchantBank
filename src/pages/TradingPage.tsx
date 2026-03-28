@@ -51,7 +51,7 @@ export function TradingPage() {
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Trading Terminal</h1>
         <p className="text-muted text-sm sm:text-base mt-1">Buy and sell DSE listed stocks in real time</p>
@@ -67,7 +67,7 @@ export function TradingPage() {
               placeholder="Search by symbol or company name..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-12 pr-5 py-3.5 bg-white/[0.04] border border-border rounded-2xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 shadow-[var(--shadow-card)] transition-all"
+              className="w-full pl-12 pr-5 py-3.5 bg-gray-50 border border-border rounded-2xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 shadow-[var(--shadow-card)] transition-all"
             />
           </div>
 
@@ -75,7 +75,7 @@ export function TradingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-[11px] uppercase tracking-wider text-muted border-b border-border bg-white/[0.02]">
+                  <tr className="text-left text-[11px] uppercase tracking-wider text-muted border-b border-border bg-gray-50/80">
                     <th className="px-5 sm:px-6 py-3.5 font-medium">Symbol</th>
                     <th className="px-3 py-3.5 font-medium text-right">Price</th>
                     <th className="px-3 py-3.5 font-medium text-right">Change</th>
@@ -104,7 +104,7 @@ export function TradingPage() {
                           'border-b border-border/50 last:border-0 cursor-pointer transition-all duration-150 relative',
                           selectedStock?.id === stock.id
                             ? 'bg-primary/5 ring-1 ring-inset ring-primary/15'
-                            : idx % 2 === 0 ? 'bg-transparent hover:bg-white/[0.04]' : 'bg-white/[0.02] hover:bg-white/[0.04]'
+                            : idx % 2 === 0 ? 'bg-transparent hover:bg-gray-50' : 'bg-gray-50/80 hover:bg-gray-50'
                         )}
                         onClick={() => handleSelectStock(stock)}
                       >
@@ -174,7 +174,7 @@ export function TradingPage() {
             <div className="px-5 sm:px-6 py-5">
               {!selectedStock ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
                     <ShoppingCart size={28} className="text-muted" />
                   </div>
                   <p className="text-sm text-muted font-medium">Select a stock to trade</p>
@@ -183,7 +183,7 @@ export function TradingPage() {
               ) : (
                 <div className="space-y-4">
                   {/* Buy/Sell Toggle */}
-                  <div className="flex gap-1.5 p-1.5 bg-white/[0.04] rounded-xl">
+                  <div className="flex gap-1.5 p-1.5 bg-gray-50 rounded-xl">
                     <button
                       onClick={() => setOrderType('buy')}
                       className={cn(
@@ -205,7 +205,7 @@ export function TradingPage() {
                   </div>
 
                   {/* Stock Info */}
-                  <div className="p-4 bg-white/[0.04] rounded-xl space-y-2.5 border border-border/50">
+                  <div className="p-4 bg-gray-50 rounded-xl space-y-2.5 border border-border/50">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted">Current Price</span>
                       <span className="font-num font-semibold text-foreground">{formatCurrency(selectedStock.last_price)}</span>

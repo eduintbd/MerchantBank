@@ -83,7 +83,7 @@ export function AdminOrdersPage() {
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8 space-y-6 sm:space-y-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8 space-y-6 sm:space-y-8">
       {/* ========== HEADER ========== */}
       <div className="flex items-center justify-between">
         <div>
@@ -297,7 +297,7 @@ export function AdminOrdersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="text-left text-[10px] text-muted uppercase tracking-wider border-b border-border bg-white/[0.02]">
+                <tr className="text-left text-[10px] text-muted uppercase tracking-wider border-b border-border bg-gray-50/80">
                   <th className="px-4 sm:px-5 py-3 font-medium">Investor</th>
                   <th className="px-3 py-3 font-medium">Stock</th>
                   <th className="px-3 py-3 font-medium">Type</th>
@@ -330,7 +330,7 @@ export function AdminOrdersPage() {
                     <tr
                       key={order.id}
                       className={cn(
-                        'border-b border-border/30 last:border-0 hover:bg-white/[0.03] transition-colors',
+                        'border-b border-border/30 last:border-0 hover:bg-gray-50/50 transition-colors',
                         tab === 'pending' && 'bg-warning/[0.02]'
                       )}
                     >

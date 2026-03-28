@@ -6,12 +6,13 @@ import { useNewsComments, useCreateNewsComment } from '@/hooks/useNewsComments';
 import { MarketIndexCards } from '@/components/dashboard/MarketIndexCards';
 import { MarketStrength } from '@/components/dashboard/MarketStrength';
 import { MarketSentiment } from '@/components/dashboard/MarketSentiment';
+import { GlobalExchangeComparison } from '@/components/dashboard/GlobalExchangeComparison';
 import { Card } from '@/components/ui/Card';
 import { formatCurrency, formatVolume, formatValueBn, formatDateTime, cn } from '@/lib/utils';
 import {
   BarChart3, Search, TrendingUp, TrendingDown, Activity,
   Layers, Newspaper, Clock, ExternalLink, ArrowRight,
-  ChevronRight, Zap, LogIn, MessageCircle, ThumbsUp, Share2, Send,
+  ChevronRight, Zap, LogIn, MessageCircle, ThumbsUp, Share2, Send, Globe,
 } from 'lucide-react';
 import type { LivePrice, TopMoverTab } from '@/types';
 
@@ -589,7 +590,7 @@ export function MarketPage() {
     return (
       <div className="min-h-screen bg-background">
         <PublicHeader isMarketOpen={false} />
-        <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
           <div className="animate-fade-in space-y-4">
             <div className="skeleton rounded-xl h-10 w-64" />
             <div className="skeleton rounded-xl h-[40px]" />
@@ -613,7 +614,7 @@ export function MarketPage() {
     <div className="min-h-screen bg-background">
       <PublicHeader isMarketOpen={isMarketOpen} />
 
-      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
         <div className="animate-fade-in space-y-5">
 
           {/* Page Header */}
@@ -720,6 +721,16 @@ export function MarketPage() {
                 <p className="text-xl font-bold font-num">{data.stats.totalStocks}</p>
               </div>
             </div>
+          </Card>
+
+          {/* Global Exchange Comparison */}
+          <Card>
+            <div className="flex items-center gap-2 mb-4">
+              <Globe size={16} className="text-info" />
+              <h3 className="text-sm font-semibold tracking-wide">Global Exchange Comparison</h3>
+              <span className="text-[10px] text-muted bg-surface px-2 py-0.5 rounded-full">NASDAQ vs DSE vs PSX vs BSE vs CSE</span>
+            </div>
+            <GlobalExchangeComparison variant="light" />
           </Card>
 
           {/* Full Stock Table */}

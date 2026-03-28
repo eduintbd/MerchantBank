@@ -36,7 +36,7 @@ export function AuthPage() {
       {/* Left side — Full background image */}
       <div style={{
         position: 'fixed', top: 0, left: 0, bottom: 0, width: '55%',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        background: 'linear-gradient(135deg, #f8f9fb 0%, #eef1f6 100%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         overflow: 'hidden',
       }} className="hidden md:flex">

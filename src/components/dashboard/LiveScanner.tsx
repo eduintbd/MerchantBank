@@ -81,7 +81,7 @@ export function LiveScanner() {
                 placeholder="Search..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-white/[0.04] border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
+                className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
               />
             </div>
             <div className="flex gap-1">
@@ -93,7 +93,7 @@ export function LiveScanner() {
                     'px-2.5 py-1.5 text-[10px] font-semibold rounded-md transition-all',
                     filter === f.key
                       ? 'bg-primary/15 text-primary border border-primary/30'
-                      : 'text-muted hover:text-foreground hover:bg-white/[0.04]'
+                      : 'text-muted hover:text-foreground hover:bg-gray-50'
                   )}
                 >
                   {f.label}
@@ -144,8 +144,8 @@ export function LiveScanner() {
                 <tr
                   key={stock.symbol}
                   className={cn(
-                    'border-t border-border/30 hover:bg-white/[0.03] transition-colors group',
-                    i % 2 === 1 && 'bg-white/[0.01]'
+                    'border-t border-border/30 hover:bg-blue-50/50 transition-colors group',
+                    i % 2 === 1 && 'bg-gray-50/50'
                   )}
                 >
                   <td className="pl-4 sm:pl-5 pr-3 py-2 relative">

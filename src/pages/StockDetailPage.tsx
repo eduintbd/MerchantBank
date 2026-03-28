@@ -95,7 +95,7 @@ export function StockDetailPage() {
 
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-3xl px-3 py-4 sm:px-4 sm:py-6 space-y-4">
+      <div className="mx-auto max-w-4xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8 space-y-4">
 
         {/* Back nav */}
         <Link to="/trading" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors">
@@ -134,13 +134,13 @@ export function StockDetailPage() {
           {/* Tags */}
           <div className="flex items-center gap-2 mb-4 flex-wrap">
             {stock.sector && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted border border-border">
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-0.5 text-xs text-muted border border-border">
                 <Activity size={11} /> {stock.sector}
               </span>
             )}
             <span className={cn(
               'ml-auto rounded-full px-2.5 py-0.5 text-xs font-medium',
-              volLabel === 'Stable' ? 'bg-white/[0.04] text-muted border border-border'
+              volLabel === 'Stable' ? 'bg-gray-50 text-muted border border-border'
                 : volLabel === 'Moderate' ? 'bg-warning/10 text-warning'
                 : 'bg-danger/10 text-danger'
             )}>
@@ -229,7 +229,7 @@ export function StockDetailPage() {
                   'rounded-lg px-2.5 py-1 text-xs font-medium transition-colors',
                   period === p
                     ? 'bg-info text-white'
-                    : 'text-muted hover:text-foreground hover:bg-white/[0.04]'
+                    : 'text-muted hover:text-foreground hover:bg-gray-50'
                 )}
               >{p}</button>
             ))}
@@ -247,23 +247,23 @@ export function StockDetailPage() {
                         <stop offset="95%" stopColor={isGain ? '#0ecb81' : '#f6465d'} stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                     <XAxis
                       dataKey="trade_date"
                       fontSize={10}
-                      tick={{ fill: 'rgba(255,255,255,0.3)' }}
+                      tick={{ fill: 'rgba(0,0,0,0.4)' }}
                       tickFormatter={(v: string) => { const d = new Date(v); return `${d.getDate()}/${d.getMonth()+1}`; }}
                       interval="preserveStartEnd"
                     />
                     <YAxis
                       fontSize={10}
-                      tick={{ fill: 'rgba(255,255,255,0.3)' }}
+                      tick={{ fill: 'rgba(0,0,0,0.4)' }}
                       domain={['auto','auto']}
                       tickFormatter={(v: number) => v.toFixed(0)}
                       width={45}
                     />
                     <Tooltip
-                      contentStyle={{ background: '#1D263A', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, fontSize: 11, color: '#fff', padding: '8px 12px' }}
+                      contentStyle={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 10, fontSize: 11, color: '#111827', padding: '8px 12px' }}
                       formatter={(value: any) => [`৳${Number(value).toFixed(2)}`, 'Close']}
                       labelFormatter={(label: any) => new Date(String(label)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     />
@@ -289,21 +289,21 @@ export function StockDetailPage() {
               {/* Period stats */}
               {periodStats && (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
-                  <div className="rounded-lg border border-border bg-white/[0.02] p-2.5">
+                  <div className="rounded-lg border border-border bg-gray-50/80 p-2.5">
                     <p className="text-[10px] text-muted uppercase tracking-wider">Period Change</p>
                     <p className={cn('text-sm font-bold font-num', parseFloat(periodStats.periodChange) >= 0 ? 'text-success' : 'text-danger')}>
                       {parseFloat(periodStats.periodChange) >= 0 ? '+' : ''}{periodStats.periodChange}%
                     </p>
                   </div>
-                  <div className="rounded-lg border border-border bg-white/[0.02] p-2.5">
+                  <div className="rounded-lg border border-border bg-gray-50/80 p-2.5">
                     <p className="text-[10px] text-muted uppercase tracking-wider">Period High</p>
                     <p className="text-sm font-bold text-success font-num">৳{periodStats.periodHigh.toFixed(2)}</p>
                   </div>
-                  <div className="rounded-lg border border-border bg-white/[0.02] p-2.5">
+                  <div className="rounded-lg border border-border bg-gray-50/80 p-2.5">
                     <p className="text-[10px] text-muted uppercase tracking-wider">Period Low</p>
                     <p className="text-sm font-bold text-danger font-num">৳{periodStats.periodLow.toFixed(2)}</p>
                   </div>
-                  <div className="rounded-lg border border-border bg-white/[0.02] p-2.5">
+                  <div className="rounded-lg border border-border bg-gray-50/80 p-2.5">
                     <p className="text-[10px] text-muted uppercase tracking-wider">Avg Volume</p>
                     <p className="text-sm font-bold text-foreground font-num">{formatVolume(periodStats.avgVolume)}</p>
                   </div>
@@ -364,7 +364,7 @@ export function StockDetailPage() {
                   className={cn(
                     'flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-colors',
                     activeTab === t.key
-                      ? 'border-b-2 border-info text-foreground bg-white/[0.02]'
+                      ? 'border-b-2 border-info text-foreground bg-gray-50/80'
                       : 'text-muted hover:text-foreground'
                   )}
                 >
@@ -397,7 +397,7 @@ export function StockDetailPage() {
                       { label: 'P/NAV', value: fundamentals?.nav && fundamentals.nav > 0 ? `${(stock.last_price / fundamentals.nav).toFixed(2)}x` : '—' },
                       { label: 'P/E x EPS', value: fundamentals?.eps && fundamentals?.pe_ratio ? `৳${(fundamentals.pe_ratio * fundamentals.eps).toFixed(2)}` : '—' },
                     ].map(item => (
-                      <div key={item.label} className="rounded-xl border border-border bg-white/[0.02] p-3">
+                      <div key={item.label} className="rounded-xl border border-border bg-gray-50/80 p-3">
                         <p className="text-[10px] text-muted uppercase tracking-wider mb-1">{item.label}</p>
                         <p className={cn('text-lg font-bold font-num', item.color || 'text-foreground')}>{item.value}</p>
                       </div>
@@ -407,7 +407,7 @@ export function StockDetailPage() {
 
                 {/* 52W Range Visual */}
                 {fundamentals?.week52_high && fundamentals?.week52_low && fundamentals.week52_high > fundamentals.week52_low && (
-                  <div className="rounded-xl border border-border bg-white/[0.02] p-4">
+                  <div className="rounded-xl border border-border bg-gray-50/80 p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-semibold text-muted uppercase tracking-wider">52 Week Range</span>
                       {fundamentals.nav && fundamentals.nav > 0 && (
@@ -445,7 +445,7 @@ export function StockDetailPage() {
                     <div className="overflow-x-auto rounded-xl border border-border">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-border bg-white/[0.02]">
+                          <tr className="border-b border-border bg-gray-50/80">
                             <th className="px-3 py-2.5 text-left text-xs font-semibold text-muted">Year</th>
                             <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted">Cash Div %</th>
                             <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted">Stock Div %</th>
@@ -455,7 +455,7 @@ export function StockDetailPage() {
                         </thead>
                         <tbody className="divide-y divide-border">
                           {dividends.slice(0, 5).map((d: any) => (
-                            <tr key={d.year} className="hover:bg-white/[0.02]">
+                            <tr key={d.year} className="hover:bg-gray-50/80">
                               <td className="px-3 py-2 font-semibold">{d.year}</td>
                               <td className="px-3 py-2 text-right text-success font-medium font-num">
                                 {d.cash_dividend != null ? `${d.cash_dividend}%` : '—'}
@@ -481,7 +481,7 @@ export function StockDetailPage() {
                     {/* Annual */}
                     {annualData.length > 0 && (
                       <div className="rounded-xl border border-border overflow-hidden mb-3">
-                        <div className="px-4 py-2 bg-white/[0.02] border-b border-border">
+                        <div className="px-4 py-2 bg-gray-50/80 border-b border-border">
                           <span className="text-xs font-bold text-muted uppercase tracking-wider">Annual</span>
                         </div>
                         <table className="w-full text-sm">
@@ -495,7 +495,7 @@ export function StockDetailPage() {
                           </thead>
                           <tbody>
                             {annualData.slice(0, 10).map((f: any, i: number) => (
-                              <tr key={i} className="border-b border-border/30 hover:bg-white/[0.02] transition-colors">
+                              <tr key={i} className="border-b border-border/30 hover:bg-gray-50/80 transition-colors">
                                 <td className="px-4 py-2.5 font-semibold text-foreground">{f.year}</td>
                                 <td className={cn('px-3 py-2.5 text-right font-num font-bold', f.eps >= 0 ? 'text-success' : 'text-danger')}>
                                   {f.eps?.toFixed(2) || '—'}
@@ -512,7 +512,7 @@ export function StockDetailPage() {
                     {/* Quarterly */}
                     {quarterlyData.length > 0 && (
                       <div className="rounded-xl border border-border overflow-hidden">
-                        <div className="px-4 py-2 bg-white/[0.02] border-b border-border">
+                        <div className="px-4 py-2 bg-gray-50/80 border-b border-border">
                           <span className="text-xs font-bold text-muted uppercase tracking-wider">Quarterly / Interim</span>
                         </div>
                         <table className="w-full text-sm">
@@ -526,10 +526,10 @@ export function StockDetailPage() {
                           </thead>
                           <tbody>
                             {quarterlyData.slice(0, 12).map((f: any, i: number) => (
-                              <tr key={i} className="border-b border-border/30 hover:bg-white/[0.02] transition-colors">
+                              <tr key={i} className="border-b border-border/30 hover:bg-gray-50/80 transition-colors">
                                 <td className="px-4 py-2.5 font-semibold text-foreground">{f.year}</td>
                                 <td className="px-3 py-2.5 text-muted">
-                                  <span className="px-2 py-0.5 rounded bg-white/[0.04] text-xs font-bold">{f.period_type}</span>
+                                  <span className="px-2 py-0.5 rounded bg-gray-50 text-xs font-bold">{f.period_type}</span>
                                 </td>
                                 <td className={cn('px-3 py-2.5 text-right font-num font-bold', f.eps >= 0 ? 'text-success' : 'text-danger')}>
                                   {f.eps?.toFixed(2) || '—'}

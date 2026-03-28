@@ -21,7 +21,7 @@ export function LearningPage() {
   if (selectedLesson && currentLesson) {
     return (
       <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
         <button onClick={() => setSelectedLesson(null)} className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} /> Back to lessons
         </button>
@@ -47,7 +47,7 @@ export function LearningPage() {
     const course = courses?.find(c => c.id === selectedCourse);
     return (
       <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
         <button onClick={() => setSelectedCourse(null)} className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} /> Back to courses
         </button>
@@ -96,7 +96,7 @@ export function LearningPage() {
   // Courses grid view
   return (
     <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4 sm:py-6 md:px-6 md:py-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Learning Center</h1>

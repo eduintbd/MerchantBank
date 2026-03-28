@@ -13,12 +13,12 @@ export function Card({ children, className, padding = true, hover, variant = 'de
   return (
     <div
       className={cn(
-        'rounded-2xl border transition-all duration-300',
-        variant === 'default' && 'border-border bg-card-solid shadow-[var(--shadow-card)]',
-        variant === 'elevated' && 'border-border bg-card-solid shadow-[var(--shadow-elevated)]',
+        'rounded-xl border transition-all duration-300',
+        variant === 'default' && 'border-gray-200 bg-white shadow-sm',
+        variant === 'elevated' && 'border-gray-200 bg-white shadow-md',
         variant === 'glass' && 'glass-card',
         padding && 'p-4 sm:p-5',
-        hover && 'hover:shadow-[var(--shadow-elevated)] hover:border-border-light hover:-translate-y-0.5 cursor-pointer',
+        hover && 'hover:shadow-md hover:border-gray-300 hover:-translate-y-0.5 cursor-pointer',
         className
       )}
       {...props}
@@ -44,50 +44,47 @@ export function StatCard({ title, value, subtitle, icon, iconColor, trend, gradi
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-border p-4 sm:p-5 min-h-[110px] sm:min-h-[128px] flex flex-col justify-between transition-all duration-300 hover-lift',
-        gradient || 'bg-card-solid',
-        'shadow-[var(--shadow-card)]',
+        'relative overflow-hidden rounded-xl border border-gray-200 p-4 sm:p-5 min-h-[110px] sm:min-h-[128px] flex flex-col justify-between transition-all duration-300 hover:shadow-md hover:-translate-y-0.5',
+        gradient || 'bg-white',
+        'shadow-sm',
         className
       )}
     >
-      {/* Icon — top right */}
       {icon && (
         <div className={cn(
           'absolute top-3.5 right-3.5 sm:top-4 sm:right-4 w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center',
-          iconColor || 'bg-white/[0.04] text-muted'
+          iconColor || 'bg-gray-100 text-gray-500'
         )}>
           {icon}
         </div>
       )}
 
-      {/* Content */}
       <div className="flex-1 flex flex-col justify-center">
-        <p className="text-[10px] sm:text-[11px] font-semibold text-muted uppercase tracking-wider mb-1.5">{title}</p>
-        <p className="text-2xl sm:text-3xl lg:text-[2rem] font-bold font-num leading-none text-foreground tracking-tight">{value}</p>
+        <p className="text-[10px] sm:text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">{title}</p>
+        <p className="text-2xl sm:text-3xl lg:text-[2rem] font-bold font-num leading-none text-gray-900 tracking-tight">{value}</p>
 
         <div className="flex items-center gap-2 mt-2">
           {trend && (
             <span className={cn(
-              'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold font-num',
+              'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-bold font-num',
               trend.value >= 0
-                ? 'bg-success/12 text-success'
-                : 'bg-danger/12 text-danger'
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'bg-red-100 text-red-700'
             )}>
               {trend.value >= 0 ? '+' : ''}{trend.value.toFixed(2)}%
             </span>
           )}
 
           {trend?.label && (
-            <span className="text-[10px] sm:text-[11px] text-muted">{trend.label}</span>
+            <span className="text-[10px] sm:text-[11px] text-gray-500">{trend.label}</span>
           )}
 
           {subtitle && !trend && (
-            <p className="text-[11px] sm:text-xs text-muted truncate">{subtitle}</p>
+            <p className="text-[11px] sm:text-xs text-gray-500 truncate">{subtitle}</p>
           )}
         </div>
       </div>
 
-      {/* Sparkline area */}
       {sparkline && (
         <div className="mt-2 h-8 sm:h-10 w-full">
           {sparkline}
