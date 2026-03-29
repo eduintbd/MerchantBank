@@ -81,7 +81,7 @@ export function NotificationSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background text-center py-12 animate-fade-in">
+      <div className="min-h-screen bg-white text-center py-12 animate-fade-in">
         <div className="w-8 h-8 border-2 border-info border-t-transparent rounded-full animate-spin mx-auto" />
         <p className="text-xs text-muted mt-3">Loading preferences...</p>
       </div>
@@ -89,8 +89,8 @@ export function NotificationSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+    <div className="min-h-screen bg-white animate-fade-in">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Notification Settings</h1>

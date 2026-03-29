@@ -3,20 +3,9 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import {
-  LayoutDashboard,
-  TrendingUp,
-  Briefcase,
-  GraduationCap,
-  ShieldCheck,
-  Users,
-  LogOut,
-  ClipboardList,
-  Menu,
-  X,
-  MessageSquare,
-  Rocket,
-  MoreHorizontal,
-  BarChart3,
+  LayoutDashboard, TrendingUp, Briefcase, GraduationCap, ShieldCheck,
+  Users, LogOut, ClipboardList, Menu, X, MessageSquare, Rocket,
+  MoreHorizontal, BarChart3,
 } from 'lucide-react';
 
 const baseNavItems = [
@@ -40,180 +29,92 @@ export function TopNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [...baseNavItems, ...(isAdmin ? [adminNavItem] : []), moreNavItem];
-
-  // Desktop shows all items
   const desktopNavItems = navItems;
-
-  // Mobile bottom nav: Home, Trade, Portfolio, Social, More
-  const mobileBottomItems = [
-    baseNavItems[0], // Home
-    baseNavItems[1], // Market
-    baseNavItems[2], // Trade
-    baseNavItems[3], // Portfolio
-    moreNavItem,     // More
-  ];
+  const mobileBottomItems = [baseNavItems[0], baseNavItems[1], baseNavItems[2], baseNavItems[3], moreNavItem];
 
   return (
     <>
-      {/* Desktop Top Header */}
-      <header className="sticky top-0 z-40 hidden sm:block" style={{
-        background: 'rgba(255,255,255,0.95)',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(0,0,0,0.08)',
-      }}>
-        <div className="px-6 md:px-8 lg:px-12">
-          <div className="flex items-center justify-between h-[60px]">
-            {/* Logo */}
-            <div className="flex items-center gap-3.5 shrink-0">
-              <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-9 h-9 rounded-xl object-cover" />
-              <div>
-                <span className="font-bold text-base text-foreground tracking-tight" style={{ fontFamily: "'Ubuntu', sans-serif" }}>HeroStock.AI</span>
-                <p className="text-[10px] text-muted leading-none mt-0.5">Investment Platform</p>
-              </div>
+      {/* Desktop Header */}
+      <header className="sticky top-0 z-40 hidden sm:block bg-white" style={{ borderBottom: '1px solid #e5e5e5' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <div className="flex items-center justify-between h-[56px]">
+            <div className="flex items-center gap-2.5 shrink-0">
+              <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-8 h-8 rounded object-cover" />
+              <span className="font-bold text-base text-[#333]">HeroStock.AI</span>
             </div>
 
-            {/* Desktop Nav Links */}
-            <nav className="flex items-center gap-0.5 lg:gap-1 overflow-x-auto scrollbar-hide">
+            <nav className="flex items-center gap-0 overflow-x-auto scrollbar-hide">
               {desktopNavItems.map(item => {
-                const isActive = item.to === '/dashboard'
-                  ? location.pathname === '/dashboard'
-                  : location.pathname.startsWith(item.to);
+                const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
                 return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.to === '/dashboard'}
-                    className={cn(
-                      'relative flex items-center gap-1.5 px-3 py-2 text-xs lg:text-sm font-medium transition-all duration-300 whitespace-nowrap group',
-                      isActive
-                        ? 'text-primary'
-                        : 'text-muted hover:text-foreground'
-                    )}
-                  >
-                    <item.icon size={15} strokeWidth={1.8} />
+                  <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'}
+                    className={cn('flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors',
+                      isActive ? 'border-[#0b8a00] text-[#0b8a00]' : 'border-transparent text-[#888] hover:text-[#333]'
+                    )}>
+                    <item.icon size={15} strokeWidth={2} />
                     <span>{item.label}</span>
-                    {/* Animated underline */}
-                    <span className={cn(
-                      'absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-primary transition-all duration-300 ease-out',
-                      isActive ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
-                    )} />
                   </NavLink>
                 );
               })}
             </nav>
 
-            {/* User + Sign Out */}
-            <div className="flex items-center gap-4 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-semibold shrink-0">
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-[#0b8a00] flex items-center justify-center text-white text-xs font-bold">
                   {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
-                <div className="hidden lg:block">
-                  <p className="text-sm font-medium text-foreground truncate max-w-[120px]">{user?.full_name || 'User'}</p>
-                </div>
+                <span className="text-sm font-semibold text-[#333] hidden lg:block truncate max-w-[120px]">{user?.full_name || 'User'}</span>
               </div>
-              <button
-                onClick={signOut}
-                className="flex items-center gap-1.5 text-muted hover:text-danger px-3 py-2 rounded-xl text-xs font-medium transition-colors duration-300 hover:bg-danger/10"
-                title="Sign Out"
-              >
-                <LogOut size={15} strokeWidth={1.8} />
-                <span className="hidden lg:inline">Sign Out</span>
+              <button onClick={signOut} className="text-sm text-[#aaa] hover:text-[#d32f2f] transition-colors" title="Sign Out">
+                <LogOut size={16} />
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Top Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 sm:hidden" style={{
-        background: 'rgba(255,255,255,0.95)',
-        boxShadow: '0 -1px 3px rgba(0,0,0,0.04)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(0,0,0,0.08)',
-      }}>
-        <div className="flex items-center justify-between px-3.5" style={{ height: 52 }}>
-          <div className="flex items-center gap-2.5">
-            <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-8 h-8 rounded-lg object-cover" />
-            <span className="font-bold text-sm text-foreground tracking-tight" style={{ fontFamily: "'Ubuntu', sans-serif" }}>HeroStock.AI</span>
+      {/* Mobile Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 sm:hidden bg-white" style={{ borderBottom: '1px solid #e5e5e5', height: 52 }}>
+        <div className="flex items-center justify-between px-3 h-full">
+          <div className="flex items-center gap-2">
+            <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-6 h-6 rounded object-cover" />
+            <span className="font-bold text-sm text-[#333]">HeroStock.AI</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white text-[9px] font-semibold">
+            <div className="w-6 h-6 rounded-full bg-[#0b8a00] flex items-center justify-center text-white text-[10px] font-bold">
               {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
             </div>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-300"
-              style={{ background: mobileMenuOpen ? 'rgba(0,0,0,0.05)' : 'transparent' }}
-            >
-              {mobileMenuOpen ? <X size={20} className="text-foreground" /> : <Menu size={20} className="text-foreground" />}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="w-7 h-7 flex items-center justify-center">
+              {mobileMenuOpen ? <X size={18} className="text-[#333]" /> : <Menu size={18} className="text-[#333]" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Slide-down Menu */}
+      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setMobileMenuOpen(false)}>
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300" />
-          <div
-            className="absolute top-[52px] left-0 right-0 max-h-[80vh] overflow-y-auto"
-            style={{
-              background: '#ffffff',
-              borderBottom: '1px solid rgba(0,0,0,0.08)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
-              animation: 'slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            {/* User info */}
-            <div className="px-4 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-sm font-semibold">
-                  {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{user?.full_name || 'User'}</p>
-                  <p className="text-xs text-muted">{user?.email}</p>
-                </div>
-              </div>
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute top-[48px] left-0 right-0 max-h-[80vh] overflow-y-auto bg-white" style={{ borderBottom: '1px solid #e5e5e5', animation: 'slideDown 0.2s ease-out' }} onClick={e => e.stopPropagation()}>
+            <div className="px-4 py-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
+              <p className="text-sm font-semibold text-[#333]">{user?.full_name || 'User'}</p>
+              <p className="text-xs text-[#aaa]">{user?.email}</p>
             </div>
-
-            {/* All nav items */}
-            <div className="py-2">
+            <div className="py-1">
               {navItems.map(item => {
                 const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
                 return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={cn(
-                      'flex items-center gap-3 px-5 py-3.5 text-sm font-medium transition-all duration-300 relative',
-                      isActive
-                        ? 'text-primary'
-                        : 'text-muted hover:text-foreground'
-                    )}
-                    style={isActive ? { background: 'rgba(5,160,3,0.06)' } : undefined}
-                  >
-                    {isActive && <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-primary" />}
-                    <item.icon size={18} strokeWidth={1.8} />
+                  <NavLink key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)}
+                    className={cn('flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium', isActive ? 'text-[#0b8a00] bg-[#f0faf0]' : 'text-[#666] hover:bg-[#f9f9f9]')}>
+                    <item.icon size={16} strokeWidth={1.8} />
                     <span>{item.label}</span>
                   </NavLink>
                 );
               })}
             </div>
-
-            {/* Sign out */}
-            <div className="px-5 py-4" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-              <button
-                onClick={() => { signOut(); setMobileMenuOpen(false); }}
-                className="flex items-center gap-3 text-sm font-medium text-danger w-full py-2 hover:bg-danger/8 rounded-lg px-2 -mx-2 transition-colors duration-300"
-              >
-                <LogOut size={18} strokeWidth={1.8} />
+            <div className="px-4 py-3" style={{ borderTop: '1px solid #f0f0f0' }}>
+              <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center gap-2.5 text-sm font-medium text-[#d32f2f]">
+                <LogOut size={16} strokeWidth={1.8} />
                 <span>Sign Out</span>
               </button>
             </div>
@@ -222,58 +123,21 @@ export function TopNav() {
       )}
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden" style={{
-        background: 'rgba(255,255,255,0.95)',
-        boxShadow: '0 -1px 3px rgba(0,0,0,0.04)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid rgba(0,0,0,0.08)',
-      }}>
-        <div className="h-16 grid grid-cols-5 safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white" style={{ borderTop: '1px solid #e5e5e5' }}>
+        <div className="h-14 grid grid-cols-5 safe-bottom">
           {mobileBottomItems.map(item => {
-            const isActive = item.to === '/dashboard'
-              ? location.pathname === '/dashboard'
-              : item.to === '/more'
-                ? location.pathname === '/more'
-                : location.pathname.startsWith(item.to);
+            const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : item.to === '/more' ? location.pathname === '/more' : location.pathname.startsWith(item.to);
             return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className="flex flex-col items-center justify-center gap-1 transition-all duration-300"
-              >
-                <item.icon
-                  size={20}
-                  strokeWidth={isActive ? 2.2 : 1.5}
-                  className={cn(
-                    'transition-all duration-300',
-                    isActive ? 'text-primary -translate-y-0.5' : 'text-muted-foreground'
-                  )}
-                />
-                <span className={cn(
-                  'text-[9px] font-medium leading-none transition-colors duration-300',
-                  isActive ? 'text-primary' : 'text-muted-foreground'
-                )}>
-                  {item.label}
-                </span>
-                {/* Active indicator dot */}
-                <span className={cn(
-                  'w-1 h-1 rounded-full bg-primary transition-all duration-300',
-                  isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
-                )} />
+              <NavLink key={item.to} to={item.to} className="flex flex-col items-center justify-center gap-0.5">
+                <item.icon size={18} strokeWidth={isActive ? 2.2 : 1.5} className={isActive ? 'text-[#0b8a00]' : 'text-[#aaa]'} />
+                <span className={cn('text-[10px] font-medium', isActive ? 'text-[#0b8a00]' : 'text-[#aaa]')}>{item.label}</span>
               </NavLink>
             );
           })}
         </div>
       </nav>
 
-      {/* Slide-down animation keyframe injected as style */}
-      <style>{`
-        @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+      <style>{`@keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </>
   );
 }

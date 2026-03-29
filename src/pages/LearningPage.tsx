@@ -20,8 +20,8 @@ export function LearningPage() {
   // Lesson detail view
   if (selectedLesson && currentLesson) {
     return (
-      <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+      <div className="min-h-screen bg-white animate-fade-in">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
         <button onClick={() => setSelectedLesson(null)} className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} /> Back to lessons
         </button>
@@ -46,8 +46,8 @@ export function LearningPage() {
   if (selectedCourse) {
     const course = courses?.find(c => c.id === selectedCourse);
     return (
-      <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+      <div className="min-h-screen bg-white animate-fade-in">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
         <button onClick={() => setSelectedCourse(null)} className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} /> Back to courses
         </button>
@@ -95,8 +95,8 @@ export function LearningPage() {
 
   // Courses grid view
   return (
-    <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+    <div className="min-h-screen bg-white animate-fade-in">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Learning Center</h1>

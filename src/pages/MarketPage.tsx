@@ -578,7 +578,7 @@ export function MarketPage() {
   const [activeTab, setActiveTab] = useState<TopMoverTab>('gainer');
 
   if (error) return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <PublicHeader isMarketOpen={false} />
       <div className="flex items-center justify-center h-64">
         <p className="text-muted text-sm">Failed to load market data</p>
@@ -588,9 +588,9 @@ export function MarketPage() {
 
   if (isLoading || !data) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white">
         <PublicHeader isMarketOpen={false} />
-        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
           <div className="animate-fade-in space-y-4">
             <div className="skeleton rounded-xl h-10 w-64" />
             <div className="skeleton rounded-xl h-[40px]" />
@@ -611,10 +611,10 @@ export function MarketPage() {
   const movers = getTopMovers(data.livePrices, activeTab);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <PublicHeader isMarketOpen={isMarketOpen} />
 
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
         <div className="animate-fade-in space-y-5">
 
           {/* Page Header */}

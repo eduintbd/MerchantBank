@@ -1,47 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-title: 'Ubuntu', 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-title: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Light Financial Theme — Clean white */
   --color-background: #ffffff;
-  --color-surface: #f8f9fb;
-  --color-card: rgba(255, 255, 255, 0.85);
+  --color-surface: #f5f5f5;
+  --color-card: #ffffff;
   --color-card-solid: #ffffff;
-  --color-card-hover: rgba(0, 0, 0, 0.03);
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-border-light: rgba(0, 0, 0, 0.14);
+  --color-card-hover: #f9f9f9;
+  --color-border: #e5e5e5;
+  --color-border-light: #ebebeb;
 
-  --color-primary: #05a003;
+  --color-primary: #0a6e0a;
   --color-primary-light: #2db82c;
-  --color-primary-dark: #048a03;
+  --color-primary-dark: #085a08;
 
-  --color-foreground: #111827;
-  --color-muted: #6b7280;
-  --color-muted-foreground: #9ca3af;
-  --color-text: #374151;
+  --color-foreground: #232526;
+  --color-muted: #8c8c8c;
+  --color-muted-foreground: #a3a3a3;
+  --color-text: #333333;
 
-  --color-success: #0ea66a;
-  --color-success-dim: rgba(14, 180, 110, 0.10);
-  --color-danger: #dc2626;
-  --color-danger-dim: rgba(220, 38, 38, 0.08);
-  --color-warning: #d97706;
-  --color-warning-dim: rgba(217, 119, 6, 0.08);
-  --color-info: #2563eb;
-  --color-info-dim: rgba(37, 99, 235, 0.08);
+  --color-success: #0b8a00;
+  --color-success-dim: rgba(11, 138, 0, 0.08);
+  --color-danger: #d32f2f;
+  --color-danger-dim: rgba(211, 47, 47, 0.06);
+  --color-warning: #e65100;
+  --color-warning-dim: rgba(230, 81, 0, 0.06);
+  --color-info: #1565c0;
+  --color-info-dim: rgba(21, 101, 192, 0.06);
   --color-gold: #b45309;
   --color-purple: #7c3aed;
-  --color-purple-dim: rgba(124, 58, 237, 0.08);
+  --color-purple-dim: rgba(124, 58, 237, 0.06);
 
-  --color-sidebar: rgba(255, 255, 255, 0.95);
-  --color-sidebar-active: rgba(5, 160, 3, 0.08);
+  --color-sidebar: #ffffff;
+  --color-sidebar-active: rgba(10, 110, 10, 0.06);
 
-  /* Shadow Tokens */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-elevated: 0 4px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 20px rgba(5, 160, 3, 0.10), 0 0 4px rgba(5, 160, 3, 0.06);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-glow: none;
 }
 
 *,
@@ -53,7 +51,7 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: 14px;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -68,268 +66,65 @@ body {
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 3px; height: 3px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f5f5f5; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* Glass — frosted */
-.glass {
-  background: rgba(255, 255, 255, 0.80);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Monospace numbers */
+/* Numbers — same font family, just tabular */
 .font-num {
-  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-
-/* Section headers */
-.section-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-/* ==========================================
-   GRADIENT CARDS — light versions
-   ========================================== */
-.grad-success {
-  background: linear-gradient(135deg, rgba(14, 180, 110, 0.06) 0%, rgba(14, 180, 110, 0.02) 100%);
-  border-color: rgba(14, 180, 110, 0.18) !important;
-}
-.grad-danger {
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(220, 38, 38, 0.02) 100%);
-  border-color: rgba(220, 38, 38, 0.15) !important;
-}
-.grad-info {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.02) 100%);
-  border-color: rgba(37, 99, 235, 0.15) !important;
-}
-.grad-warning {
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.05) 0%, rgba(217, 119, 6, 0.02) 100%);
-  border-color: rgba(217, 119, 6, 0.15) !important;
-}
-.grad-purple {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(124, 58, 237, 0.02) 100%);
-  border-color: rgba(124, 58, 237, 0.12) !important;
-}
-.grad-primary {
-  background: linear-gradient(135deg, rgba(5, 160, 3, 0.06) 0%, rgba(5, 160, 3, 0.02) 100%);
-  border-color: rgba(5, 160, 3, 0.15) !important;
-}
-
-/* ==========================================
-   PREMIUM HEADER GRADIENT
-   ========================================== */
-.header-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 50%, #ffffff 100%);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  letter-spacing: -0.01em;
 }
 
 /* ==========================================
    ANIMATIONS
    ========================================== */
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
-}
-.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
-
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-.animate-fade-in { animation: fade-in 0.25s ease-out forwards; }
-
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-slide-up { animation: slide-up 0.35s ease-out forwards; }
+.animate-fade-in { animation: fade-in 0.2s ease-out forwards; }
 
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.07) 50%, rgba(0,0,0,0.04) 75%);
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 6px;
 }
-
-@keyframes ticker-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.animate-ticker { animation: ticker-scroll 40s linear infinite; }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
+  from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.animate-slide-down { animation: slideDown 0.2s ease-out forwards; }
 
 @keyframes stat-pulse-anim {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 203, 129, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(14, 203, 129, 0); }
-}
-
-@keyframes card-shine-anim {
-  0% { left: -75%; }
-  100% { left: 125%; }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(11, 138, 0, 0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(11, 138, 0, 0); }
 }
 
 /* ==========================================
-   UTILITY CLASSES
+   UTILITY
    ========================================== */
-.text-gain { color: var(--color-success); }
-.text-loss { color: var(--color-danger); }
+.text-gain { color: #0b8a00; }
+.text-loss { color: #d32f2f; }
 
-/* ==========================================
-   MICRO-INTERACTION UTILITIES
-   ========================================== */
-.hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-elevated);
-}
-
-.card-shine {
-  position: relative;
-  overflow: hidden;
-}
-.card-shine::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 0, 0, 0.02),
-    transparent
-  );
-  pointer-events: none;
-  transition: none;
-}
-.card-shine:hover::after {
-  animation: card-shine-anim 0.6s ease-out forwards;
-}
-
-/* ==========================================
-   TICKER STRIP — live stock ticker bar
-   ========================================== */
-.ticker-strip {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  background: linear-gradient(90deg, #f8f9fb 0%, #f1f3f7 100%);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-  white-space: nowrap;
-  height: 36px;
-  font-size: 0.75rem;
-  font-family: var(--font-mono);
-  color: #374151;
-}
-.ticker-strip .ticker-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 16px;
-  flex-shrink: 0;
-}
-.ticker-strip .ticker-item .ticker-symbol {
-  font-weight: 600;
-  color: #111827;
-}
-
-/* ==========================================
-   DATA TABLE — dark financial tables
-   ========================================== */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8125rem;
-  font-family: var(--font-sans);
-}
-.data-table thead th {
-  padding: 8px 12px;
-  text-align: left;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-muted);
-  border-bottom: 1px solid var(--color-border);
-  white-space: nowrap;
-  user-select: none;
-}
-.data-table tbody td {
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-foreground);
-  vertical-align: middle;
-}
-.data-table tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.015);
-}
-.data-table tbody tr {
-  transition: background-color 0.15s ease;
-}
-.data-table tbody tr:hover {
-  background-color: rgba(5, 160, 3, 0.04);
-}
-.data-table .col-num {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  letter-spacing: -0.02em;
-}
-
-/* ==========================================
-   STAT PULSE — live data indicator
-   ========================================== */
 .stat-pulse {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background-color: var(--color-success);
+  background-color: #0b8a00;
   animation: stat-pulse-anim 2s ease-in-out infinite;
 }
-.stat-pulse--danger {
-  background-color: var(--color-danger);
-  animation: stat-pulse-anim 2s ease-in-out infinite;
-  --pulse-color: rgba(246, 70, 93, 0.4);
-}
 
-/* ==========================================
-   GLASS CARD — dark frosted premium card
-   ========================================== */
-.glass-card {
-  background: rgba(255, 255, 255, 0.70);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 16px;
-  box-shadow: var(--shadow-card);
-}
-
-/* Safe area insets for notch devices */
+/* Safe area */
 @supports (padding: env(safe-area-inset-bottom)) {
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   .safe-top { padding-top: env(safe-area-inset-top); }

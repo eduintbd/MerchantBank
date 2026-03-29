@@ -65,7 +65,7 @@ export function StockDetailPage() {
 
   if (stockLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center animate-fade-in">
           <div className="w-8 h-8 border-2 border-info border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm text-muted mt-3">Loading stock data...</p>
@@ -76,7 +76,7 @@ export function StockDetailPage() {
 
   if (!stock) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center animate-fade-in">
           <Activity size={40} className="text-muted mx-auto mb-3" />
           <p className="text-sm text-muted">Stock not found</p>
@@ -94,8 +94,8 @@ export function StockDetailPage() {
   const volLabel = volNum > 5 ? 'High' : volNum > 2 ? 'Moderate' : 'Stable';
 
   return (
-    <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-4xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8 space-y-4">
+    <div className="min-h-screen bg-white animate-fade-in">
+      <div className="space-y-4" style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
 
         {/* Back nav */}
         <Link to="/trading" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors">

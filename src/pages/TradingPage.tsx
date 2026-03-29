@@ -50,8 +50,8 @@ export function TradingPage() {
   const totalAmount = quantity && price ? parseInt(quantity) * parseFloat(price) : 0;
 
   return (
-    <div className="min-h-screen bg-background animate-fade-in">
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+    <div className="min-h-screen bg-white animate-fade-in">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Trading Terminal</h1>
         <p className="text-muted text-sm sm:text-base mt-1">Buy and sell DSE listed stocks in real time</p>

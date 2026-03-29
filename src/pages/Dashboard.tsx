@@ -14,33 +14,26 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
-// ─── STOCK TICKER ────────────────────────────────────────
+/* ─── Stock Ticker ─── */
 function StockTicker({ prices }: { prices: LivePrice[] }) {
   const items = prices.slice(0, 30);
-  if (items.length === 0) return null;
-
+  if (!items.length) return null;
   return (
-    <div className="relative overflow-hidden bg-[#1b2a4a] text-white">
-      <div className="flex animate-marquee whitespace-nowrap py-1.5">
+    <div className="relative overflow-hidden bg-[#232526] text-white border-b border-[#333]">
+      <div className="flex animate-marquee whitespace-nowrap" style={{ padding: '6px 0' }}>
         {[...items, ...items].map((p, i) => (
-          <Link
-            key={`${p.symbol}-${i}`}
-            to={`/stock/${p.symbol}`}
-            className="inline-flex items-center gap-1.5 mx-4 text-[11px] hover:opacity-80 transition-opacity"
-          >
-            <span className="font-semibold text-white/90">{p.symbol}</span>
-            <span className="font-num text-white/50">{p.ltp.toFixed(2)}</span>
-            <span className={cn(
-              'font-num font-bold',
-              p.change_pct > 0 ? 'text-emerald-400' : p.change_pct < 0 ? 'text-red-400' : 'text-white/40'
-            )}>
+          <Link key={`${p.symbol}-${i}`} to={`/stock/${p.symbol}`}
+            className="inline-flex items-center gap-1 mx-3 text-xs hover:opacity-80">
+            <span className="font-semibold">{p.symbol}</span>
+            <span className="opacity-50 font-num">{p.ltp.toFixed(2)}</span>
+            <span className={cn('font-num font-semibold', p.change_pct > 0 ? 'text-[#26a69a]' : p.change_pct < 0 ? 'text-[#ef5350]' : 'opacity-40')}>
               {p.change_pct >= 0 ? '+' : ''}{p.change_pct.toFixed(2)}%
             </span>
           </Link>
         ))}
       </div>
-      <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#1b2a4a] to-transparent pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#1b2a4a] to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#232526] to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#232526] to-transparent pointer-events-none" />
       <style>{`
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { animation: marquee 45s linear infinite; }
@@ -50,194 +43,215 @@ function StockTicker({ prices }: { prices: LivePrice[] }) {
   );
 }
 
-// ─── INDEX CARDS ─────────────────────────────────────────
-const INDEX_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
-  DSEX: { color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-  DSES: { color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-  DS30: { color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-200' },
-};
+/* ─── DSEX Hero Landing (investing.com style) ─── */
+function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
+  indices: MarketIndex[];
+  stats: { totalVolume: number; totalValue: number; totalTrades: number; advancers: number; decliners: number; unchanged: number; totalStocks: number };
+  isMarketOpen: boolean;
+  lastUpdated?: string;
+}) {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const dsex = indices.find(i => i.index_name === 'DSEX') || indices[0];
+  const selected = indices[activeIdx] || dsex;
+  const up = selected.change >= 0;
 
-function IndexCards({ indices }: { indices: MarketIndex[] }) {
   return (
-    <div className="grid grid-cols-3 gap-3 sm:gap-4">
-      {indices.map(idx => {
-        const cfg = INDEX_CONFIG[idx.index_name] || INDEX_CONFIG.DSEX;
-        const isUp = idx.change >= 0;
-        return (
-          <div key={idx.index_name} className={cn('rounded-xl border-2 p-3 sm:p-5 transition-shadow hover:shadow-md min-w-0', cfg.border, cfg.bg)}>
-            <div className="flex items-center justify-between mb-1 sm:mb-2 gap-1">
-              <span className={cn('text-[10px] sm:text-xs font-bold uppercase tracking-wide', cfg.color)}>{idx.index_name}</span>
-              <div className={cn(
-                'flex items-center gap-0.5 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold shrink-0',
-                isUp ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+    <div className="border border-[#e5e5e5] rounded overflow-hidden">
+      {/* Index Tabs */}
+      <div className="flex border-b border-[#e5e5e5] bg-[#f9f9f9]">
+        {indices.map((idx, i) => {
+          const isActive = i === activeIdx;
+          const idxUp = idx.change >= 0;
+          return (
+            <button key={idx.index_name} onClick={() => setActiveIdx(i)}
+              className={cn('flex-1 px-4 py-3 text-center border-b-2 transition-colors',
+                isActive ? 'border-[#0b8a00] bg-white' : 'border-transparent hover:bg-[#f0f0f0]'
               )}>
-                {isUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
-                {isUp ? '+' : ''}{idx.change_pct.toFixed(2)}%
+              <div className="text-xs font-semibold text-[#888]">{idx.index_name}</div>
+              <div className="text-base font-bold font-num text-[#333] mt-0.5">
+                {idx.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+              <div className={cn('text-xs font-semibold font-num mt-0.5', idxUp ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                {idxUp ? '+' : ''}{idx.change.toFixed(2)} ({idxUp ? '+' : ''}{idx.change_pct.toFixed(2)}%)
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Hero Section */}
+      <div className="p-5 bg-white">
+        <div className="flex items-start justify-between">
+          {/* Left — Main Index Display */}
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-lg font-bold text-[#333]">{selected.index_name} Index</h2>
+              <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded',
+                isMarketOpen ? 'bg-[#e8f5e9] text-[#0b8a00]' : 'bg-[#ffebee] text-[#d32f2f]'
+              )}>
+                {isMarketOpen ? 'OPEN' : 'CLOSED'}
+              </span>
+            </div>
+            <div className="flex items-baseline gap-3">
+              <span className="text-4xl font-bold font-num text-[#333]">
+                {selected.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+              <span className={cn('text-xl font-bold font-num', up ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                {up ? '+' : ''}{selected.change.toFixed(2)}
+              </span>
+              <span className={cn('text-base font-bold font-num px-2 py-0.5 rounded text-white', up ? 'bg-[#0b8a00]' : 'bg-[#d32f2f]')}>
+                {up ? '+' : ''}{selected.change_pct.toFixed(2)}%
+              </span>
+            </div>
+            {lastUpdated && (
+              <div className="text-xs text-[#aaa] mt-2">
+                As of {formatDateTime(lastUpdated)} · Dhaka Stock Exchange
+              </div>
+            )}
+          </div>
+
+          {/* Right — Key Stats */}
+          <div className="hidden sm:grid grid-cols-2 gap-x-8 gap-y-2 text-right">
+            <div>
+              <div className="text-[11px] text-[#aaa]">Volume</div>
+              <div className="text-sm font-semibold font-num text-[#333]">{formatVolume(stats.totalVolume)}</div>
+            </div>
+            <div>
+              <div className="text-[11px] text-[#aaa]">Trades</div>
+              <div className="text-sm font-semibold font-num text-[#333]">{formatVolume(stats.totalTrades)}</div>
+            </div>
+            <div>
+              <div className="text-[11px] text-[#aaa]">Value</div>
+              <div className="text-sm font-semibold font-num text-[#333]">{(stats.totalValue / 1e9).toFixed(2)}B</div>
+            </div>
+            <div>
+              <div className="text-[11px] text-[#aaa]">Adv / Dec</div>
+              <div className="text-sm font-semibold font-num">
+                <span className="text-[#0b8a00]">{stats.advancers}</span>
+                <span className="text-[#aaa] mx-1">/</span>
+                <span className="text-[#d32f2f]">{stats.decliners}</span>
               </div>
             </div>
-            <p className="text-lg sm:text-2xl lg:text-3xl font-bold font-num text-gray-900 tracking-tight truncate">
-              {idx.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-            </p>
-            <p className={cn('text-[10px] sm:text-xs font-semibold font-num mt-1', isUp ? 'text-emerald-600' : 'text-red-600')}>
-              {isUp ? '+' : ''}{idx.change.toFixed(2)} pts
-            </p>
           </div>
-        );
-      })}
-    </div>
-  );
-}
-
-// ─── MARKET STATS BAR ────────────────────────────────────
-function MarketStatsBar({ stats }: { stats: { totalVolume: number; totalValue: number; totalTrades: number; advancers: number; decliners: number; unchanged: number; totalStocks: number } }) {
-  const items = [
-    { label: 'Volume', value: formatVolume(stats.totalVolume), icon: Volume2, color: 'text-blue-600' },
-    { label: 'Trades', value: formatVolume(stats.totalTrades), icon: Activity, color: 'text-amber-600' },
-    { label: 'Value', value: `${(stats.totalValue / 1e9).toFixed(2)}B`, icon: DollarSign, color: 'text-violet-600' },
-    { label: 'Advancers', value: String(stats.advancers), icon: TrendingUp, color: 'text-emerald-600' },
-    { label: 'Decliners', value: String(stats.decliners), icon: TrendingDown, color: 'text-red-600' },
-    { label: 'Unchanged', value: String(stats.unchanged), icon: Activity, color: 'text-gray-500' },
-  ];
-  return (
-    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
-      {items.map(s => (
-        <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-2 sm:p-3 text-center shadow-sm min-w-0">
-          <s.icon size={14} className={cn('mx-auto mb-0.5 sm:mb-1', s.color)} />
-          <p className="text-sm sm:text-lg font-bold font-num text-gray-900 truncate">{s.value}</p>
-          <p className="text-[8px] sm:text-[10px] font-medium text-gray-500 uppercase tracking-wide truncate">{s.label}</p>
         </div>
-      ))}
+
+        {/* Mobile Stats Row */}
+        <div className="flex flex-wrap gap-x-5 gap-y-1 mt-3 sm:hidden">
+          <span className="text-xs text-[#888]">Vol: <strong className="font-num text-[#333]">{formatVolume(stats.totalVolume)}</strong></span>
+          <span className="text-xs text-[#888]">Trades: <strong className="font-num text-[#333]">{formatVolume(stats.totalTrades)}</strong></span>
+          <span className="text-xs">
+            <span className="text-[#0b8a00] font-semibold font-num">{stats.advancers}</span>
+            <span className="text-[#aaa]"> / </span>
+            <span className="text-[#d32f2f] font-semibold font-num">{stats.decliners}</span>
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── STRENGTH + SENTIMENT ────────────────────────────────
-function MarketStrengthPanel({ stats }: { stats: { advancers: number; decliners: number; unchanged: number; totalStocks: number } }) {
+
+/* ─── Market Breadth + Sentiment ─── */
+function MarketBreadth({ stats }: { stats: { advancers: number; decliners: number; unchanged: number; totalStocks: number } }) {
   const { advancers, decliners, unchanged, totalStocks } = stats;
   const bullPct = totalStocks > 0 ? Math.round((advancers / totalStocks) * 100) : 50;
-
-  let sentiment = 'Neutral';
-  let sentimentColor = 'text-gray-600';
-  let sentimentBg = 'bg-gray-50';
-  if (bullPct >= 65) { sentiment = 'Bullish'; sentimentColor = 'text-emerald-700'; sentimentBg = 'bg-emerald-50'; }
-  else if (bullPct >= 55) { sentiment = 'Mild Bull'; sentimentColor = 'text-blue-700'; sentimentBg = 'bg-blue-50'; }
-  else if (bullPct <= 35) { sentiment = 'Bearish'; sentimentColor = 'text-red-700'; sentimentBg = 'bg-red-50'; }
-  else if (bullPct <= 45) { sentiment = 'Mild Bear'; sentimentColor = 'text-amber-700'; sentimentBg = 'bg-amber-50'; }
+  let sentiment = 'Neutral', sColor = '#888';
+  if (bullPct >= 65) { sentiment = 'Bullish'; sColor = '#0b8a00'; }
+  else if (bullPct >= 55) { sentiment = 'Mild Bull'; sColor = '#1565c0'; }
+  else if (bullPct <= 35) { sentiment = 'Bearish'; sColor = '#d32f2f'; }
+  else if (bullPct <= 45) { sentiment = 'Mild Bear'; sColor = '#e65100'; }
 
   const donutData = [
-    { name: 'Gainers', value: advancers, color: '#059669' },
-    { name: 'Losers', value: decliners, color: '#dc2626' },
-    { name: 'Unchanged', value: unchanged, color: '#d1d5db' },
+    { name: 'Advancers', value: advancers, color: '#0b8a00' },
+    { name: 'Decliners', value: decliners, color: '#d32f2f' },
+    { name: 'Unchanged', value: unchanged, color: '#ccc' },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {/* Market Strength */}
-      <div className="rounded-xl border border-gray-200 bg-white p-3 sm:p-4 shadow-sm">
-        <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
-          <BarChart2 size={14} className="text-blue-600" /> Market Breadth
-        </h3>
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="border border-[#e5e5e5] rounded p-4">
+        <h3 className="text-sm font-semibold text-[#333] mb-3">Market Breadth</h3>
+        <div className="flex items-center gap-5">
+          <div className="relative w-20 h-20 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={donutData} cx="50%" cy="50%" innerRadius={28} outerRadius={44} dataKey="value" strokeWidth={2} stroke="#fff">
+                <Pie data={donutData} cx="50%" cy="50%" innerRadius={24} outerRadius={38} dataKey="value" strokeWidth={1} stroke="#fff">
                   {donutData.map((d, i) => <Cell key={i} fill={d.color} />)}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-lg font-bold text-gray-900">{totalStocks}</span>
-              <span className="text-[9px] text-gray-500 font-medium">Stocks</span>
+              <span className="text-sm font-bold text-[#333]">{totalStocks}</span>
             </div>
           </div>
-          <div className="space-y-2 flex-1">
-            {donutData.map(item => (
-              <div key={item.name} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full" style={{ background: item.color }} />
-                  <span className="text-xs font-medium text-gray-600">{item.name}</span>
+          <div className="space-y-1.5 flex-1">
+            {donutData.map(d => (
+              <div key={d.name} className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full" style={{ background: d.color }} />
+                  <span className="text-xs text-[#666]">{d.name}</span>
                 </div>
-                <span className="text-sm font-bold font-num text-gray-900">{item.value}</span>
+                <span className="text-xs font-semibold font-num" style={{ color: d.color }}>{d.value}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Market Sentiment */}
-      <div className="rounded-xl border border-gray-200 bg-white p-3 sm:p-4 shadow-sm">
-        <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
-          <Eye size={14} className="text-violet-600" /> Market Sentiment
-        </h3>
-        <div className="flex flex-col items-center gap-3 py-2">
-          <div className={cn('px-4 py-1.5 rounded-full text-lg font-black', sentimentColor, sentimentBg)}>
-            {sentiment}
-          </div>
+      <div className="border border-[#e5e5e5] rounded p-4">
+        <h3 className="text-sm font-semibold text-[#333] mb-3">Market Sentiment</h3>
+        <div className="flex flex-col items-center gap-3 pt-1">
+          <span className="text-xl font-bold" style={{ color: sColor }}>{sentiment}</span>
           <div className="w-full">
-            <div className="relative h-2.5 rounded-full overflow-hidden bg-gray-100">
-              <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(to right, #dc2626, #f59e0b, #059669)' }} />
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md border-2 border-gray-900 transition-all duration-500"
-                style={{ left: `calc(${bullPct}% - 6px)` }}
-              />
+            <div className="relative h-2 rounded-full bg-[#eee] overflow-hidden">
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, #d32f2f, #ffa726, #0b8a00)' }} />
+              <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full border-2 border-[#333] shadow" style={{ left: `calc(${bullPct}% - 6px)` }} />
             </div>
-            <div className="flex justify-between mt-1 text-[10px] font-medium text-gray-500">
+            <div className="flex justify-between mt-1 text-[10px] text-[#999]">
               <span>Bear</span><span>Neutral</span><span>Bull</span>
             </div>
           </div>
-          <p className="text-xs text-gray-500">
-            Advancer Ratio: <span className="font-bold text-emerald-600 font-num">{bullPct}%</span>
-          </p>
+          <span className="text-xs text-[#888]">Advancer Ratio: <strong className="font-num" style={{ color: sColor }}>{bullPct}%</strong></span>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── PORTFOLIO OVERVIEW ──────────────────────────────────
+/* ─── Portfolio Overview ─── */
 function PortfolioOverview({ portfolio, learning }: { portfolio: any; learning: any }) {
-  const cards = [
-    { label: 'Portfolio Value', value: formatCurrency(portfolio?.current_value || 0), icon: Briefcase, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', sub: portfolio ? `${portfolio.total_profit_loss_percent >= 0 ? '+' : ''}${portfolio.total_profit_loss_percent.toFixed(2)}%` : undefined, subUp: portfolio?.total_profit_loss_percent >= 0 },
-    { label: 'Invested', value: formatCurrency(portfolio?.total_invested || 0), icon: Wallet, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', sub: `${portfolio?.total_stocks || 0} stocks` },
-    { label: 'Day P&L', value: formatCurrency(portfolio?.total_profit_loss || 0), icon: BarChart2, color: portfolio?.total_profit_loss >= 0 ? 'text-emerald-600' : 'text-red-600', bg: portfolio?.total_profit_loss >= 0 ? 'bg-emerald-50' : 'bg-red-50', border: portfolio?.total_profit_loss >= 0 ? 'border-emerald-200' : 'border-red-200' },
-    { label: 'Learning', value: `${learning?.progressPercent || 0}%`, icon: GraduationCap, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', sub: learning?.isQualified ? 'Qualified' : 'In progress' },
+  const items = [
+    { label: 'Portfolio Value', val: formatCurrency(portfolio?.current_value || 0), sub: portfolio ? `${portfolio.total_profit_loss_percent >= 0 ? '+' : ''}${portfolio.total_profit_loss_percent.toFixed(2)}%` : undefined, subUp: portfolio?.total_profit_loss_percent >= 0 },
+    { label: 'Invested', val: formatCurrency(portfolio?.total_invested || 0), sub: `${portfolio?.total_stocks || 0} stocks` },
+    { label: 'Day P&L', val: formatCurrency(portfolio?.total_profit_loss || 0), subUp: portfolio?.total_profit_loss >= 0 },
+    { label: 'Learning', val: `${learning?.progressPercent || 0}%`, sub: learning?.isQualified ? 'Qualified' : 'In progress' },
   ];
-
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-      {cards.map(card => (
-        <div key={card.label} className={cn('rounded-xl border-2 p-3 sm:p-4 min-w-0 overflow-hidden', card.border, card.bg)}>
-          <div className="flex items-center justify-between mb-1.5 sm:mb-2 gap-1">
-            <p className="text-[9px] sm:text-[11px] font-semibold text-gray-500 uppercase tracking-wide truncate">{card.label}</p>
-            <card.icon size={14} className={cn(card.color, 'shrink-0')} />
-          </div>
-          <p className={cn('text-base sm:text-xl font-bold font-num truncate', card.color)}>{card.value}</p>
-          {card.sub && (
-            <p className={cn('mt-0.5 text-[10px] sm:text-xs font-semibold font-num truncate', card.subUp === true ? 'text-emerald-600' : card.subUp === false ? 'text-red-600' : 'text-gray-500')}>
-              {card.sub}
-            </p>
-          )}
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {items.map(c => (
+        <div key={c.label} className="border border-[#e5e5e5] rounded p-3">
+          <div className="text-[11px] text-[#888] uppercase tracking-wide mb-1">{c.label}</div>
+          <div className="text-base font-bold font-num text-[#333]">{c.val}</div>
+          {c.sub && <div className={cn('text-xs font-num mt-0.5', c.subUp === true ? 'text-[#0b8a00]' : c.subUp === false ? 'text-[#d32f2f]' : 'text-[#888]')}>{c.sub}</div>}
         </div>
       ))}
     </div>
   );
 }
 
-// ─── TOP MOVERS ──────────────────────────────────────────
+/* ─── Top Movers ─── */
 type MoverTab = 'gainer' | 'loser' | 'volume' | 'value' | 'trade';
-const MOVER_TABS: { key: MoverTab; label: string; icon: React.ElementType }[] = [
-  { key: 'gainer', label: 'Gainers', icon: TrendingUp },
-  { key: 'loser', label: 'Losers', icon: TrendingDown },
-  { key: 'volume', label: 'Volume', icon: Volume2 },
-  { key: 'value', label: 'Value', icon: DollarSign },
-  { key: 'trade', label: 'Trades', icon: Flame },
+const MOVER_TABS: { key: MoverTab; label: string }[] = [
+  { key: 'gainer', label: 'Top Gainer' },
+  { key: 'loser', label: 'Top Loser' },
+  { key: 'volume', label: 'Top Volume' },
+  { key: 'value', label: 'Top Value' },
+  { key: 'trade', label: 'Top Trade' },
 ];
 
-function TopMoversSection({ prices }: { prices: LivePrice[] }) {
+function TopMovers({ prices }: { prices: LivePrice[] }) {
   const navigate = useNavigate();
   const [tab, setTab] = useState<MoverTab>('gainer');
-
   const rows = useMemo(() => {
     const arr = [...prices];
     switch (tab) {
@@ -250,171 +264,122 @@ function TopMoversSection({ prices }: { prices: LivePrice[] }) {
   }, [prices, tab]);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
-      <div className="flex items-center gap-1 px-4 pt-4 pb-0 overflow-x-auto scrollbar-hide">
-        {MOVER_TABS.map(t => {
-          const Icon = t.icon;
-          const isActive = tab === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg transition-all whitespace-nowrap',
-                isActive
-                  ? t.key === 'gainer' ? 'bg-emerald-100 text-emerald-700'
-                    : t.key === 'loser' ? 'bg-red-100 text-red-700'
-                    : 'bg-blue-100 text-blue-700'
-                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-              )}
-            >
-              <Icon size={12} /> {t.label}
-            </button>
-          );
-        })}
+    <div className="border border-[#e5e5e5] rounded overflow-hidden">
+      <div className="flex items-center border-b border-[#e5e5e5] bg-[#f9f9f9] overflow-x-auto">
+        {MOVER_TABS.map(t => (
+          <button key={t.key} onClick={() => setTab(t.key)}
+            className={cn('px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 transition-colors',
+              tab === t.key ? 'border-[#0b8a00] text-[#0b8a00] bg-white' : 'border-transparent text-[#888] hover:text-[#333]'
+            )}>
+            {t.label}
+          </button>
+        ))}
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-100">
-              <th className="px-4 py-2.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">#</th>
-              <th className="px-4 py-2.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Symbol</th>
-              <th className="px-4 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">LTP</th>
-              <th className="px-4 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">Change %</th>
-              {(tab === 'volume' || tab === 'trade') && (
-                <th className="px-4 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                  {tab === 'volume' ? 'Volume' : 'Trades'}
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((s, i) => {
-              const isUp = s.change_pct >= 0;
-              return (
-                <tr
-                  key={s.symbol}
-                  className="border-b border-gray-50 hover:bg-blue-50/50 cursor-pointer transition-colors"
-                  onClick={() => navigate(`/stock/${s.symbol}`)}
-                >
-                  <td className="px-4 py-2.5 text-xs text-gray-400 font-num">{i + 1}</td>
-                  <td className="px-4 py-2.5">
-                    <span className="font-bold text-gray-900">{s.symbol}</span>
-                  </td>
-                  <td className="px-4 py-2.5 text-right font-num font-semibold text-gray-900">{s.ltp.toFixed(2)}</td>
-                  <td className="px-4 py-2.5 text-right">
-                    <span className={cn(
-                      'inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold font-num',
-                      isUp ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                    )}>
-                      {isUp ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
-                      {isUp ? '+' : ''}{s.change_pct.toFixed(2)}%
-                    </span>
-                  </td>
-                  {(tab === 'volume' || tab === 'trade') && (
-                    <td className="px-4 py-2.5 text-right text-xs font-num text-gray-500">
-                      {tab === 'volume' ? formatVolume(s.volume) : s.trades.toLocaleString()}
-                    </td>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <table className="w-full">
+        <thead>
+          <tr className="bg-[#f5f5f5] border-b border-[#e5e5e5]">
+            <th className="w-8 px-3 py-2 text-left text-[11px] font-semibold text-[#888]">#</th>
+            <th className="px-3 py-2 text-left text-[11px] font-semibold text-[#888]">Symbol</th>
+            <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">LTP</th>
+            <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">Chg %</th>
+            {(tab === 'volume' || tab === 'trade') && (
+              <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">{tab === 'volume' ? 'Volume' : 'Trades'}</th>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((s, i) => {
+            const up = s.change_pct >= 0;
+            return (
+              <tr key={s.symbol} className="border-b border-[#f0f0f0] hover:bg-[#f9f9f9] cursor-pointer" onClick={() => navigate(`/stock/${s.symbol}`)}>
+                <td className="px-3 py-2 text-xs text-[#aaa] font-num">{i + 1}</td>
+                <td className="px-3 py-2 font-semibold text-[#1565c0]">{s.symbol}</td>
+                <td className="px-3 py-2 text-right font-num font-semibold">{s.ltp.toFixed(2)}</td>
+                <td className="px-3 py-2 text-right">
+                  <span className={cn('font-num font-semibold', up ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                    {up ? '+' : ''}{s.change_pct.toFixed(2)}%
+                  </span>
+                </td>
+                {(tab === 'volume' || tab === 'trade') && (
+                  <td className="px-3 py-2 text-right text-xs font-num text-[#888]">{tab === 'volume' ? formatVolume(s.volume) : s.trades.toLocaleString()}</td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-// ─── MOST ACTIVE SNAPSHOT ────────────────────────────────
-function MostActiveSnapshot({ prices }: { prices: LivePrice[] }) {
+/* ─── Most Active ─── */
+function MostActive({ prices }: { prices: LivePrice[] }) {
   const navigate = useNavigate();
   const active = useMemo(() => [...prices].sort((a, b) => b.volume - a.volume).slice(0, 5), [prices]);
-
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-      <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-        <Flame size={14} className="text-orange-500" /> Most Active
-      </h3>
-      <div className="space-y-2">
-        {active.map(s => {
-          const isUp = s.change_pct >= 0;
-          return (
-            <div
-              key={s.symbol}
-              className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-              onClick={() => navigate(`/stock/${s.symbol}`)}
-            >
-              <div>
-                <span className="text-sm font-bold text-gray-900">{s.symbol}</span>
-                <span className="text-[10px] text-gray-400 ml-2 font-num">{formatVolume(s.volume)} vol</span>
-              </div>
-              <div className="text-right">
-                <span className="text-sm font-bold font-num text-gray-900">{s.ltp.toFixed(2)}</span>
-                <span className={cn('ml-2 text-xs font-bold font-num', isUp ? 'text-emerald-600' : 'text-red-600')}>
-                  {isUp ? '+' : ''}{s.change_pct.toFixed(2)}%
-                </span>
-              </div>
-            </div>
-          );
-        })}
+    <div className="border border-[#e5e5e5] rounded overflow-hidden">
+      <div className="px-4 py-2.5 bg-[#f5f5f5] border-b border-[#e5e5e5]">
+        <h3 className="text-sm font-semibold text-[#333]">Most Active</h3>
       </div>
+      <table className="w-full">
+        <tbody>
+          {active.map(s => {
+            const up = s.change_pct >= 0;
+            return (
+              <tr key={s.symbol} className="border-b border-[#f0f0f0] hover:bg-[#f9f9f9] cursor-pointer" onClick={() => navigate(`/stock/${s.symbol}`)}>
+                <td className="px-4 py-2 font-semibold text-[#1565c0]">{s.symbol}</td>
+                <td className="px-2 py-2 text-xs text-[#aaa] font-num">{formatVolume(s.volume)}</td>
+                <td className="px-2 py-2 text-right font-num font-semibold">{s.ltp.toFixed(2)}</td>
+                <td className="px-4 py-2 text-right">
+                  <span className={cn('font-num font-semibold text-xs', up ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                    {up ? '+' : ''}{s.change_pct.toFixed(2)}%
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-// ─── 52W HIGH/LOW ────────────────────────────────────────
-function WeekHighLow({ prices }: { prices: LivePrice[] }) {
-  const near52High = useMemo(() =>
-    [...prices].filter(p => p.high > 0 && p.ltp >= p.high * 0.98).sort((a, b) => b.change_pct - a.change_pct).slice(0, 5),
-    [prices]
-  );
-  const near52Low = useMemo(() =>
-    [...prices].filter(p => p.low > 0 && p.ltp <= p.low * 1.02).sort((a, b) => a.change_pct - b.change_pct).slice(0, 5),
-    [prices]
+/* ─── Day High / Low ─── */
+function DayHighLow({ prices }: { prices: LivePrice[] }) {
+  const nearHigh = useMemo(() => [...prices].filter(p => p.high > 0 && p.ltp >= p.high * 0.98).sort((a, b) => b.change_pct - a.change_pct).slice(0, 5), [prices]);
+  const nearLow = useMemo(() => [...prices].filter(p => p.low > 0 && p.ltp <= p.low * 1.02).sort((a, b) => a.change_pct - b.change_pct).slice(0, 5), [prices]);
+
+  const Panel = ({ title, data, color }: { title: string; data: LivePrice[]; color: string }) => (
+    <div className="border border-[#e5e5e5] rounded overflow-hidden">
+      <div className="px-4 py-2 bg-[#f5f5f5] border-b border-[#e5e5e5]">
+        <h3 className="text-xs font-semibold" style={{ color }}>{title}</h3>
+      </div>
+      {data.length === 0 ? (
+        <p className="px-4 py-3 text-xs text-[#aaa]">No stocks</p>
+      ) : (
+        <table className="w-full">
+          <tbody>
+            {data.map(s => (
+              <tr key={s.symbol} className="border-b border-[#f0f0f0]">
+                <td className="px-4 py-1.5 text-xs font-semibold text-[#333]">{s.symbol}</td>
+                <td className="px-4 py-1.5 text-right text-xs font-num font-semibold" style={{ color }}>{s.ltp.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 sm:p-4">
-        <h3 className="text-xs sm:text-sm font-bold text-emerald-700 mb-2 sm:mb-3 flex items-center gap-2">
-          <ArrowUpRight size={14} /> Near Day High
-        </h3>
-        {near52High.length === 0 ? (
-          <p className="text-xs text-gray-500">No stocks near day high</p>
-        ) : (
-          <div className="space-y-1.5">
-            {near52High.map(s => (
-              <div key={s.symbol} className="flex items-center justify-between text-xs sm:text-sm">
-                <span className="font-bold text-gray-900">{s.symbol}</span>
-                <span className="font-num font-semibold text-emerald-700">{s.ltp.toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="rounded-xl border border-red-200 bg-red-50 p-3 sm:p-4">
-        <h3 className="text-xs sm:text-sm font-bold text-red-700 mb-2 sm:mb-3 flex items-center gap-2">
-          <ArrowDownRight size={14} /> Near Day Low
-        </h3>
-        {near52Low.length === 0 ? (
-          <p className="text-xs text-gray-500">No stocks near day low</p>
-        ) : (
-          <div className="space-y-1.5">
-            {near52Low.map(s => (
-              <div key={s.symbol} className="flex items-center justify-between text-xs sm:text-sm">
-                <span className="font-bold text-gray-900">{s.symbol}</span>
-                <span className="font-num font-semibold text-red-700">{s.ltp.toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <Panel title="Near Day High" data={nearHigh} color="#0b8a00" />
+      <Panel title="Near Day Low" data={nearLow} color="#d32f2f" />
     </div>
   );
 }
 
-// ─── ALL STOCKS TABLE ────────────────────────────────────
+/* ─── All Stocks Table ─── */
 type SortKey = 'symbol' | 'ltp' | 'change_pct' | 'volume' | 'value_traded';
 const PAGE_SIZE = 50;
 
@@ -425,15 +390,11 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
 
-  const filtered = prices.filter(s =>
-    !search || s.symbol.toLowerCase().includes(search.toLowerCase())
-  );
-
+  const filtered = prices.filter(s => !search || s.symbol.toLowerCase().includes(search.toLowerCase()));
   const sorted = [...filtered].sort((a, b) => {
     if (sortKey === 'symbol') return sortDir === 'asc' ? a.symbol.localeCompare(b.symbol) : b.symbol.localeCompare(a.symbol);
     return sortDir === 'asc' ? (a[sortKey] as number) - (b[sortKey] as number) : (b[sortKey] as number) - (a[sortKey] as number);
   });
-
   const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
 
@@ -443,95 +404,71 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
     setPage(0);
   };
 
-  const SortTh = ({ label, k, align }: { label: string; k: SortKey; align?: string }) => (
-    <th
-      className={cn('px-3 py-2.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700 transition-colors', align || 'text-left')}
-      onClick={() => handleSort(k)}
-    >
-      <span className="inline-flex items-center gap-0.5">
-        {label}
-        {sortKey === k && <span className="text-blue-600">{sortDir === 'asc' ? '↑' : '↓'}</span>}
-      </span>
+  const Th = ({ label, k, right }: { label: string; k: SortKey; right?: boolean }) => (
+    <th className={cn('px-3 py-2 text-[11px] font-semibold text-[#888] cursor-pointer select-none hover:text-[#333]', right ? 'text-right' : 'text-left')} onClick={() => handleSort(k)}>
+      {label}{sortKey === k && <span className="text-[#1565c0] ml-0.5">{sortDir === 'asc' ? '↑' : '↓'}</span>}
     </th>
   );
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
-      <div className="p-3 sm:p-4 border-b border-gray-100 flex items-center justify-between gap-3">
+    <div className="border border-[#e5e5e5] rounded overflow-hidden">
+      <div className="px-4 py-3 border-b border-[#e5e5e5] flex items-center justify-between gap-3 bg-[#f9f9f9]">
         <div className="relative max-w-xs flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search stocks..."
-            value={search}
+          <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#aaa]" />
+          <input type="text" placeholder="Search stocks..." value={search}
             onChange={e => { setSearch(e.target.value); setPage(0); }}
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-300 transition-all"
+            className="w-full pl-8 pr-3 py-1.5 rounded border border-[#ddd] bg-white text-sm text-[#333] placeholder:text-[#bbb] focus:outline-none focus:border-[#1565c0]"
           />
         </div>
-        <span className="text-xs font-medium text-gray-400">{sorted.length} stocks</span>
+        <span className="text-xs text-[#aaa]">{sorted.length} stocks</span>
       </div>
-
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50/80">
-            <tr>
-              <SortTh label="Symbol" k="symbol" />
-              <SortTh label="LTP" k="ltp" align="text-right" />
-              <SortTh label="Change %" k="change_pct" align="text-right" />
-              <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">Change</th>
-              <SortTh label="Volume" k="volume" align="text-right" />
-              <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider hidden lg:table-cell">High</th>
-              <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider hidden lg:table-cell">Low</th>
+        <table className="w-full">
+          <thead>
+            <tr className="bg-[#f5f5f5] border-b border-[#e5e5e5]">
+              <Th label="Symbol" k="symbol" />
+              <Th label="LTP" k="ltp" right />
+              <Th label="Chg %" k="change_pct" right />
+              <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">Change</th>
+              <Th label="Volume" k="volume" right />
+              <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888] hidden lg:table-cell">High</th>
+              <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888] hidden lg:table-cell">Low</th>
             </tr>
           </thead>
           <tbody>
-            {paged.map(s => {
-              const isUp = s.change_pct >= 0;
+            {paged.map((s, i) => {
+              const up = s.change_pct >= 0;
               return (
-                <tr
-                  key={s.symbol}
-                  className="border-b border-gray-50 hover:bg-blue-50/40 cursor-pointer transition-colors"
-                  onClick={() => navigate(`/stock/${s.symbol}`)}
-                >
-                  <td className="px-3 py-2.5 font-bold text-blue-600">{s.symbol}</td>
-                  <td className="px-3 py-2.5 text-right font-num font-semibold text-gray-900">{s.ltp.toFixed(2)}</td>
-                  <td className="px-3 py-2.5 text-right">
-                    <span className={cn(
-                      'inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-bold font-num',
-                      isUp ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                    )}>
-                      {isUp ? '+' : ''}{s.change_pct.toFixed(2)}%
+                <tr key={s.symbol} className={cn('border-b border-[#f0f0f0] hover:bg-[#f9f9f9] cursor-pointer', i % 2 === 1 && 'bg-[#fafafa]')} onClick={() => navigate(`/stock/${s.symbol}`)}>
+                  <td className="px-3 py-2 font-semibold text-[#1565c0]">{s.symbol}</td>
+                  <td className="px-3 py-2 text-right font-num font-semibold">{s.ltp.toFixed(2)}</td>
+                  <td className="px-3 py-2 text-right">
+                    <span className={cn('font-num font-semibold', up ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                      {up ? '+' : ''}{s.change_pct.toFixed(2)}%
                     </span>
                   </td>
-                  <td className={cn('px-3 py-2.5 text-right font-num text-xs', isUp ? 'text-emerald-600' : 'text-red-600')}>
-                    {isUp ? '+' : ''}{s.change.toFixed(2)}
+                  <td className={cn('px-3 py-2 text-right font-num text-xs', up ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                    {up ? '+' : ''}{s.change.toFixed(2)}
                   </td>
-                  <td className="px-3 py-2.5 text-right text-xs font-num text-gray-500">{formatVolume(s.volume)}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-num text-gray-500 hidden lg:table-cell">{s.high.toFixed(2)}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-num text-gray-500 hidden lg:table-cell">{s.low.toFixed(2)}</td>
+                  <td className="px-3 py-2 text-right text-xs font-num text-[#888]">{formatVolume(s.volume)}</td>
+                  <td className="px-3 py-2 text-right text-xs font-num text-[#888] hidden lg:table-cell">{s.high.toFixed(2)}</td>
+                  <td className="px-3 py-2 text-right text-xs font-num text-[#888] hidden lg:table-cell">{s.low.toFixed(2)}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
-
       {totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-gray-100 px-4 py-2.5">
-          <span className="text-xs text-gray-500">
-            Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
+        <div className="flex items-center justify-between border-t border-[#e5e5e5] px-4 py-2 bg-[#f9f9f9]">
+          <span className="text-xs text-[#aaa]">
+            {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
           </span>
           <div className="flex gap-1">
-            <button
-              onClick={() => setPage(p => Math.max(0, p - 1))}
-              disabled={page === 0}
-              className="rounded-lg px-3 py-1 text-xs font-medium border border-gray-200 hover:bg-gray-50 disabled:opacity-40 transition-colors"
-            >Prev</button>
-            <button
-              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-              disabled={page >= totalPages - 1}
-              className="rounded-lg px-3 py-1 text-xs font-medium border border-gray-200 hover:bg-gray-50 disabled:opacity-40 transition-colors"
-            >Next</button>
+            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
+              className="px-3 py-1 text-xs font-semibold border border-[#ddd] rounded hover:bg-[#f0f0f0] disabled:opacity-40">Prev</button>
+            <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
+              className="px-3 py-1 text-xs font-semibold border border-[#ddd] rounded hover:bg-[#f0f0f0] disabled:opacity-40">Next</button>
           </div>
         </div>
       )}
@@ -539,9 +476,9 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════
-// MAIN DASHBOARD
-// ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════════════════════ */
 export function Dashboard() {
   const { user } = useAuth();
   const { data: portfolio } = usePortfolio();
@@ -553,227 +490,157 @@ export function Dashboard() {
   const isMarketOpen = timeDiffMin < 10;
 
   return (
-    <div className="animate-fade-in">
-      {/* Stock Ticker — edge-to-edge */}
+    <div className="animate-fade-in min-h-screen bg-white">
       {market && <StockTicker prices={market.livePrices} />}
 
-      {/* Centered content container */}
-      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 24px' }}>
         <div className="space-y-5">
 
-          {/* ── HEADER ── */}
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 truncate">
-                Welcome, {user?.full_name?.split(' ')[0] || 'Investor'}
-              </h1>
-              <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-1.5 flex-wrap">
-                <p className="text-gray-500 text-xs sm:text-sm flex items-center gap-1">
-                  <Clock size={12} />
-                  {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                </p>
-                <span className={cn(
-                  'inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full',
-                  isMarketOpen
-                    ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                    : 'bg-red-100 text-red-700 border border-red-200'
-                )}>
-                  <span className={cn('w-1.5 h-1.5 rounded-full', isMarketOpen ? 'bg-emerald-500 animate-pulse' : 'bg-red-500')} />
-                  DSE {isMarketOpen ? 'OPEN' : 'CLOSED'}
-                </span>
-                {market?.lastUpdated && (
-                  <span className="text-[10px] text-gray-400 flex items-center gap-1">
-                    <Activity size={10} />
-                    {formatDateTime(market.lastUpdated)}
-                  </span>
-                )}
-              </div>
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-lg font-bold text-[#333]">Welcome, {user?.full_name?.split(' ')[0] || 'Investor'}</h1>
+              <span className="text-xs text-[#aaa] flex items-center gap-1">
+                <Clock size={11} />
+                {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+              </span>
             </div>
-            <div className="flex items-center shrink-0">
-              <Link to="/trading" className="flex items-center gap-1 sm:gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm text-white font-semibold hover:bg-blue-700 transition-colors shadow-sm">
-                <TrendingUp size={14} /> Trade
-              </Link>
-            </div>
+            <Link to="/trading" className="px-4 py-2 rounded bg-[#0b8a00] text-white text-sm font-semibold hover:bg-[#097300] transition-colors">
+              Trade Now
+            </Link>
           </div>
 
-          {/* ── INDEX CARDS ── */}
+          {/* DSEX Hero Landing */}
           {marketLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[1,2,3].map(i => <div key={i} className="skeleton rounded-xl h-[100px]" />)}
-            </div>
+            <div className="skeleton rounded h-40" />
           ) : market && (
-            <IndexCards indices={market.indices} />
+            <DSEXHero indices={market.indices} stats={market.stats} isMarketOpen={isMarketOpen} lastUpdated={market.lastUpdated} />
           )}
 
-          {/* ── MARKET STATS BAR ── */}
-          {market && <MarketStatsBar stats={market.stats} />}
+          {/* Breadth + Sentiment */}
+          {market && <MarketBreadth stats={market.stats} />}
 
-          {/* ── STRENGTH + SENTIMENT ── */}
-          {market && <MarketStrengthPanel stats={market.stats} />}
-
-          {/* ── PORTFOLIO OVERVIEW ── */}
+          {/* Portfolio */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
-                <Briefcase size={16} className="text-blue-600" /> Portfolio Overview
-              </h2>
-              <Link to="/portfolio" className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-0.5 font-semibold">
-                Details <ChevronRight size={12} />
-              </Link>
+              <h2 className="text-sm font-semibold text-[#333]">Portfolio Overview</h2>
+              <Link to="/portfolio" className="text-xs text-[#1565c0] hover:underline flex items-center gap-0.5">Details <ChevronRight size={12} /></Link>
             </div>
             <PortfolioOverview portfolio={portfolio} learning={learning} />
           </div>
 
-          {/* ── HOLDINGS PREVIEW ── */}
+          {/* Holdings */}
           {portfolio && portfolio.items.length > 0 && (
-            <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50">
-                <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <Star size={14} className="text-amber-500" /> Holdings
-                </h2>
-                <Link to="/portfolio" className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-0.5 font-semibold">
-                  View all <ChevronRight size={12} />
-                </Link>
+            <div className="border border-[#e5e5e5] rounded overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-2.5 bg-[#f5f5f5] border-b border-[#e5e5e5]">
+                <h2 className="text-sm font-semibold text-[#333]">Holdings</h2>
+                <Link to="/portfolio" className="text-xs text-[#1565c0] hover:underline">View all</Link>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50/80">
-                    <tr>
-                      <th className="px-4 py-2.5 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">Stock</th>
-                      <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">Qty</th>
-                      <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider hidden sm:table-cell">Avg</th>
-                      <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">LTP</th>
-                      <th className="px-3 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">P&L</th>
-                      <th className="px-4 py-2.5 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider">P&L%</th>
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-[#f9f9f9] border-b border-[#e5e5e5]">
+                    <th className="px-4 py-2 text-left text-[11px] font-semibold text-[#888]">Stock</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">Qty</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888] hidden sm:table-cell">Avg</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">LTP</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">P&L</th>
+                    <th className="px-4 py-2 text-right text-[11px] font-semibold text-[#888]">P&L%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {portfolio.items.slice(0, 8).map((item, i) => (
+                    <tr key={item.id} className={cn('border-b border-[#f0f0f0] hover:bg-[#f9f9f9]', i % 2 === 1 && 'bg-[#fafafa]')}>
+                      <td className="px-4 py-2">
+                        <Link to={`/stock/${item.stock_symbol}`} className="font-semibold text-[#1565c0] hover:underline">{item.stock_symbol}</Link>
+                      </td>
+                      <td className="px-3 py-2 text-right font-num text-[#888]">{item.quantity}</td>
+                      <td className="px-3 py-2 text-right font-num text-[#888] hidden sm:table-cell">{item.avg_buy_price.toFixed(2)}</td>
+                      <td className="px-3 py-2 text-right font-num font-semibold">{item.current_price.toFixed(2)}</td>
+                      <td className={cn('px-3 py-2 text-right font-num font-semibold', item.profit_loss >= 0 ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                        {formatCurrency(item.profit_loss)}
+                      </td>
+                      <td className={cn('px-4 py-2 text-right font-num font-semibold text-xs', item.profit_loss_percent >= 0 ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+                        {formatPercent(item.profit_loss_percent)}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {portfolio.items.slice(0, 8).map(item => (
-                      <tr key={item.id} className="border-b border-gray-50 hover:bg-blue-50/40 transition-colors">
-                        <td className="px-4 py-2.5">
-                          <Link to={`/stock/${item.stock_symbol}`} className="font-bold text-blue-600 hover:underline">{item.stock_symbol}</Link>
-                        </td>
-                        <td className="px-3 py-2.5 text-right font-num text-gray-500">{item.quantity}</td>
-                        <td className="px-3 py-2.5 text-right font-num text-gray-500 hidden sm:table-cell">{item.avg_buy_price.toFixed(2)}</td>
-                        <td className="px-3 py-2.5 text-right font-num font-semibold text-gray-900">{item.current_price.toFixed(2)}</td>
-                        <td className={cn('px-3 py-2.5 text-right font-num font-semibold', item.profit_loss >= 0 ? 'text-emerald-600' : 'text-red-600')}>
-                          {formatCurrency(item.profit_loss)}
-                        </td>
-                        <td className="px-4 py-2.5 text-right">
-                          <span className={cn(
-                            'inline-block min-w-[50px] px-2 py-0.5 rounded text-xs font-bold font-num text-center',
-                            item.profit_loss_percent >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                          )}>
-                            {formatPercent(item.profit_loss_percent)}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
-          {/* ── TOP MOVERS ── */}
+          {/* Top Movers */}
           {market && (
             <div>
-              <h2 className="text-sm sm:text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Zap size={16} className="text-amber-500" /> Top Movers
-              </h2>
-              <TopMoversSection prices={market.livePrices} />
+              <h2 className="text-sm font-semibold text-[#333] mb-3">Top Movers</h2>
+              <TopMovers prices={market.livePrices} />
             </div>
           )}
 
-          {/* ── MOST ACTIVE + DAY HIGH/LOW ── */}
+          {/* Most Active + Day High/Low */}
           {market && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <MostActiveSnapshot prices={market.livePrices} />
-              <WeekHighLow prices={market.livePrices} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <MostActive prices={market.livePrices} />
+              <DayHighLow prices={market.livePrices} />
             </div>
           )}
 
-          {/* ── ALL STOCKS TABLE ── */}
+          {/* All Stocks */}
           {market && (
             <div>
-              <h2 className="text-sm sm:text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Globe size={16} className="text-blue-600" /> All Stocks
-              </h2>
+              <h2 className="text-sm font-semibold text-[#333] mb-3">All Stocks</h2>
               <AllStocksTable prices={market.livePrices} />
             </div>
           )}
 
-          {/* ── ACTION ALERTS ── */}
+          {/* Alerts */}
           {(user?.kyc_status !== 'verified' || (learning && !learning.isQualified)) && (
-            <div className="space-y-3">
-              <h2 className="text-sm sm:text-base font-bold text-gray-900">Action Required</h2>
+            <div className="space-y-2">
               {user?.kyc_status !== 'verified' && (
-                <div className="rounded-xl bg-white border border-amber-200 p-4 flex items-center gap-3 border-l-4 border-l-amber-500 shadow-sm">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                    <ShieldCheck size={18} className="text-amber-600" />
+                <div className="flex items-center gap-3 px-4 py-3 border border-[#e5e5e5] rounded border-l-3 border-l-[#e65100]">
+                  <ShieldCheck size={16} className="text-[#e65100] shrink-0" />
+                  <div className="flex-1">
+                    <span className="text-sm font-semibold text-[#333]">Complete KYC</span>
+                    <span className="text-xs text-[#888] ml-2">Submit documents to unlock trading</span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-gray-900">Complete KYC Verification</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Submit documents to unlock live trading</p>
-                  </div>
-                  <Link to="/kyc" className="rounded-lg bg-amber-100 border border-amber-200 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-200 transition-colors">
-                    Go <ChevronRight size={12} className="inline" />
-                  </Link>
+                  <Link to="/kyc" className="text-xs font-semibold text-[#1565c0] hover:underline">Go →</Link>
                 </div>
               )}
               {learning && !learning.isQualified && (
-                <div className="rounded-xl bg-white border border-blue-200 p-4 flex items-center gap-3 border-l-4 border-l-blue-500 shadow-sm">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                    <GraduationCap size={18} className="text-blue-600" />
+                <div className="flex items-center gap-3 px-4 py-3 border border-[#e5e5e5] rounded border-l-3 border-l-[#1565c0]">
+                  <GraduationCap size={16} className="text-[#1565c0] shrink-0" />
+                  <div className="flex-1">
+                    <span className="text-sm font-semibold text-[#333]">Complete Learning</span>
+                    <span className="text-xs text-[#888] ml-2">{learning.completedLessons}/{learning.totalLessons} lessons</span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-gray-900">Complete Learning</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{learning.completedLessons}/{learning.totalLessons} lessons</p>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2">
-                      <div className="bg-blue-600 h-1.5 rounded-full transition-all" style={{ width: `${learning.progressPercent}%` }} />
-                    </div>
-                  </div>
-                  <Link to="/learning" className="rounded-lg bg-blue-100 border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-200 transition-colors">
-                    Go <ChevronRight size={12} className="inline" />
-                  </Link>
+                  <Link to="/learning" className="text-xs font-semibold text-[#1565c0] hover:underline">Go →</Link>
                 </div>
               )}
             </div>
           )}
 
-          {/* ── QUICK ACTIONS ── */}
-          <div>
-            <h2 className="text-sm sm:text-base font-bold text-gray-900 mb-3">Quick Actions</h2>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
-              {[
-                { to: '/trading', icon: TrendingUp, label: 'Trade', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-                { to: '/portfolio', icon: Briefcase, label: 'Portfolio', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200' },
-                { to: '/ipo', icon: Zap, label: 'IPO', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200' },
-                { to: '/market', icon: BarChart2, label: 'Market', color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-200' },
-                { to: '/learning', icon: GraduationCap, label: 'Learn', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200' },
-                { to: '/social', icon: Newspaper, label: 'Social', color: 'text-cyan-600', bg: 'bg-cyan-50', border: 'border-cyan-200' },
-              ].map(item => (
-                <Link key={item.to} to={item.to}>
-                  <div className={cn('rounded-xl border-2 p-4 text-center group hover:shadow-md transition-all', item.border, item.bg)}>
-                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 transition-transform group-hover:scale-110', `${item.bg}`)}>
-                      <item.icon size={20} className={item.color} />
-                    </div>
-                    <p className="text-xs font-bold text-gray-700">{item.label}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+          {/* Quick Actions */}
+          <div className="flex flex-wrap gap-2">
+            {[
+              { to: '/trading', label: 'Trade' },
+              { to: '/portfolio', label: 'Portfolio' },
+              { to: '/ipo', label: 'IPO' },
+              { to: '/market', label: 'Market' },
+              { to: '/learning', label: 'Learn' },
+              { to: '/social', label: 'Social' },
+            ].map(item => (
+              <Link key={item.to} to={item.to} className="px-4 py-2 text-xs font-semibold border border-[#e5e5e5] rounded hover:bg-[#f5f5f5] text-[#333] transition-colors">
+                {item.label}
+              </Link>
+            ))}
           </div>
 
-          {/* ── FOOTER ── */}
-          <footer className="border-t border-gray-200 pt-4">
-            <div className="flex flex-col items-center justify-between gap-2 text-center text-[10px] sm:text-xs text-gray-400 md:flex-row md:text-left">
-              <p>&copy; {new Date().getFullYear()} HeroStock.AI — Regulated by BSEC</p>
-              {market?.lastUpdated && (
-                <p>Last updated: <span className="font-num">{new Date(market.lastUpdated).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span></p>
-              )}
-            </div>
-          </footer>
+          {/* Footer */}
+          <div className="border-t border-[#e5e5e5] pt-3 flex items-center justify-between text-[11px] text-[#aaa]">
+            <span>© {new Date().getFullYear()} HeroStock.AI — Regulated by BSEC</span>
+            {market?.lastUpdated && <span className="font-num">Last updated: {new Date(market.lastUpdated).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>}
+          </div>
+
         </div>
       </div>
     </div>
