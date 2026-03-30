@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, TrendingUp, Briefcase, GraduationCap, ShieldCheck,
   Users, LogOut, ClipboardList, Menu, X, MessageSquare, Rocket,
-  MoreHorizontal, BarChart3,
+  MoreHorizontal, BarChart3, PlayCircle, FileText, Wallet, UserCog,
+  UserPlus,
 } from 'lucide-react';
 
-const baseNavItems = [
+const liveNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
   { to: '/market', icon: BarChart3, label: 'Market' },
   { to: '/trading', icon: TrendingUp, label: 'Trade' },
@@ -20,17 +22,35 @@ const baseNavItems = [
   { to: '/marketing', icon: Users, label: 'Refer' },
 ];
 
+const demoNavItems = [
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
+  { to: '/market', icon: BarChart3, label: 'Market' },
+  { to: '/demo/trading', icon: TrendingUp, label: 'Trade' },
+  { to: '/demo/portfolio', icon: Briefcase, label: 'Portfolio' },
+  { to: '/demo/ledger', icon: Wallet, label: 'Ledger' },
+  { to: '/demo/eod', icon: PlayCircle, label: 'EOD' },
+  { to: '/demo/reports', icon: FileText, label: 'Reports' },
+  { to: '/learning', icon: GraduationCap, label: 'Learn' },
+];
+
 const adminNavItem = { to: '/admin/orders', icon: ClipboardList, label: 'Orders' };
+const adminLearnersItem = { to: '/admin/learners', icon: UserCog, label: 'Learners' };
 const moreNavItem = { to: '/more', icon: MoreHorizontal, label: 'More' };
 
 export function TopNav() {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, isGuest, signOut } = useAuth();
+  const { isDemoMode } = useDemo();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [...baseNavItems, ...(isAdmin ? [adminNavItem] : []), moreNavItem];
+  const baseNavItems = isDemoMode ? demoNavItems : liveNavItems;
+  const adminItems = isAdmin ? [adminNavItem, ...(isDemoMode ? [adminLearnersItem] : [])] : [];
+  const navItems = [...baseNavItems, ...adminItems, moreNavItem];
   const desktopNavItems = navItems;
   const mobileBottomItems = [baseNavItems[0], baseNavItems[1], baseNavItems[2], baseNavItems[3], moreNavItem];
+
+  const displayName = isGuest ? 'Guest' : (user?.full_name || 'User');
+  const displayInitial = isGuest ? 'G' : (user?.full_name?.charAt(0)?.toUpperCase() || 'U');
 
   return (
     <>
@@ -60,14 +80,24 @@ export function TopNav() {
 
             <div className="flex items-center gap-3 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#0b8a00] flex items-center justify-center text-white text-xs font-bold">
-                  {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                <div className={cn(
+                  'w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold',
+                  isGuest ? 'bg-gray-400' : 'bg-[#0b8a00]'
+                )}>
+                  {displayInitial}
                 </div>
-                <span className="text-sm font-semibold text-[#333] hidden lg:block truncate max-w-[120px]">{user?.full_name || 'User'}</span>
+                <span className="text-sm font-semibold text-[#333] hidden lg:block truncate max-w-[120px]">{displayName}</span>
               </div>
-              <button onClick={signOut} className="text-sm text-[#aaa] hover:text-[#d32f2f] transition-colors" title="Sign Out">
-                <LogOut size={16} />
-              </button>
+              {isGuest ? (
+                <Link to="/auth" className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#0b8a00] rounded-lg hover:brightness-110 transition-all" title="Create Account">
+                  <UserPlus size={13} />
+                  <span className="hidden lg:inline">Sign Up</span>
+                </Link>
+              ) : (
+                <button onClick={signOut} className="text-sm text-[#aaa] hover:text-[#d32f2f] transition-colors" title="Sign Out">
+                  <LogOut size={16} />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -81,8 +111,17 @@ export function TopNav() {
             <span className="font-bold text-sm text-[#333]">HeroStock.AI</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-[#0b8a00] flex items-center justify-center text-white text-[10px] font-bold">
-              {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+            {isGuest && (
+              <Link to="/auth" className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-white bg-[#0b8a00] rounded-md">
+                <UserPlus size={11} />
+                Sign Up
+              </Link>
+            )}
+            <div className={cn(
+              'w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold',
+              isGuest ? 'bg-gray-400' : 'bg-[#0b8a00]'
+            )}>
+              {displayInitial}
             </div>
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="w-7 h-7 flex items-center justify-center">
               {mobileMenuOpen ? <X size={18} className="text-[#333]" /> : <Menu size={18} className="text-[#333]" />}
@@ -97,8 +136,8 @@ export function TopNav() {
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute top-[48px] left-0 right-0 max-h-[80vh] overflow-y-auto bg-white" style={{ borderBottom: '1px solid #e5e5e5', animation: 'slideDown 0.2s ease-out' }} onClick={e => e.stopPropagation()}>
             <div className="px-4 py-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
-              <p className="text-sm font-semibold text-[#333]">{user?.full_name || 'User'}</p>
-              <p className="text-xs text-[#aaa]">{user?.email}</p>
+              <p className="text-sm font-semibold text-[#333]">{displayName}</p>
+              <p className="text-xs text-[#aaa]">{isGuest ? 'Guest account — no sign-up required' : user?.email}</p>
             </div>
             <div className="py-1">
               {navItems.map(item => {
@@ -113,10 +152,17 @@ export function TopNav() {
               })}
             </div>
             <div className="px-4 py-3" style={{ borderTop: '1px solid #f0f0f0' }}>
-              <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center gap-2.5 text-sm font-medium text-[#d32f2f]">
-                <LogOut size={16} strokeWidth={1.8} />
-                <span>Sign Out</span>
-              </button>
+              {isGuest ? (
+                <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5 text-sm font-medium text-[#0b8a00]">
+                  <UserPlus size={16} strokeWidth={1.8} />
+                  <span>Create Account</span>
+                </Link>
+              ) : (
+                <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center gap-2.5 text-sm font-medium text-[#d32f2f]">
+                  <LogOut size={16} strokeWidth={1.8} />
+                  <span>Sign Out</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

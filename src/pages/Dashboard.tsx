@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, lazy, Suspense } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDemo } from '@/contexts/DemoContext';
 import { usePortfolio } from '@/hooks/useStocks';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useLearningProgress } from '@/hooks/useLearning';
@@ -479,11 +480,23 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
 /* ═══════════════════════════════════════════════════════════
    DASHBOARD
    ═══════════════════════════════════════════════════════════ */
+const DemoDashboard = lazy(() => import('@/components/dashboard/DemoDashboard').then(m => ({ default: m.DemoDashboard })));
+
 export function Dashboard() {
   const { user } = useAuth();
+  const { isDemoMode } = useDemo();
   const { data: portfolio } = usePortfolio();
   const { data: market, isLoading: marketLoading } = useMarketData();
   const { data: learning } = useLearningProgress();
+
+  // Show Demo Dashboard when in demo mode
+  if (isDemoMode) {
+    return (
+      <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-info border-t-transparent rounded-full animate-spin" /></div>}>
+        <DemoDashboard />
+      </Suspense>
+    );
+  }
 
   const lastUpdate = market?.lastUpdated ? new Date(market.lastUpdated) : null;
   const timeDiffMin = lastUpdate ? (Date.now() - lastUpdate.getTime()) / 60000 : Infinity;

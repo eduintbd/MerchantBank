@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { DemoProvider } from '@/contexts/DemoContext';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AuthPage } from '@/pages/AuthPage';
 import { Dashboard } from '@/pages/Dashboard';
@@ -31,6 +32,15 @@ const MorePage = lazy(() => import('@/pages/MorePage').then(m => ({ default: m.M
 const PortfolioAnalysisPage = lazy(() => import('@/pages/PortfolioAnalysisPage').then(m => ({ default: m.PortfolioAnalysisPage })));
 const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
 const MarketPage = lazy(() => import('@/pages/MarketPage').then(m => ({ default: m.MarketPage })));
+
+// Demo Trading + Learning pages
+const OnboardingPage = lazy(() => import('@/pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })));
+const DemoTradingPage = lazy(() => import('@/pages/DemoTradingPage').then(m => ({ default: m.DemoTradingPage })));
+const DemoPortfolioPage = lazy(() => import('@/pages/DemoPortfolioPage').then(m => ({ default: m.DemoPortfolioPage })));
+const CashLedgerPage = lazy(() => import('@/pages/CashLedgerPage').then(m => ({ default: m.CashLedgerPage })));
+const EodReplayPage = lazy(() => import('@/pages/EodReplayPage').then(m => ({ default: m.EodReplayPage })));
+const DemoReportsPage = lazy(() => import('@/pages/DemoReportsPage').then(m => ({ default: m.DemoReportsPage })));
+const AdminLearnersPage = lazy(() => import('@/pages/AdminLearnersPage').then(m => ({ default: m.AdminLearnersPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,37 +74,28 @@ function PageLoader() {
   );
 }
 
-function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return <LoadingScreen />;
-  if (!isAuthenticated) return <Navigate to="/auth" replace />;
-  return <>{children}</>;
-}
-
 function AppRoutes() {
-  const { isAuthenticated, loading } = useAuth();
+  const { loading } = useAuth();
 
-  // Don't block /market while auth is loading
   const location = useLocation();
   if (loading && !location.pathname.startsWith('/market')) return <LoadingScreen />;
 
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
-      <Route path="/auth" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
+      {/* Landing page — always accessible, users can explore or go to dashboard */}
+      <Route path="/landing" element={<LandingPage />} />
 
-      {/* Market page - open to everyone, no auth required */}
+      {/* Auth page — available for guests who want to create a real account */}
+      <Route path="/auth" element={<AuthPage />} />
+
+      {/* Market page — open to everyone */}
       <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
 
-      {/* Protected routes */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
+      {/* All app routes — no auth gate, guest auto-login handles it */}
+      <Route element={<AppLayout />}>
+        {/* Default: send / to dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
         {/* Core pages */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/trading" element={<TradingPage />} />
@@ -104,7 +105,7 @@ function AppRoutes() {
         <Route path="/marketing" element={<MarketingPage />} />
         <Route path="/admin/orders" element={<AdminOrdersPage />} />
 
-        {/* New feature pages */}
+        {/* Feature pages */}
         <Route path="/halal" element={<Suspense fallback={<PageLoader />}><HalalStocksPage /></Suspense>} />
         <Route path="/women-investors" element={<Suspense fallback={<PageLoader />}><WomenInvestorsPage /></Suspense>} />
         <Route path="/market-history" element={<Suspense fallback={<PageLoader />}><MarketHistoryPage /></Suspense>} />
@@ -119,8 +120,20 @@ function AppRoutes() {
         <Route path="/more" element={<Suspense fallback={<PageLoader />}><MorePage /></Suspense>} />
         <Route path="/portfolio/analysis" element={<Suspense fallback={<PageLoader />}><PortfolioAnalysisPage /></Suspense>} />
         <Route path="/notifications/settings" element={<Suspense fallback={<PageLoader />}><NotificationSettingsPage /></Suspense>} />
+
+        {/* Demo Trading + Learning routes */}
+        <Route path="/demo/trading" element={<Suspense fallback={<PageLoader />}><DemoTradingPage /></Suspense>} />
+        <Route path="/demo/portfolio" element={<Suspense fallback={<PageLoader />}><DemoPortfolioPage /></Suspense>} />
+        <Route path="/demo/ledger" element={<Suspense fallback={<PageLoader />}><CashLedgerPage /></Suspense>} />
+        <Route path="/demo/eod" element={<Suspense fallback={<PageLoader />}><EodReplayPage /></Suspense>} />
+        <Route path="/demo/reports" element={<Suspense fallback={<PageLoader />}><DemoReportsPage /></Suspense>} />
+        <Route path="/admin/learners" element={<Suspense fallback={<PageLoader />}><AdminLearnersPage /></Suspense>} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+
+      {/* Onboarding — standalone page */}
+      <Route path="/onboarding" element={<Suspense fallback={<PageLoader />}><OnboardingPage /></Suspense>} />
+
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
@@ -128,19 +141,21 @@ function AppRoutes() {
 function AppShell() {
   return (
     <AuthProvider>
-      <AppRoutes />
-      <Toaster
-        position="top-right"
-        richColors
-        toastOptions={{
-          style: {
-            background: '#ffffff',
-            border: '1px solid #e2e8f0',
-            color: '#1e293b',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
-          },
-        }}
-      />
+      <DemoProvider>
+        <AppRoutes />
+        <Toaster
+          position="top-right"
+          richColors
+          toastOptions={{
+            style: {
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              color: '#1e293b',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+            },
+          }}
+        />
+      </DemoProvider>
     </AuthProvider>
   );
 }

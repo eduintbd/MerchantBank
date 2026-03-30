@@ -1,3 +1,6 @@
+// Re-export all demo types
+export * from './demo';
+
 // User & Auth Types
 export type UserRole = 'admin' | 'investor' | 'agent' | 'manager';
 export type KycStatus = 'pending' | 'submitted' | 'verified' | 'rejected';

@@ -6,6 +6,7 @@ interface AuthState {
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
+  isGuest: boolean;
   isAdmin: boolean;
   isInvestor: boolean;
 }
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: null,
     loading: true,
     isAuthenticated: false,
+    isGuest: false,
     isAdmin: false,
     isInvestor: false,
   });
@@ -31,24 +33,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        fetchProfile(session.user.id);
+        fetchProfile(session.user.id, session.user.is_anonymous ?? false);
       } else {
-        setState(s => ({ ...s, loading: false }));
+        // No session — auto-create anonymous guest
+        autoSignInGuest();
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        fetchProfile(session.user.id);
+        fetchProfile(session.user.id, session.user.is_anonymous ?? false);
       } else {
-        setState({ user: null, loading: false, isAuthenticated: false, isAdmin: false, isInvestor: false });
+        setState({ user: null, loading: false, isAuthenticated: false, isGuest: false, isAdmin: false, isInvestor: false });
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  async function fetchProfile(userId: string) {
+  async function autoSignInGuest() {
+    try {
+      const { data, error } = await supabase.auth.signInAnonymously();
+      if (error) {
+        console.warn('Anonymous sign-in failed, proceeding without auth:', error.message);
+        // Fall back — set a minimal guest user so the app still works
+        setState({
+          user: {
+            id: 'guest-' + Date.now(),
+            email: '',
+            full_name: 'Guest',
+            role: 'investor' as const,
+            kyc_status: 'pending' as const,
+            is_approved: false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          loading: false,
+          isAuthenticated: true,
+          isGuest: true,
+          isAdmin: false,
+          isInvestor: true,
+        });
+        return;
+      }
+      // onAuthStateChange will pick up the new session and call fetchProfile
+    } catch {
+      setState(s => ({ ...s, loading: false }));
+    }
+  }
+
+  async function fetchProfile(userId: string, isAnonymous: boolean) {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -56,14 +90,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .single();
 
     if (error || !data) {
-      // Profile missing — create a basic one from auth metadata
+      // Profile missing — create one (works for anonymous & regular users)
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
         const meta = authUser.user_metadata || {};
         const fallback = {
           id: userId,
           email: authUser.email || '',
-          full_name: meta.full_name || '',
+          full_name: meta.full_name || (isAnonymous ? 'Guest Investor' : ''),
           phone: meta.phone || '',
           role: 'investor' as const,
           kyc_status: 'pending' as const,
@@ -74,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           user: { ...fallback, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), is_approved: false } as User,
           loading: false,
           isAuthenticated: true,
+          isGuest: isAnonymous,
           isAdmin: false,
           isInvestor: true,
         });
@@ -88,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading: false,
       isAuthenticated: true,
+      isGuest: isAnonymous,
       isAdmin: user.role === 'admin' || user.role === 'manager',
       isInvestor: user.role === 'investor',
     });
