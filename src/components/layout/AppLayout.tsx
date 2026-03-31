@@ -1,9 +1,20 @@
-import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { TopNav } from './Sidebar';
 import { DemoModeBanner } from './DemoModeBanner';
 import { CoachingOverlay } from '@/components/coaching/CoachingOverlay';
+import { LeadCaptureModal } from '@/components/ui/LeadCaptureModal';
+import { trackPageView, getVisitor } from '@/services/visitorTracker';
 
 export function AppLayout() {
+  const location = useLocation();
+
+  // Track page views
+  useEffect(() => {
+    getVisitor(); // Ensure visitor is initialized
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen bg-white">
       <DemoModeBanner />
@@ -12,6 +23,7 @@ export function AppLayout() {
         <Outlet />
       </main>
       <CoachingOverlay />
+      <LeadCaptureModal />
     </div>
   );
 }
