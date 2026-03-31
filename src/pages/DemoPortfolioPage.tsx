@@ -30,7 +30,7 @@ export function DemoPortfolioPage() {
 
   return (
     <div className="min-h-screen bg-white animate-fade-in">
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="flex items-center gap-2 mb-1">
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-gray-900">Demo Portfolio</h1>
           <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#0b8a00]/10 text-[#0b8a00] border border-[#0b8a00]/20">

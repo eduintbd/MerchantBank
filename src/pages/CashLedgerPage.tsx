@@ -20,7 +20,7 @@ export function CashLedgerPage() {
 
   return (
     <div className="min-h-screen bg-white animate-fade-in">
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-gray-900">Cash Ledger</h1>
           <p className="text-gray-500 text-sm sm:text-base mt-1">Track every cash movement in your demo account</p>

@@ -56,24 +56,24 @@ export function TopNav() {
     <>
       {/* Desktop Header */}
       <header className="sticky top-0 z-40 hidden sm:block bg-white" style={{ borderBottom: '1px solid #e5e5e5' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }} className="px-3 sm:px-4 lg:px-6">
           <div className="flex items-center justify-between h-[56px]">
             <div className="flex items-center gap-2.5 shrink-0">
               <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-8 h-8 rounded object-cover" />
               <span className="font-bold text-base text-[#333]">HeroStock.AI</span>
             </div>
 
-            <nav className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+            <nav className="flex items-center gap-0.5 lg:gap-1 overflow-x-auto scrollbar-hide">
               {desktopNavItems.map(item => {
                 const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
                 return (
                   <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'}
-                    className={cn('group flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold whitespace-nowrap rounded-lg transition-all duration-200',
+                    className={cn('group flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3.5 py-1.5 lg:py-2 text-[11px] lg:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-all duration-200',
                       isActive
                         ? 'bg-[#0b8a00]/10 text-[#0b8a00]'
                         : 'text-[#777] hover:bg-[#f5f5f5] hover:text-[#333]'
                     )}>
-                    <item.icon size={15} strokeWidth={isActive ? 2.2 : 1.8} className="transition-transform duration-200 group-hover:scale-110" />
+                    <item.icon size={14} strokeWidth={isActive ? 2.2 : 1.8} className="transition-transform duration-200 group-hover:scale-110 shrink-0" />
                     <span>{item.label}</span>
                   </NavLink>
                 );
@@ -136,7 +136,7 @@ export function TopNav() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setMobileMenuOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute top-[48px] left-0 right-0 max-h-[80vh] overflow-y-auto bg-white" style={{ borderBottom: '1px solid #e5e5e5', animation: 'slideDown 0.2s ease-out' }} onClick={e => e.stopPropagation()}>
+          <div className="absolute left-0 right-0 max-h-[80vh] overflow-y-auto bg-white" style={{ top: 'calc(52px + env(safe-area-inset-top, 0px))', borderBottom: '1px solid #e5e5e5', animation: 'slideDown 0.2s ease-out' }} onClick={e => e.stopPropagation()}>
             <div className="px-4 py-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
               <p className="text-sm font-semibold text-[#333]">{displayName}</p>
               <p className="text-xs text-[#aaa]">{isGuest ? 'Guest account — no sign-up required' : user?.email}</p>
@@ -176,9 +176,9 @@ export function TopNav() {
           {mobileBottomItems.map(item => {
             const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : item.to === '/more' ? location.pathname === '/more' : location.pathname.startsWith(item.to);
             return (
-              <NavLink key={item.to} to={item.to} className="flex flex-col items-center justify-center gap-0.5">
-                <item.icon size={18} strokeWidth={isActive ? 2.2 : 1.5} className={isActive ? 'text-[#0b8a00]' : 'text-[#aaa]'} />
-                <span className={cn('text-[10px] font-medium', isActive ? 'text-[#0b8a00]' : 'text-[#aaa]')}>{item.label}</span>
+              <NavLink key={item.to} to={item.to} className="flex flex-col items-center justify-center gap-0.5 min-w-0">
+                <item.icon size={18} strokeWidth={isActive ? 2.2 : 1.5} className={cn('shrink-0', isActive ? 'text-[#0b8a00]' : 'text-[#aaa]')} />
+                <span className={cn('text-[9px] sm:text-[10px] font-medium truncate max-w-full', isActive ? 'text-[#0b8a00]' : 'text-[#aaa]')}>{item.label}</span>
               </NavLink>
             );
           })}

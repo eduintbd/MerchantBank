@@ -83,7 +83,7 @@ export function AdminOrdersPage() {
 
   return (
     <div className="min-h-screen bg-white animate-fade-in">
-      <div className="space-y-6 sm:space-y-8" style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+      <div className="space-y-6 sm:space-y-8 px-3 sm:px-6 lg:px-8 py-4 sm:py-6" style={{ maxWidth: 1400, margin: '0 auto' }}>
       {/* ========== HEADER ========== */}
       <div className="flex items-center justify-between">
         <div>

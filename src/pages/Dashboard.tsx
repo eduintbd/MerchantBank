@@ -64,14 +64,14 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
           const idxUp = idx.change >= 0;
           return (
             <button key={idx.index_name} onClick={() => setActiveIdx(i)}
-              className={cn('flex-1 px-4 py-3 text-center border-b-2 transition-colors',
+              className={cn('flex-1 px-2 sm:px-4 py-2 sm:py-3 text-center border-b-2 transition-colors min-w-0',
                 isActive ? 'border-[#0b8a00] bg-white' : 'border-transparent hover:bg-[#f0f0f0]'
               )}>
-              <div className="text-xs font-semibold text-[#888]">{idx.index_name}</div>
-              <div className="text-base font-bold font-num text-[#333] mt-0.5">
+              <div className="text-[10px] sm:text-xs font-semibold text-[#888] truncate">{idx.index_name}</div>
+              <div className="text-sm sm:text-base font-bold font-num text-[#333] mt-0.5 truncate">
                 {idx.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div className={cn('text-xs font-semibold font-num mt-0.5', idxUp ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+              <div className={cn('text-[10px] sm:text-xs font-semibold font-num mt-0.5 truncate', idxUp ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
                 {idxUp ? '+' : ''}{idx.change.toFixed(2)} ({idxUp ? '+' : ''}{idx.change_pct.toFixed(2)}%)
               </div>
             </button>
@@ -84,8 +84,8 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           {/* Left — Main Index Display */}
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-lg font-bold text-[#333]">{selected.index_name} Index</h2>
+            <div className="flex items-center gap-2 sm:gap-3 mb-1">
+              <h2 className="text-base sm:text-lg font-bold text-[#333]">{selected.index_name} Index</h2>
               <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded',
                 isMarketOpen ? 'bg-[#e8f5e9] text-[#0b8a00]' : 'bg-[#ffebee] text-[#d32f2f]'
               )}>
@@ -111,7 +111,7 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
           </div>
 
           {/* Right — Key Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 gap-x-6 sm:gap-x-8 gap-y-2 text-left sm:text-right">
+          <div className="grid grid-cols-2 gap-x-3 sm:gap-x-8 gap-y-2 text-left sm:text-right">
             <div>
               <div className="text-[11px] text-[#aaa]">Volume</div>
               <div className="text-sm font-semibold font-num text-[#333]">{formatVolume(stats.totalVolume)}</div>
@@ -227,11 +227,11 @@ function PortfolioOverview({ portfolio, learning }: { portfolio: any; learning: 
     { label: 'Learning', val: `${learning?.progressPercent || 0}%`, sub: learning?.isQualified ? 'Qualified' : 'In progress' },
   ];
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
       {items.map(c => (
-        <div key={c.label} className="border border-[#e5e5e5] rounded p-3">
-          <div className="text-[11px] text-[#888] uppercase tracking-wide mb-1">{c.label}</div>
-          <div className="text-base font-bold font-num text-[#333]">{c.val}</div>
+        <div key={c.label} className="border border-[#e5e5e5] rounded p-2.5 sm:p-3 min-w-0">
+          <div className="text-[10px] sm:text-[11px] text-[#888] uppercase tracking-wide mb-1 truncate">{c.label}</div>
+          <div className="text-sm sm:text-base font-bold font-num text-[#333] truncate">{c.val}</div>
           {c.sub && <div className={cn('text-xs font-num mt-0.5', c.subUp === true ? 'text-[#0b8a00]' : c.subUp === false ? 'text-[#d32f2f]' : 'text-[#888]')}>{c.sub}</div>}
         </div>
       ))}

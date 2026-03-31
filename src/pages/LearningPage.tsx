@@ -42,7 +42,7 @@ export function LearningPage() {
 
     return (
       <div className="min-h-screen bg-white animate-fade-in">
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '24px 32px' }}>
+        <div style={{ maxWidth: 800, margin: '0 auto' }} className="px-3 sm:px-6 py-4 sm:py-6">
           <button onClick={() => setSelectedLesson(null)} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6">
             <ArrowLeft size={16} /> Back to {course.title}
           </button>
@@ -150,7 +150,7 @@ export function LearningPage() {
 
     return (
       <div className="min-h-screen bg-white animate-fade-in">
-        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           <button onClick={() => setSelectedCourse(null)} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors mb-6">
             <ArrowLeft size={16} /> Back to courses
           </button>
@@ -228,7 +228,7 @@ export function LearningPage() {
   // ─── Courses Grid View (Hero Academy Home) ───
   return (
     <div className="min-h-screen bg-white animate-fade-in">
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
           <div>

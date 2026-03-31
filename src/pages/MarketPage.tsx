@@ -590,7 +590,7 @@ export function MarketPage() {
     return (
       <div className="min-h-screen bg-white">
         <PublicHeader isMarketOpen={false} />
-        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="animate-fade-in space-y-4">
             <div className="skeleton rounded-xl h-10 w-64" />
             <div className="skeleton rounded-xl h-[40px]" />
@@ -614,7 +614,7 @@ export function MarketPage() {
     <div className="min-h-screen bg-white">
       <PublicHeader isMarketOpen={isMarketOpen} />
 
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         <div className="animate-fade-in space-y-5">
 
           {/* Page Header */}
