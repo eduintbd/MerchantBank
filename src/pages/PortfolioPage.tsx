@@ -255,7 +255,15 @@ export function PortfolioPage() {
         </div>
       )}
 
-      <PortfolioUploadModal open={uploadOpen} onClose={() => setUploadOpen(false)} />
+      <PortfolioUploadModal
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        onLocalImport={(holdings) => {
+          for (const h of holdings) {
+            addHolding({ stock_symbol: h.stock_symbol, quantity: h.quantity, avg_buy_price: h.avg_buy_price });
+          }
+        }}
+      />
       <AddStockModal open={addOpen} onClose={() => setAddOpen(false)} onAdd={handleAddStock} />
 
       {/* Summary Stats */}

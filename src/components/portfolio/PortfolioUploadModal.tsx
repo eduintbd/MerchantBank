@@ -337,10 +337,11 @@ function downloadTemplate(format: BrokerFormat) {
 interface Props {
   open: boolean;
   onClose: () => void;
+  onLocalImport?: (holdings: ParsedHolding[]) => void;
 }
 
-export function PortfolioUploadModal({ open, onClose }: Props) {
-  const { user } = useAuth();
+export function PortfolioUploadModal({ open, onClose, onLocalImport }: Props) {
+  const { user, isGuest } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
   const [broker, setBroker] = useState<BrokerFormat>('custom');
   const [file, setFile] = useState<File | null>(null);
@@ -409,9 +410,20 @@ export function PortfolioUploadModal({ open, onClose }: Props) {
   }
 
   async function handleUpload() {
-    if (!user || parsed.length === 0) return;
+    if (parsed.length === 0) return;
     setUploading(true);
     try {
+      // Guest users: save to localStorage via callback
+      if (isGuest || !user) {
+        if (onLocalImport) {
+          onLocalImport(parsed);
+        }
+        toast.success(`Successfully imported ${parsed.length} holdings locally`);
+        setStep('done');
+        return;
+      }
+
+      // Authenticated users: save to Supabase
       for (const h of parsed) {
         const totalInvested = h.quantity * h.avg_buy_price;
         const { error: err } = await supabase.from('portfolio').upsert(
@@ -582,44 +594,72 @@ export function PortfolioUploadModal({ open, onClose }: Props) {
                 </p>
               </div>
 
-              {file?.name.toLowerCase().endsWith('.pdf') && (
-                <div className="flex items-start gap-2 p-3 rounded-xl bg-info/5 border border-info/20">
-                  <AlertCircle size={16} className="text-info shrink-0 mt-0.5" />
-                  <p className="text-xs text-info">
-                    PDF parsing uses text extraction. Please review the parsed data carefully before importing. If values look incorrect, consider uploading a CSV instead.
-                  </p>
-                </div>
-              )}
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-info/5 border border-info/20">
+                <AlertCircle size={16} className="text-info shrink-0 mt-0.5" />
+                <p className="text-xs text-info">
+                  Review and edit values below. Click any quantity or price to correct it.
+                </p>
+              </div>
 
-              {/* Preview Table */}
+              {/* Editable Preview Table */}
               <div className="overflow-x-auto rounded-xl border border-border">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left text-xs text-muted border-b border-border bg-gray-50">
-                      <th className="px-4 py-2.5 font-medium">#</th>
-                      <th className="px-4 py-2.5 font-medium">Symbol</th>
-                      <th className="px-4 py-2.5 font-medium text-right">Quantity</th>
-                      <th className="px-4 py-2.5 font-medium text-right">Avg Buy Price</th>
-                      <th className="px-4 py-2.5 font-medium text-right">Total Invested</th>
+                      <th className="px-3 py-2.5 font-medium">#</th>
+                      <th className="px-3 py-2.5 font-medium">Symbol</th>
+                      <th className="px-3 py-2.5 font-medium text-right">Quantity</th>
+                      <th className="px-3 py-2.5 font-medium text-right">Avg Buy Price</th>
+                      <th className="px-3 py-2.5 font-medium text-right">Total Invested</th>
+                      <th className="px-2 py-2.5 w-8"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {parsed.map((h, i) => (
                       <tr key={i} className="border-b border-border last:border-0">
-                        <td className="px-4 py-2.5 text-muted">{i + 1}</td>
-                        <td className="px-4 py-2.5 font-semibold">{h.stock_symbol}</td>
-                        <td className="px-4 py-2.5 text-right font-num">{h.quantity.toLocaleString()}</td>
-                        <td className="px-4 py-2.5 text-right font-num">৳{h.avg_buy_price.toFixed(2)}</td>
-                        <td className="px-4 py-2.5 text-right font-num">৳{(h.quantity * h.avg_buy_price).toFixed(2)}</td>
+                        <td className="px-3 py-2 text-muted">{i + 1}</td>
+                        <td className="px-3 py-2 font-semibold">{h.stock_symbol}</td>
+                        <td className="px-3 py-2 text-right">
+                          <input
+                            type="number"
+                            value={h.quantity}
+                            min="1"
+                            onChange={e => {
+                              const val = parseInt(e.target.value) || 0;
+                              setParsed(prev => prev.map((p, j) => j === i ? { ...p, quantity: val } : p));
+                            }}
+                            className="w-20 text-right font-num text-sm px-2 py-1 border border-border rounded-lg bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primary/30"
+                          />
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <input
+                            type="number"
+                            value={h.avg_buy_price}
+                            step="0.01"
+                            min="0.01"
+                            onChange={e => {
+                              const val = parseFloat(e.target.value) || 0;
+                              setParsed(prev => prev.map((p, j) => j === i ? { ...p, avg_buy_price: val } : p));
+                            }}
+                            className="w-24 text-right font-num text-sm px-2 py-1 border border-border rounded-lg bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primary/30"
+                          />
+                        </td>
+                        <td className="px-3 py-2 text-right font-num text-muted">৳{(h.quantity * h.avg_buy_price).toFixed(2)}</td>
+                        <td className="px-2 py-2">
+                          <button onClick={() => setParsed(prev => prev.filter((_, j) => j !== i))} className="text-muted hover:text-danger" title="Remove">
+                            <X size={14} />
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr className="bg-gray-50 font-semibold text-sm">
-                      <td colSpan={2} className="px-4 py-2.5">Total</td>
-                      <td className="px-4 py-2.5 text-right font-num">{parsed.reduce((s, h) => s + h.quantity, 0).toLocaleString()}</td>
-                      <td className="px-4 py-2.5 text-right">—</td>
-                      <td className="px-4 py-2.5 text-right font-num">৳{parsed.reduce((s, h) => s + h.quantity * h.avg_buy_price, 0).toFixed(2)}</td>
+                      <td colSpan={2} className="px-3 py-2.5">Total</td>
+                      <td className="px-3 py-2.5 text-right font-num">{parsed.reduce((s, h) => s + h.quantity, 0).toLocaleString()}</td>
+                      <td className="px-3 py-2.5 text-right">—</td>
+                      <td className="px-3 py-2.5 text-right font-num">৳{parsed.reduce((s, h) => s + h.quantity * h.avg_buy_price, 0).toFixed(2)}</td>
+                      <td></td>
                     </tr>
                   </tfoot>
                 </table>
