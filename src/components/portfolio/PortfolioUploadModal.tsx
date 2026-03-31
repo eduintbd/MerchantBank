@@ -13,13 +13,17 @@ interface ParsedHolding {
   avg_buy_price: number;
 }
 
-type BrokerFormat = 'ucb' | 'idlc' | 'brac' | 'lankabd' | 'custom';
+type BrokerFormat = 'ucb' | 'idlc' | 'brac' | 'lankabd' | 'ebl' | 'citybank' | 'dbh' | 'ific' | 'custom';
 
 const brokerFormats: { id: BrokerFormat; name: string; desc: string }[] = [
   { id: 'ucb', name: 'UCB Stock Brokerage', desc: 'UCB Capital Management' },
   { id: 'idlc', name: 'IDLC Securities', desc: 'IDLC Investments Ltd' },
   { id: 'brac', name: 'BRAC EPL', desc: 'BRAC EPL Stock Brokerage' },
   { id: 'lankabd', name: 'LankaBangla', desc: 'LankaBangla Securities' },
+  { id: 'ebl', name: 'EBL Securities', desc: 'Eastern Bank Securities' },
+  { id: 'citybank', name: 'City Brokerage', desc: 'City Bank Capital Resources' },
+  { id: 'dbh', name: 'DBH Securities', desc: 'Delta Brac Housing Securities' },
+  { id: 'ific', name: 'IFIC Securities', desc: 'IFIC Bank Securities' },
   { id: 'custom', name: 'Custom / Generic', desc: 'Any CSV or PDF with portfolio data' },
 ];
 
@@ -96,9 +100,13 @@ function parseBrokerCSV(rows: string[][], format: BrokerFormat): ParsedHolding[]
       priceIdx = headers.findIndex(h => /cost.?price|avg/i.test(h));
       break;
     case 'lankabd':
-      symIdx = headers.findIndex(h => /symbol/i.test(h));
-      qtyIdx = headers.findIndex(h => /quantity|qty/i.test(h));
-      priceIdx = headers.findIndex(h => /avg.?price|avg/i.test(h));
+    case 'ebl':
+    case 'citybank':
+    case 'dbh':
+    case 'ific':
+      symIdx = headers.findIndex(h => /symbol|scrip|stock|instrument/i.test(h));
+      qtyIdx = headers.findIndex(h => /quantity|qty|shares|balance|holding/i.test(h));
+      priceIdx = headers.findIndex(h => /avg.?(?:price|cost|rate|buy)|cost.?price|unit.?cost/i.test(h));
       break;
     default:
       symIdx = detectSymbolCol(headers);
@@ -159,63 +167,137 @@ async function extractTextFromPDF(file: File): Promise<string> {
   return pages.join('\n');
 }
 
-// DSE stock symbols are typically 2-10 uppercase letters
+// DSE stock symbols: 2-15 uppercase alphanumeric, starts with letter
 const DSE_SYMBOL_PATTERN = /^[A-Z][A-Z0-9]{1,14}$/;
 
-function parsePDFText(text: string): ParsedHolding[] {
+// Common non-stock words that match the symbol pattern but should be ignored
+const IGNORE_WORDS = new Set([
+  'SL', 'NO', 'QTY', 'TOTAL', 'DATE', 'NAME', 'SYMBOL', 'SCRIP', 'STOCK',
+  'BDT', 'TK', 'NET', 'AVG', 'COST', 'PRICE', 'VALUE', 'MARKET', 'RATE',
+  'SHARES', 'QUANTITY', 'BALANCE', 'AMOUNT', 'PAGE', 'OF', 'THE', 'AND',
+  'FOR', 'FROM', 'WITH', 'PORTFOLIO', 'STATEMENT', 'REPORT', 'ACCOUNT',
+  'CLIENT', 'BO', 'ID', 'INVESTOR', 'HOLDING', 'CURRENT', 'CLOSING',
+  'OPENING', 'GAIN', 'LOSS', 'UNREALIZED', 'REALIZED', 'COMMISSION',
+  'CHARGE', 'TAX', 'FEE', 'GRAND', 'SUB', 'INSTRUMENT', 'COMPANY',
+  'LTD', 'LIMITED', 'PLC', 'BANK', 'SECURITIES', 'CAPITAL', 'MANAGEMENT',
+]);
+
+function isLikelySymbol(text: string): boolean {
+  const upper = text.trim().toUpperCase();
+  if (!DSE_SYMBOL_PATTERN.test(upper)) return false;
+  if (IGNORE_WORDS.has(upper)) return false;
+  // Reject single-character or pure numbers
+  if (upper.length < 2) return false;
+  return true;
+}
+
+function parseNumber(val: string): number {
+  // Remove commas, currency symbols, spaces
+  const cleaned = val.replace(/[,৳$\sBDTTk]/gi, '');
+  if (/^-?\d+\.?\d*$/.test(cleaned)) return parseFloat(cleaned);
+  return NaN;
+}
+
+function parsePDFText(text: string, broker: BrokerFormat = 'custom'): ParsedHolding[] {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const holdings: ParsedHolding[] = [];
 
-  // Strategy 1: Try to detect as tab/space-separated table
-  // Look for lines that have a stock-like symbol followed by numbers
-  for (const line of lines) {
+  // Step 1: Detect header row to understand column positions
+  let headerIdx = -1;
+  let qtyColHint = -1;
+  let priceColHint = -1;
+  let symbolColHint = -1;
+
+  for (let i = 0; i < Math.min(lines.length, 30); i++) {
+    const lower = lines[i].toLowerCase();
+    // Look for rows that contain portfolio table headers
+    const hasQty = /\b(qty|quantity|shares|balance|holding|unit)\b/i.test(lower);
+    const hasPrice = /\b(avg|cost|rate|price|buy)\b/i.test(lower);
+    const hasSymbol = /\b(symbol|scrip|stock|instrument|ticker|company.?code)\b/i.test(lower);
+
+    if ((hasQty && hasPrice) || (hasSymbol && (hasQty || hasPrice))) {
+      headerIdx = i;
+      const parts = lines[i].split(/\t+|\s{2,}/).map(p => p.trim());
+      parts.forEach((p, idx) => {
+        const pl = p.toLowerCase();
+        if (/symbol|scrip|stock|instrument|ticker/i.test(pl)) symbolColHint = idx;
+        if (/qty|quantity|shares|balance|holding|unit/i.test(pl) && qtyColHint === -1) qtyColHint = idx;
+        if (/avg.*(?:cost|price|rate|buy)|cost.*price|buy.*price|avg.*rate|unit.*cost/i.test(pl)) priceColHint = idx;
+      });
+      break;
+    }
+  }
+
+  // Step 2: Parse data rows
+  const startRow = headerIdx >= 0 ? headerIdx + 1 : 0;
+
+  for (let i = startRow; i < lines.length; i++) {
+    const line = lines[i];
     // Split by tabs or multiple spaces
     const parts = line.split(/\t+|\s{2,}/).map(p => p.trim()).filter(Boolean);
-    if (parts.length < 3) continue;
+    if (parts.length < 2) continue;
 
-    // Try to find a symbol-like token and numbers in this line
+    // Try column-aware parsing first (if header detected)
+    if (headerIdx >= 0 && symbolColHint >= 0) {
+      const symPart = (parts[symbolColHint] || '').toUpperCase().trim();
+      if (isLikelySymbol(symPart)) {
+        const qtyVal = qtyColHint >= 0 ? parseNumber(parts[qtyColHint] || '') : NaN;
+        const priceVal = priceColHint >= 0 ? parseNumber(parts[priceColHint] || '') : NaN;
+
+        if (!isNaN(qtyVal) && qtyVal > 0 && !isNaN(priceVal) && priceVal > 0) {
+          if (!holdings.find(h => h.stock_symbol === symPart)) {
+            holdings.push({ stock_symbol: symPart, quantity: Math.round(qtyVal), avg_buy_price: priceVal });
+          }
+          continue;
+        }
+      }
+    }
+
+    // Fallback: heuristic-based parsing
     let symbol = '';
     const numbers: number[] = [];
 
     for (const part of parts) {
-      const cleaned = part.replace(/[,৳$BDT\s]/g, '');
-      if (!symbol && DSE_SYMBOL_PATTERN.test(part.trim())) {
-        symbol = part.trim();
-      } else if (/^[0-9]+\.?[0-9]*$/.test(cleaned) && cleaned.length > 0) {
-        numbers.push(parseFloat(cleaned));
+      if (!symbol && isLikelySymbol(part)) {
+        symbol = part.toUpperCase().trim();
+      } else {
+        const num = parseNumber(part);
+        if (!isNaN(num) && num > 0) {
+          numbers.push(num);
+        }
       }
     }
 
     if (symbol && numbers.length >= 2) {
-      // Heuristic: first number is likely quantity (integer-ish), second is price
-      // Find the integer-like number for quantity and a decimal for price
       let qty = 0;
       let price = 0;
 
-      // If there are exactly 2 numbers, first = qty, second = price
-      if (numbers.length === 2) {
+      // Broker-specific number interpretation
+      if (broker === 'ucb' || broker === 'idlc' || broker === 'brac' || broker === 'lankabd') {
+        // Most BD brokers: first number = qty, second = avg price
+        qty = numbers[0];
+        price = numbers[1];
+      } else if (numbers.length === 2) {
         qty = numbers[0];
         price = numbers[1];
       } else {
-        // Multiple numbers: find the most likely qty (whole number) and price
-        // Typically: qty, avg_price, market_price, total_value, etc.
+        // Multiple numbers: use heuristic
+        // Find the best qty candidate (whole number, reasonable range)
+        // and price candidate (can be decimal, reasonable range for BDT)
         for (const n of numbers) {
-          if (!qty && n > 0 && n === Math.floor(n) && n < 1000000) {
+          if (!qty && n > 0 && n === Math.floor(n) && n < 10_000_000) {
             qty = n;
-          } else if (qty && !price && n > 0 && n < 100000) {
+          } else if (qty && !price && n > 0 && n < 100_000) {
             price = n;
           }
         }
-        // Fallback
         if (!qty && numbers[0] > 0) qty = numbers[0];
         if (!price && numbers.length > 1 && numbers[1] > 0) price = numbers[1];
       }
 
       if (qty > 0 && price > 0) {
-        // Avoid duplicates
-        const existing = holdings.find(h => h.stock_symbol === symbol);
-        if (!existing) {
-          holdings.push({ stock_symbol: symbol, quantity: qty, avg_buy_price: price });
+        if (!holdings.find(h => h.stock_symbol === symbol)) {
+          holdings.push({ stock_symbol: symbol, quantity: Math.round(qty), avg_buy_price: price });
         }
       }
     }
@@ -293,7 +375,7 @@ export function PortfolioUploadModal({ open, onClose }: Props) {
           setParsing(false);
           return;
         }
-        const holdings = parsePDFText(text);
+        const holdings = parsePDFText(text, broker);
         if (holdings.length === 0) {
           setError('Could not detect any stock holdings in the PDF. Make sure it contains a portfolio table with stock symbols, quantities, and prices. You can also try uploading as CSV.');
           setParsing(false);

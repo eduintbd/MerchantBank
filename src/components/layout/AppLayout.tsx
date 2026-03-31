@@ -19,7 +19,7 @@ export function AppLayout() {
     <div className="min-h-screen bg-white">
       <DemoModeBanner />
       <TopNav />
-      <main className="pt-[52px] sm:pt-0 pb-[60px] sm:pb-0">
+      <main className="pt-[52px] sm:pt-0 pb-[calc(60px+env(safe-area-inset-bottom,0px))] sm:pb-0">
         <Outlet />
       </main>
       <CoachingOverlay />

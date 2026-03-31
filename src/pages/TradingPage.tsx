@@ -51,7 +51,7 @@ export function TradingPage() {
 
   return (
     <div className="min-h-screen bg-white animate-fade-in">
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Trading Terminal</h1>
         <p className="text-muted text-sm sm:text-base mt-1">Buy and sell DSE listed stocks in real time</p>
@@ -59,7 +59,7 @@ export function TradingPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
         {/* Stock List */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 order-2 lg:order-1">
           <div className="relative mb-5 sm:mb-6">
             <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted" />
             <input
@@ -149,7 +149,7 @@ export function TradingPage() {
         </div>
 
         {/* Order Panel */}
-        <div className="space-y-5">
+        <div className="space-y-5 order-1 lg:order-2">
           <Card padding={false} className="overflow-hidden">
             {/* Header bar */}
             {selectedStock ? (

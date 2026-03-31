@@ -95,7 +95,7 @@ export function StockDetailPage() {
 
   return (
     <div className="min-h-screen bg-white animate-fade-in">
-      <div className="space-y-4" style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 32px' }}>
+      <div className="space-y-4 px-3 sm:px-6 lg:px-8 py-4 sm:py-6" style={{ maxWidth: 1400, margin: '0 auto' }}>
 
         {/* Back nav */}
         <Link to="/trading" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-foreground transition-colors">
@@ -152,14 +152,14 @@ export function StockDetailPage() {
           <div className="flex items-end justify-between gap-4 flex-wrap">
             <div>
               <p className="text-xs text-muted uppercase tracking-wider mb-1">Last Traded Price</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl sm:text-4xl font-bold text-foreground font-num">৳{stock.last_price.toFixed(2)}</span>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground font-num">৳{stock.last_price.toFixed(2)}</span>
                 <span className={cn('text-lg font-semibold font-num', isGain ? 'text-success' : 'text-danger')}>
                   {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}
                 </span>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+            <div className="grid grid-cols-2 gap-x-3 sm:gap-x-6 gap-y-1 text-sm">
               {[
                 { label: 'Open', val: stock.open },
                 { label: 'High', val: stock.high },

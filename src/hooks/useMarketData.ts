@@ -34,13 +34,14 @@ export function useMarketData() {
       if (indicesRes.error) throw indicesRes.error;
       if (pricesRes.error) throw pricesRes.error;
 
+      const indexOrder = ['DSEX', 'DSES', 'DS30'];
       const indices: MarketIndex[] = (indicesRes.data || []).map((r: any) => ({
         index_name: r.index_name,
         value: r.value,
         change: r.change,
         change_pct: r.change_pct,
         scraped_at: r.scraped_at,
-      }));
+      })).sort((a, b) => (indexOrder.indexOf(a.index_name) ?? 99) - (indexOrder.indexOf(b.index_name) ?? 99));
 
       const prices: LivePrice[] = (pricesRes.data || []).map((r: any) => ({
         symbol: r.symbol,

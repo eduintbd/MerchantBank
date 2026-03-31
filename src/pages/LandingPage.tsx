@@ -172,8 +172,8 @@ export function LandingPage() {
           objectFit: 'contain', opacity: 0.04, zIndex: 0, pointerEvents: 'none',
         }} />
 
-        <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', padding: '48px 0', position: 'relative', zIndex: 2 }}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 2 }} className="py-6 sm:py-10 lg:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-center">
 
             {/* Left: Copy */}
             <div>
@@ -244,7 +244,7 @@ export function LandingPage() {
                 <div style={{
                   background: T.bgCard,
                   backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-                  borderRadius: 20, padding: 24,
+                  borderRadius: 20, padding: 16,
                   border: `1px solid ${T.border}`,
                   boxShadow: '0 20px 60px rgba(0,0,0,0.06)',
                 }}>
@@ -312,7 +312,7 @@ export function LandingPage() {
 
       {/* ══════════ STATS STRIP ══════════ */}
       <div style={{ background: T.bgLight, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
-        <div style={{ width: '95%', maxWidth: 1000, margin: '0 auto', padding: '40px 0', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24, textAlign: 'center' }} className="sm:!grid-cols-4 sm:!gap-24">
+        <div style={{ width: '95%', maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', textAlign: 'center' }} className="py-8 sm:py-10 gap-4 sm:gap-6 sm:!grid-cols-4 lg:!gap-24">
           {STATS.map(s => (
             <div key={s.label}>
               <div style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: T.title, fontFamily: T.fontMono, letterSpacing: '-0.02em' }}>{s.value}</div>
@@ -339,7 +339,7 @@ export function LandingPage() {
           {market ? (
             <>
               {/* Index cards */}
-              <div style={{ display: 'grid', gap: 16, marginBottom: 20 }} className="grid-cols-1 sm:grid-cols-3 sm:gap-20">
+              <div style={{ display: 'grid', gap: 16, marginBottom: 20 }} className="grid-cols-1 sm:grid-cols-3 sm:!gap-4 lg:!gap-5">
                 {[dsex, dses, ds30].filter(Boolean).map((idx, i) => {
                   const colors = [T.blue, T.accent, '#a855f7'];
                   return (
@@ -370,7 +370,7 @@ export function LandingPage() {
               </div>
 
               {/* Market stats */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }} className="sm:!grid-cols-4 sm:!gap-16">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }} className="sm:!grid-cols-4 sm:!gap-4 lg:!gap-5">
                 {[
                   { label: 'Total Volume', value: formatVolume(market.stats.totalVolume), Icon: BarChart3, accent: T.blue },
                   { label: 'Total Trades', value: formatNumber(market.stats.totalTrades), Icon: Activity, accent: '#f59e0b' },
@@ -392,7 +392,7 @@ export function LandingPage() {
               </div>
             </>
           ) : (
-            <div style={{ display: 'grid', gap: 16 }} className="grid-cols-1 sm:grid-cols-3 sm:gap-20">
+            <div style={{ display: 'grid', gap: 16 }} className="grid-cols-1 sm:grid-cols-3 sm:!gap-4 lg:!gap-5">
               {[1, 2, 3].map(i => <div key={i} style={{ height: 120, borderRadius: T.radius, background: 'rgba(0,0,0,0.03)', animation: 'pulse 2s infinite' }} />)}
             </div>
           )}
@@ -421,7 +421,7 @@ export function LandingPage() {
             <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 700, color: T.title, margin: '0 0 14px' }}>No gimmicks. Just investments.</h2>
             <p style={{ fontSize: 16, color: T.titleSub, maxWidth: 440, margin: '0 auto' }}>Built for Bangladeshi investors who want a simple, trusted platform.</p>
           </div>
-          <div style={{ display: 'grid', gap: 16 }} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-20">
+          <div style={{ display: 'grid', gap: 16 }} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:!gap-4 lg:!gap-5">
             {WHY.map(w => (
               <div key={w.title} style={{
                 padding: '28px 24px', borderRadius: 18,

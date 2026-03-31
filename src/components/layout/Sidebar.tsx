@@ -106,8 +106,8 @@ export function TopNav() {
       </header>
 
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 sm:hidden bg-white" style={{ borderBottom: '1px solid #e5e5e5', height: 52 }}>
-        <div className="flex items-center justify-between px-3 h-full">
+      <header className="fixed top-0 left-0 right-0 z-50 sm:hidden bg-white" style={{ borderBottom: '1px solid #e5e5e5', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+        <div className="flex items-center justify-between px-3" style={{ height: 52 }}>
           <div className="flex items-center gap-2">
             <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-6 h-6 rounded object-cover" />
             <span className="font-bold text-sm text-[#333]">HeroStock.AI</span>
@@ -171,8 +171,8 @@ export function TopNav() {
       )}
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white" style={{ borderTop: '1px solid #e5e5e5' }}>
-        <div className="h-14 grid grid-cols-5 safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white" style={{ borderTop: '1px solid #e5e5e5', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="h-14 grid grid-cols-5">
           {mobileBottomItems.map(item => {
             const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : item.to === '/more' ? location.pathname === '/more' : location.pathname.startsWith(item.to);
             return (

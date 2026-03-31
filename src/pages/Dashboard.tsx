@@ -52,8 +52,7 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
   lastUpdated?: string;
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
-  const dsex = indices.find(i => i.index_name === 'DSEX') || indices[0];
-  const selected = indices[activeIdx] || dsex;
+  const selected = indices[activeIdx] || indices[0];
   const up = selected.change >= 0;
 
   return (
@@ -81,8 +80,8 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
       </div>
 
       {/* Hero Section */}
-      <div className="p-5 bg-white">
-        <div className="flex items-start justify-between">
+      <div className="p-3 sm:p-5 bg-white">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           {/* Left — Main Index Display */}
           <div>
             <div className="flex items-center gap-3 mb-1">
@@ -93,14 +92,14 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
                 {isMarketOpen ? 'OPEN' : 'CLOSED'}
               </span>
             </div>
-            <div className="flex items-baseline gap-3">
-              <span className="text-4xl font-bold font-num text-[#333]">
+            <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap">
+              <span className="text-2xl sm:text-4xl font-bold font-num text-[#333]">
                 {selected.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
-              <span className={cn('text-xl font-bold font-num', up ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
+              <span className={cn('text-base sm:text-xl font-bold font-num', up ? 'text-[#0b8a00]' : 'text-[#d32f2f]')}>
                 {up ? '+' : ''}{selected.change.toFixed(2)}
               </span>
-              <span className={cn('text-base font-bold font-num px-2 py-0.5 rounded text-white', up ? 'bg-[#0b8a00]' : 'bg-[#d32f2f]')}>
+              <span className={cn('text-xs sm:text-base font-bold font-num px-2 py-0.5 rounded text-white', up ? 'bg-[#0b8a00]' : 'bg-[#d32f2f]')}>
                 {up ? '+' : ''}{selected.change_pct.toFixed(2)}%
               </span>
             </div>
@@ -112,7 +111,7 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
           </div>
 
           {/* Right — Key Stats */}
-          <div className="hidden sm:grid grid-cols-2 gap-x-8 gap-y-2 text-right">
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-x-6 sm:gap-x-8 gap-y-2 text-left sm:text-right">
             <div>
               <div className="text-[11px] text-[#aaa]">Volume</div>
               <div className="text-sm font-semibold font-num text-[#333]">{formatVolume(stats.totalVolume)}</div>
@@ -506,19 +505,20 @@ export function Dashboard() {
     <div className="animate-fade-in min-h-screen bg-white">
       {market && <StockTicker prices={market.livePrices} />}
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 24px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }} className="px-3 sm:px-6 py-4 sm:py-5">
         <div className="space-y-5">
 
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h1 className="text-lg font-bold text-[#333]">Welcome, {user?.full_name?.split(' ')[0] || 'Investor'}</h1>
-              <span className="text-xs text-[#aaa] flex items-center gap-1">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <h1 className="text-base sm:text-lg font-bold text-[#333] truncate">Welcome, {user?.full_name?.split(' ')[0] || 'Investor'}</h1>
+              <span className="text-[10px] sm:text-xs text-[#aaa] flex items-center gap-1 shrink-0">
                 <Clock size={11} />
-                {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                <span className="hidden sm:inline">{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                <span className="sm:hidden">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
               </span>
             </div>
-            <Link to="/trading" className="px-4 py-2 rounded bg-[#0b8a00] text-white text-sm font-semibold hover:bg-[#097300] transition-colors">
+            <Link to="/trading" className="px-3 sm:px-4 py-2 rounded bg-[#0b8a00] text-white text-xs sm:text-sm font-semibold hover:bg-[#097300] transition-colors shrink-0">
               Trade Now
             </Link>
           </div>
@@ -549,15 +549,16 @@ export function Dashboard() {
                 <h2 className="text-sm font-semibold text-[#333]">Holdings</h2>
                 <Link to="/portfolio" className="text-xs text-[#1565c0] hover:underline">View all</Link>
               </div>
-              <table className="w-full">
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-[400px]">
                 <thead>
                   <tr className="bg-[#f9f9f9] border-b border-[#e5e5e5]">
-                    <th className="px-4 py-2 text-left text-[11px] font-semibold text-[#888]">Stock</th>
-                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">Qty</th>
-                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888] hidden sm:table-cell">Avg</th>
-                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">LTP</th>
-                    <th className="px-3 py-2 text-right text-[11px] font-semibold text-[#888]">P&L</th>
-                    <th className="px-4 py-2 text-right text-[11px] font-semibold text-[#888]">P&L%</th>
+                    <th className="px-3 sm:px-4 py-2 text-left text-[11px] font-semibold text-[#888]">Stock</th>
+                    <th className="px-2 sm:px-3 py-2 text-right text-[11px] font-semibold text-[#888]">Qty</th>
+                    <th className="px-2 sm:px-3 py-2 text-right text-[11px] font-semibold text-[#888] hidden sm:table-cell">Avg</th>
+                    <th className="px-2 sm:px-3 py-2 text-right text-[11px] font-semibold text-[#888]">LTP</th>
+                    <th className="px-2 sm:px-3 py-2 text-right text-[11px] font-semibold text-[#888]">P&L</th>
+                    <th className="px-3 sm:px-4 py-2 text-right text-[11px] font-semibold text-[#888]">P&L%</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -579,6 +580,7 @@ export function Dashboard() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
 
