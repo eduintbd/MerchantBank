@@ -148,9 +148,11 @@ export function usePortfolio(userId?: string) {
   return useQuery({
     queryKey: ['portfolio', userId],
     queryFn: async (): Promise<PortfolioSummary> => {
+      const emptyPortfolio: PortfolioSummary = { total_invested: 0, current_value: 0, total_profit_loss: 0, total_profit_loss_percent: 0, total_stocks: 0, items: [] };
+
       const { data: { user } } = await supabase.auth.getUser();
       const id = userId || user?.id;
-      if (!id) throw new Error('Not authenticated');
+      if (!id) return emptyPortfolio;
 
       // Fetch portfolio holdings from Hero Supabase
       const { data, error } = await supabase
@@ -158,10 +160,8 @@ export function usePortfolio(userId?: string) {
         .select('*')
         .eq('user_id', id);
 
-      if (error) throw error;
-      if (!data || data.length === 0) {
-        return { total_invested: 0, current_value: 0, total_profit_loss: 0, total_profit_loss_percent: 0, total_stocks: 0, items: [] };
-      }
+      if (error) return emptyPortfolio;
+      if (!data || data.length === 0) return emptyPortfolio;
 
       // Fetch live prices + stock names from DSE Portal
       let priceMap = new Map<string, any>();
