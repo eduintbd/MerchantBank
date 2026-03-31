@@ -12,7 +12,7 @@ import { formatCurrency, formatVolume, formatValueBn, formatDateTime, cn } from 
 import {
   BarChart3, Search, TrendingUp, TrendingDown, Activity,
   Layers, Newspaper, Clock, ExternalLink, ArrowRight,
-  ChevronRight, Zap, LogIn, MessageCircle, ThumbsUp, Share2, Send, Globe,
+  ChevronRight, Zap, LayoutDashboard, MessageCircle, ThumbsUp, Share2, Send, Globe,
 } from 'lucide-react';
 import type { LivePrice, TopMoverTab } from '@/types';
 
@@ -557,14 +557,14 @@ function PublicHeader({ isMarketOpen }: { isMarketOpen: boolean }) {
             </div>
           </div>
 
-          {/* Right — Sign In CTA */}
+          {/* Right — Dashboard CTA */}
           <div className="flex items-center gap-2">
             <Link
-              to="/auth"
+              to="/dashboard"
               className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
             >
-              <LogIn size={14} />
-              <span>Sign In</span>
+              <LayoutDashboard size={14} />
+              <span>Dashboard</span>
             </Link>
           </div>
         </div>
@@ -743,10 +743,10 @@ export function MarketPage() {
               <p className="text-sm text-muted">Get portfolio tracking, AI analysis, demo trading, learning courses &amp; more.</p>
             </div>
             <Link
-              to="/auth"
+              to="/dashboard"
               className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm whitespace-nowrap"
             >
-              Get Started Free
+              Go to Dashboard
               <ArrowRight size={16} />
             </Link>
           </div>

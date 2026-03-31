@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -12,7 +12,12 @@ export function AuthPage() {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, isAuthenticated, isGuest } = useAuth();
+
+  // If user is already logged in with a real account, send to dashboard
+  if (isAuthenticated && !isGuest) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,14 +38,13 @@ export function AuthPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', fontFamily: "'Inter', system-ui, sans-serif" }}>
 
-      {/* Left side — Full background image */}
+      {/* Left side — branding */}
       <div style={{
         position: 'fixed', top: 0, left: 0, bottom: 0, width: '55%',
         background: 'linear-gradient(135deg, #f8f9fb 0%, #eef1f6 100%)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         overflow: 'hidden',
       }} className="hidden md:flex">
-        {/* Background image */}
         <img
           src="/herostock-logo.jpeg"
           alt="HeroStock.AI"
@@ -50,7 +54,6 @@ export function AuthPage() {
             marginBottom: 32,
           }}
         />
-        {/* Tagline */}
         <h2 style={{ fontSize: 28, fontWeight: 800, color: '#f8fafc', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
           Invest in Bangladesh's<br />
           <span style={{ color: '#60a5fa' }}>Future</span>
@@ -58,8 +61,6 @@ export function AuthPage() {
         <p style={{ fontSize: 15, color: '#94a3b8', textAlign: 'center', marginTop: 12, maxWidth: 360, lineHeight: 1.6 }}>
           Trade on the Dhaka Stock Exchange. BSEC regulated. Zero account fees.
         </p>
-
-        {/* Trust badges */}
         <div style={{ display: 'flex', gap: 24, marginTop: 32 }}>
           {['BSEC Regulated', 'DSE Member', 'CDBL Participant'].map(badge => (
             <div key={badge} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -79,7 +80,6 @@ export function AuthPage() {
         background: 'transparent',
       }} className="sm:!p-[40px_24px] md:w-[45%] md:min-w-[45%] md:!bg-white">
 
-        {/* Mobile: background image behind form */}
         <div className="md:hidden" style={{
           position: 'fixed', inset: 0, zIndex: 0,
           background: 'linear-gradient(180deg, #f8fafc 0%, #fff 100%)',
@@ -93,7 +93,7 @@ export function AuthPage() {
         <div style={{ width: '100%', maxWidth: 420, position: 'relative', zIndex: 2 }}>
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: 36 }}>
-            <Link to="/">
+            <Link to="/dashboard">
               <img
                 src="/herostock-logo.jpeg"
                 alt="HeroStock.AI"
@@ -104,9 +104,19 @@ export function AuthPage() {
               {mode === 'login' ? 'Welcome back' : 'Create your account'}
             </h1>
             <p style={{ fontSize: 14, color: '#64748b', marginTop: 6 }}>
-              {mode === 'login' ? 'Sign in to HeroStock.AI' : 'Start your investment journey'}
+              {mode === 'login' ? 'Sign in to save your progress' : 'Create an account to keep your data'}
             </p>
           </div>
+
+          {/* Guest notice */}
+          {isGuest && (
+            <div style={{
+              background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12,
+              padding: '12px 16px', marginBottom: 20, fontSize: 13, color: '#15803d', lineHeight: 1.5,
+            }}>
+              You're currently using HeroStock as a guest. Create an account to save your trading history and progress permanently.
+            </div>
+          )}
 
           {/* Form card */}
           <div style={{
@@ -144,9 +154,14 @@ export function AuthPage() {
             </div>
           </div>
 
-          {/* Footer */}
-          <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 24, lineHeight: 1.5 }}>
-            By signing up, you agree to our Terms of Service and Privacy Policy.<br />
+          {/* Skip link */}
+          <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <Link to="/dashboard" style={{ fontSize: 14, fontWeight: 500, color: '#64748b', textDecoration: 'none' }}>
+              Skip — continue as guest
+            </Link>
+          </div>
+
+          <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 20, lineHeight: 1.5 }}>
             HeroStock.AI is regulated by BSEC.
           </p>
         </div>

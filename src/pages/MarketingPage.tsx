@@ -13,7 +13,7 @@ export function MarketingPage() {
   const [copied, setCopied] = useState(false);
 
   const referralLink = summary?.referral_code
-    ? `${window.location.origin}/register?ref=${summary.referral_code}`
+    ? `${window.location.origin}/dashboard?ref=${summary.referral_code}`
     : '';
 
   function copyLink() {

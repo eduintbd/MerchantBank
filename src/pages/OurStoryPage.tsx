@@ -197,7 +197,7 @@ export function OurStoryPage() {
               <Link to="/">
                 <Button variant="ghost" size="sm">Home</Button>
               </Link>
-              <Link to="/auth">
+              <Link to="/dashboard">
                 <Button variant="primary" size="sm" icon={<ArrowRight size={14} />}>Get Started</Button>
               </Link>
             </div>
@@ -482,7 +482,7 @@ export function OurStoryPage() {
               Join thousands of investors who trust HeroStock.AI to navigate the Bangladesh capital market.
             </p>
             <div className="mt-5 flex items-center justify-center gap-3">
-              <Link to="/auth">
+              <Link to="/dashboard">
                 <Button size="lg" icon={<ArrowRight size={16} />}>Start Investing</Button>
               </Link>
               <Link to="/">

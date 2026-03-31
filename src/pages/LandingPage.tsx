@@ -32,7 +32,6 @@ const T = {
 /* ─── Static data ─────────────────────────────────────────── */
 const NAV_LINKS = [
   { href: '#market', label: 'Market' },
-  { href: '#pricing', label: 'Pricing' },
   { href: '#features', label: 'Features' },
   { href: '#learn', label: 'Academy' },
 ];
@@ -42,13 +41,6 @@ const STATS = [
   { value: '৳250 Cr+', label: 'Volume Traded' },
   { value: '300+', label: 'DSE Stocks' },
   { value: 'BSEC', label: 'Regulated' },
-];
-
-const PRICING = [
-  { value: '৳0', label: 'Account Opening', sub: 'Free forever' },
-  { value: '৳0', label: 'Annual Maintenance', sub: 'No hidden charges' },
-  { value: '0.5%', label: 'Brokerage', sub: 'Per trade, flat fee' },
-  { value: 'Free', label: 'Learning Academy', sub: 'All courses included' },
 ];
 
 const FEATURES = [
@@ -115,19 +107,19 @@ export function LandingPage() {
 
           {/* CTAs + Hamburger */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Link to="/auth" className="hidden sm:block" style={{ padding: '8px 18px', fontSize: 14, fontWeight: 500, color: T.titleSub, textDecoration: 'none', borderRadius: T.radiusSm, transition: 'color .3s' }}
+            <Link to="/market" className="hidden sm:block" style={{ padding: '8px 18px', fontSize: 14, fontWeight: 500, color: T.titleSub, textDecoration: 'none', borderRadius: T.radiusSm, transition: 'color .3s' }}
               onMouseEnter={e => (e.currentTarget.style.color = T.title)}
               onMouseLeave={e => (e.currentTarget.style.color = T.titleSub as string)}>
-              Login
+              Explore Market
             </Link>
-            <Link to="/auth" className="hidden sm:flex" style={{
+            <Link to="/dashboard" className="hidden sm:flex" style={{
               padding: '10px 20px', fontSize: 13, fontWeight: 600, color: T.white,
               background: T.accent, borderRadius: T.radiusSm, textDecoration: 'none',
               display: 'flex', alignItems: 'center', gap: 6, transition: 'opacity .3s', whiteSpace: 'nowrap',
             }}
               onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
               onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-              Open Account <ArrowRight size={14} />
+              Go to Dashboard <ArrowRight size={14} />
             </Link>
             <button onClick={() => setMobileNav(!mobileNav)} className="md:hidden"
               style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: T.radiusSm, border: 'none', background: mobileNav ? T.bgLight : 'transparent', cursor: 'pointer', transition: 'background .3s' }}>
@@ -150,11 +142,11 @@ export function LandingPage() {
               ))}
             </nav>
             <div style={{ padding: '12px 16px 16px', display: 'flex', gap: 10, borderTop: `1px solid ${T.border}` }}>
-              <Link to="/auth" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.titleSub, background: T.bg, border: `1px solid ${T.border}`, borderRadius: T.radiusSm, textDecoration: 'none', textAlign: 'center' }}>
-                Login
+              <Link to="/market" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.titleSub, background: T.bg, border: `1px solid ${T.border}`, borderRadius: T.radiusSm, textDecoration: 'none', textAlign: 'center' }}>
+                Explore Market
               </Link>
-              <Link to="/auth" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.white, background: T.accent, borderRadius: T.radiusSm, textDecoration: 'none', textAlign: 'center' }}>
-                Open Account
+              <Link to="/dashboard" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.white, background: T.accent, borderRadius: T.radiusSm, textDecoration: 'none', textAlign: 'center' }}>
+                Go to Dashboard
               </Link>
             </div>
           </div>
@@ -206,7 +198,7 @@ export function LandingPage() {
 
               {/* CTAs */}
               <div style={{ marginTop: 28 }} className="flex flex-col sm:flex-row flex-wrap gap-3">
-                <Link to="/auth" style={{
+                <Link to="/dashboard" style={{
                   padding: '14px 30px', fontSize: 15, fontWeight: 700, color: T.white,
                   background: T.accent, borderRadius: 12, textDecoration: 'none',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -214,7 +206,7 @@ export function LandingPage() {
                 }}
                   onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
                   onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-                  Open Free Account <ArrowRight size={16} />
+                  Start Trading Now <ArrowRight size={16} />
                 </Link>
                 <a href="#market" style={{
                   padding: '14px 30px', fontSize: 15, fontWeight: 600, color: T.titleSub,
@@ -329,34 +321,6 @@ export function LandingPage() {
           ))}
         </div>
       </div>
-
-      {/* ══════════ PRICING ══════════ */}
-      <section id="pricing" style={{ padding: 'clamp(56px, 8vw, 96px) 0', background: T.bg }}>
-        <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>Transparent Pricing</div>
-            <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 700, color: T.title, letterSpacing: '-0.02em', margin: '0 0 14px' }}>Free and transparent pricing</h2>
-            <p style={{ fontSize: 16, color: T.titleSub, maxWidth: 480, margin: '0 auto' }}>No hidden charges. No surprises. Ever.</p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, maxWidth: 960, margin: '0 auto' }} className="sm:!grid-cols-4 sm:!gap-20">
-            {PRICING.map((p, i) => (
-              <div key={p.label} style={{
-                border: i === 0 ? `1.5px solid rgba(5,160,3,0.25)` : `1px solid ${T.border}`,
-                borderRadius: 20, padding: '28px 16px', textAlign: 'center',
-                background: i === 0 ? T.accentDim : 'rgba(255,255,255,0.02)',
-                transition: 'transform .3s, border-color .3s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.15)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = i === 0 ? 'rgba(5,160,3,0.25)' : T.border; }}>
-                <div style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, color: T.accent, fontFamily: T.fontMono, letterSpacing: '-0.03em' }}>{p.value}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: T.title, marginTop: 12 }}>{p.label}</div>
-                <div style={{ fontSize: 12, color: T.titleSub, marginTop: 4 }}>{p.sub}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ══════════ LIVE MARKET ══════════ */}
       <section id="market" style={{ padding: 'clamp(56px, 8vw, 96px) 0', background: T.bgLight }}>
@@ -526,7 +490,7 @@ export function LandingPage() {
                 stock market fundamentals. Complete the academy to unlock live trading.
               </p>
             </div>
-            <Link to="/auth" style={{
+            <Link to="/dashboard" style={{
               padding: '14px 28px', background: T.accent, color: T.white,
               fontWeight: 700, fontSize: 15, borderRadius: 12, textDecoration: 'none',
               display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
@@ -548,23 +512,23 @@ export function LandingPage() {
             Join thousands of investors on Hero. Open your free account in minutes. No paperwork. No hidden fees.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
-            <Link to="/auth" style={{
+            <Link to="/dashboard" style={{
               padding: '14px 32px', fontSize: 15, fontWeight: 700, color: T.white,
               background: T.accent, borderRadius: 12, textDecoration: 'none',
               display: 'flex', alignItems: 'center', gap: 8, transition: 'opacity .3s',
             }}
               onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
               onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-              Open Free Account <ArrowRight size={16} />
+              Start Trading Now <ArrowRight size={16} />
             </Link>
-            <Link to="/auth" style={{
+            <Link to="/dashboard" style={{
               padding: '14px 28px', fontSize: 15, fontWeight: 600, color: T.titleSub,
               background: 'rgba(0,0,0,0.03)', border: `1px solid ${T.border}`,
               borderRadius: 12, textDecoration: 'none', transition: 'border-color .3s',
             }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}>
-              Login
+              Try Demo Trading
             </Link>
           </div>
         </div>
@@ -585,8 +549,8 @@ export function LandingPage() {
           {/* Footer links */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '28px 20px', marginBottom: 40 }} className="sm:!grid-cols-4 sm:!gap-x-24">
             {[
-              { title: 'Account', links: [{ label: 'Open Account', href: '/auth' }, { label: 'Login', href: '/auth' }, { label: 'KYC Status', href: '/kyc' }] },
-              { title: 'Platform', links: [{ label: 'Live Market', href: '#market' }, { label: 'Features', href: '#features' }, { label: 'Pricing', href: '#pricing' }] },
+              { title: 'Account', links: [{ label: 'Dashboard', href: '/dashboard' }, { label: 'Demo Trading', href: '/demo/trading' }, { label: 'KYC Status', href: '/kyc' }] },
+              { title: 'Platform', links: [{ label: 'Live Market', href: '#market' }, { label: 'Features', href: '#features' }] },
               { title: 'Learn', links: [{ label: 'Hero Academy', href: '#learn' }, { label: 'DSE Basics', href: '#' }, { label: 'Investment Guide', href: '#' }] },
               { title: 'Company', links: [{ label: 'About Us', href: '#' }, { label: 'Contact', href: '#' }, { label: 'Careers', href: '#' }] },
             ].map(col => (

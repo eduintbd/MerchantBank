@@ -135,9 +135,9 @@ export function WomenInvestorsPage() {
         <p className="text-sm text-muted mb-5 max-w-md mx-auto">
           Join thousands of women who are building their financial future through the Dhaka Stock Exchange.
         </p>
-        <Link to="/auth">
+        <Link to="/dashboard">
           <Button size="lg" icon={<TrendingUp size={18} />}>
-            Open an Account
+            Start Trading
           </Button>
         </Link>
       </Card>      </div>
