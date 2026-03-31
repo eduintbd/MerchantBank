@@ -80,6 +80,7 @@ export function TradingPage() {
                     <th className="px-3 py-3.5 font-medium text-right">Price</th>
                     <th className="px-3 py-3.5 font-medium text-right">Change</th>
                     <th className="px-3 py-3.5 font-medium text-right hidden md:table-cell">Volume</th>
+                    <th className="px-3 py-3.5 font-medium text-right hidden lg:table-cell">Open</th>
                     <th className="px-3 py-3.5 font-medium text-right hidden lg:table-cell">High</th>
                     <th className="px-3 py-3.5 font-medium text-right hidden lg:table-cell">Low</th>
                     <th className="px-3 py-3.5 font-medium text-center">Action</th>
@@ -88,14 +89,14 @@ export function TradingPage() {
                 </thead>
                 <tbody>
                   {isLoading ? (
-                    <tr><td colSpan={8} className="px-5 py-12 text-center text-muted">
+                    <tr><td colSpan={9} className="px-5 py-12 text-center text-muted">
                       <div className="flex flex-col items-center gap-2">
                         <div className="w-7 h-7 border-2 border-info border-t-transparent rounded-full animate-spin" />
                         <span className="text-sm">Loading stocks...</span>
                       </div>
                     </td></tr>
                   ) : stocks?.length === 0 ? (
-                    <tr><td colSpan={8} className="px-5 py-12 text-center text-muted">No stocks found</td></tr>
+                    <tr><td colSpan={9} className="px-5 py-12 text-center text-muted">No stocks found</td></tr>
                   ) : (
                     stocks?.map((stock, idx) => (
                       <tr
@@ -127,6 +128,7 @@ export function TradingPage() {
                           </span>
                         </td>
                         <td className="px-3 py-4 text-right font-num text-muted text-xs hidden md:table-cell">{stock.volume.toLocaleString()}</td>
+                        <td className="px-3 py-4 text-right font-num text-muted text-xs hidden lg:table-cell">{formatCurrency(stock.open)}</td>
                         <td className="px-3 py-4 text-right font-num text-muted text-xs hidden lg:table-cell">{formatCurrency(stock.high)}</td>
                         <td className="px-3 py-4 text-right font-num text-muted text-xs hidden lg:table-cell">{formatCurrency(stock.low)}</td>
                         <td className="px-3 py-4 text-center">

@@ -10,9 +10,11 @@ export interface StockFundamental {
   paid_up_capital: number;
   total_shares: number;
   face_value: number;
-  listing_year: number;
+  listing_year: number | null;
   week52_high: number;
   week52_low: number;
+  authorized_capital?: number;
+  free_float?: number;
 }
 
 export function useFundamentals(symbol?: string) {
@@ -21,13 +23,39 @@ export function useFundamentals(symbol?: string) {
     enabled: !!symbol,
     queryFn: async () => {
       if (!dseSupabase || !symbol) return null;
-      const { data, error } = await dseSupabase
-        .from('fundamentals')
-        .select('*')
-        .eq('symbol', symbol)
-        .single();
-      if (error) return null;
-      return data as StockFundamental;
+
+      // Fetch fundamentals + live_prices (for 52W high/low) in parallel
+      const [fundRes, priceRes] = await Promise.all([
+        dseSupabase.from('fundamentals').select('*').eq('symbol', symbol).single(),
+        dseSupabase.from('live_prices').select('week_52_high, week_52_low').eq('symbol', symbol).single(),
+      ]);
+
+      if (fundRes.error) return null;
+      const f = fundRes.data;
+      const p = priceRes.data;
+
+      // Extract listing year from listing_date
+      let listingYear: number | null = null;
+      if (f.listing_date) {
+        const y = new Date(f.listing_date).getFullYear();
+        if (!isNaN(y)) listingYear = y;
+      }
+
+      return {
+        symbol: f.symbol,
+        market_cap: f.market_cap || 0,
+        eps: f.eps || 0,
+        pe_ratio: f.pe_ratio || 0,
+        nav: f.nav_per_share || 0,
+        paid_up_capital: f.paid_up_capital || 0,
+        total_shares: f.total_shares || 0,
+        face_value: f.face_value || 0,
+        listing_year: listingYear,
+        week52_high: p?.week_52_high || 0,
+        week52_low: p?.week_52_low || 0,
+        authorized_capital: f.authorized_capital || undefined,
+        free_float: f.free_float || undefined,
+      } as StockFundamental;
     },
     staleTime: 24 * 60 * 60 * 1000,
   });
@@ -38,9 +66,37 @@ export function useAllFundamentals() {
     queryKey: ['allFundamentals'],
     queryFn: async () => {
       if (!dseSupabase) return [];
-      const { data, error } = await dseSupabase.from('fundamentals').select('*');
-      if (error) return [];
-      return (data || []) as StockFundamental[];
+
+      const [fundRes, priceRes] = await Promise.all([
+        dseSupabase.from('fundamentals').select('*'),
+        dseSupabase.from('live_prices').select('symbol, week_52_high, week_52_low'),
+      ]);
+
+      if (fundRes.error) return [];
+      const priceMap = new Map<string, any>();
+      for (const p of priceRes.data || []) priceMap.set(p.symbol, p);
+
+      return (fundRes.data || []).map((f: any): StockFundamental => {
+        const p = priceMap.get(f.symbol);
+        let listingYear: number | null = null;
+        if (f.listing_date) {
+          const y = new Date(f.listing_date).getFullYear();
+          if (!isNaN(y)) listingYear = y;
+        }
+        return {
+          symbol: f.symbol,
+          market_cap: f.market_cap || 0,
+          eps: f.eps || 0,
+          pe_ratio: f.pe_ratio || 0,
+          nav: f.nav_per_share || 0,
+          paid_up_capital: f.paid_up_capital || 0,
+          total_shares: f.total_shares || 0,
+          face_value: f.face_value || 0,
+          listing_year: listingYear,
+          week52_high: p?.week_52_high || 0,
+          week52_low: p?.week_52_low || 0,
+        };
+      });
     },
     staleTime: 24 * 60 * 60 * 1000,
   });
@@ -74,9 +130,14 @@ export function useFinancialStatements(symbol?: string) {
         .from('financial_statements')
         .select('*')
         .eq('symbol', symbol)
-        .order('year', { ascending: false });
+        .order('period_end', { ascending: false });
       if (error) return [];
-      return data || [];
+      // Map nav_per_share -> nav and extract year from period_end
+      return (data || []).map((f: any) => ({
+        ...f,
+        year: f.year || (f.period_end ? new Date(f.period_end).getFullYear() : null),
+        nav: f.nav_per_share ?? f.nav ?? null,
+      }));
     },
     staleTime: 24 * 60 * 60 * 1000,
   });

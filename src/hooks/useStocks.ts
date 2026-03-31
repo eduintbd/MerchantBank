@@ -46,6 +46,10 @@ export function useStocks(search?: string) {
           open: p?.open || 0,
           close: p?.close_prev || 0,
           market_cap: undefined,
+          trades: p?.trades || 0,
+          value_traded: p?.value_traded || 0,
+          week_52_high: p?.week_52_high || 0,
+          week_52_low: p?.week_52_low || 0,
           updated_at: p?.scraped_at || '',
         };
       });
@@ -84,6 +88,10 @@ export function useStock(symbol: string) {
         open: p?.open || 0,
         close: p?.close_prev || 0,
         market_cap: undefined,
+        trades: p?.trades || 0,
+        value_traded: p?.value_traded || 0,
+        week_52_high: p?.week_52_high || 0,
+        week_52_low: p?.week_52_low || 0,
         updated_at: p?.scraped_at || '',
       };
     },

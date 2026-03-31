@@ -56,6 +56,10 @@ export interface Stock {
   open: number;
   close: number;
   market_cap?: number;
+  trades?: number;
+  value_traded?: number;
+  week_52_high?: number;
+  week_52_low?: number;
   updated_at: string;
 }
 

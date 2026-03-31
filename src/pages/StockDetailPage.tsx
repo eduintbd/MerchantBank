@@ -326,8 +326,8 @@ export function StockDetailPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {[
               { icon: BarChart2, label: 'Volume', value: formatVolume(stock.volume), color: 'text-info', bg: 'bg-info/10' },
-              { icon: Activity, label: 'Trades', value: '—', color: 'text-purple-400', bg: 'bg-purple-400/10' },
-              { icon: DollarSign, label: 'Value (Mn)', value: stock.market_cap ? `${(stock.market_cap / 1_000_000).toFixed(2)}M` : '—', color: 'text-success', bg: 'bg-success/10' },
+              { icon: Activity, label: 'Trades', value: stock.trades ? stock.trades.toLocaleString() : '—', color: 'text-purple-400', bg: 'bg-purple-400/10' },
+              { icon: DollarSign, label: 'Value (Mn)', value: stock.value_traded ? `${(stock.value_traded / 1_000_000).toFixed(2)}M` : '—', color: 'text-success', bg: 'bg-success/10' },
               { icon: ArrowUpDown, label: 'Change %', value: `${stock.change_percent >= 0 ? '+' : ''}${stock.change_percent.toFixed(2)}%`, color: isGain ? 'text-success' : 'text-danger', bg: isGain ? 'bg-success/10' : 'bg-danger/10' },
             ].map(card => {
               const Icon = card.icon;

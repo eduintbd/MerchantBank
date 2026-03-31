@@ -63,15 +63,17 @@ export function TopNav() {
               <span className="font-bold text-base text-[#333]">HeroStock.AI</span>
             </div>
 
-            <nav className="flex items-center gap-0 overflow-x-auto scrollbar-hide">
+            <nav className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
               {desktopNavItems.map(item => {
                 const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
                 return (
                   <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'}
-                    className={cn('flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors',
-                      isActive ? 'border-[#0b8a00] text-[#0b8a00]' : 'border-transparent text-[#888] hover:text-[#333]'
+                    className={cn('group flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold whitespace-nowrap rounded-lg transition-all duration-200',
+                      isActive
+                        ? 'bg-[#0b8a00]/10 text-[#0b8a00]'
+                        : 'text-[#777] hover:bg-[#f5f5f5] hover:text-[#333]'
                     )}>
-                    <item.icon size={15} strokeWidth={2} />
+                    <item.icon size={15} strokeWidth={isActive ? 2.2 : 1.8} className="transition-transform duration-200 group-hover:scale-110" />
                     <span>{item.label}</span>
                   </NavLink>
                 );
