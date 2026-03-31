@@ -57,9 +57,6 @@ export function DemoOrderTicket({ stock, onClose }: DemoOrderTicketProps) {
         orderType,
         quantity: qty,
         limitPrice: orderType === 'LIMIT' ? limit : null,
-        lastPrice: stock.last_price,
-        highPrice: stock.high,
-        lowPrice: stock.low,
       });
 
       toast.success(

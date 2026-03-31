@@ -85,7 +85,7 @@ export function PerformanceTrend() {
             <XAxis dataKey="date" fontSize={12} tick={{ fill: '#6b7280' }} />
             <YAxis fontSize={12} tick={{ fill: '#6b7280' }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}K`} />
             <Tooltip
-              formatter={(value: any, name: string) => [
+              formatter={(value: any, name?: string) => [
                 formatCurrency(Number(value)),
                 name === 'value' ? 'Total Value' : name === 'portfolio' ? 'Holdings' : 'Cash',
               ]}

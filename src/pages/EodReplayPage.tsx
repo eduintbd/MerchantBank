@@ -54,7 +54,7 @@ export function EodReplayPage() {
 
   async function handleRunEod() {
     try {
-      await runEod.mutateAsync();
+      await runEod.mutateAsync(undefined);
       toast.success('EOD Processing Complete', {
         description: 'Your end-of-day processing has been completed successfully.',
       });
