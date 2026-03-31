@@ -144,21 +144,48 @@ async function extractTextFromPDF(file: File): Promise<string> {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    // Group text items by their Y position to reconstruct rows
-    const lineMap = new Map<number, { x: number; text: string }[]>();
+
+    // Collect all text items with positions
+    const allItems: { x: number; y: number; text: string }[] = [];
     for (const item of content.items) {
-      if (!('str' in item)) continue;
-      const y = Math.round((item as any).transform[5]); // Y coordinate
-      const x = (item as any).transform[4]; // X coordinate
-      if (!lineMap.has(y)) lineMap.set(y, []);
-      lineMap.get(y)!.push({ x, text: (item as any).str });
+      if (!('str' in item) || !(item as any).str.trim()) continue;
+      allItems.push({
+        y: (item as any).transform[5],
+        x: (item as any).transform[4],
+        text: (item as any).str,
+      });
     }
-    // Sort by Y descending (PDF coordinates are bottom-up), then X ascending
-    const sortedYs = [...lineMap.keys()].sort((a, b) => b - a);
-    for (const y of sortedYs) {
-      const items = lineMap.get(y)!.sort((a, b) => a.x - b.x);
-      const lineText = items.map(i => i.text).join('\t');
-      if (lineText.trim()) pages.push(lineText);
+
+    // Group by Y with tolerance (items within 3 units are same row)
+    allItems.sort((a, b) => b.y - a.y || a.x - b.x);
+    const rows: { x: number; text: string }[][] = [];
+    let currentRow: { x: number; text: string }[] = [];
+    let lastY = -Infinity;
+
+    for (const item of allItems) {
+      if (currentRow.length === 0 || Math.abs(item.y - lastY) <= 3) {
+        currentRow.push({ x: item.x, text: item.text });
+      } else {
+        if (currentRow.length > 0) rows.push(currentRow);
+        currentRow = [{ x: item.x, text: item.text }];
+      }
+      lastY = item.y;
+    }
+    if (currentRow.length > 0) rows.push(currentRow);
+
+    // Build text lines from rows
+    for (const row of rows) {
+      row.sort((a, b) => a.x - b.x);
+      // Use tab separator; add extra tab if X gap is large (separate columns)
+      let line = '';
+      for (let j = 0; j < row.length; j++) {
+        if (j > 0) {
+          const gap = row[j].x - row[j - 1].x - (row[j - 1].text.length * 5);
+          line += gap > 20 ? '\t' : ' ';
+        }
+        line += row[j].text;
+      }
+      if (line.trim()) pages.push(line);
     }
   }
   return pages.join('\n');
@@ -269,27 +296,32 @@ function parsePDFText(text: string, broker: BrokerFormat = 'custom'): ParsedHold
       let qty = 0;
       let price = 0;
 
-      // Broker-specific number interpretation
-      if (broker === 'ucb' || broker === 'idlc' || broker === 'brac' || broker === 'lankabd') {
-        // Most BD brokers: first number = qty, second = avg price
-        qty = numbers[0];
-        price = numbers[1];
+      // Smart detection: separate integers (qty candidates) from decimals (price candidates)
+      const integers = numbers.filter(n => n === Math.floor(n) && n > 0 && n < 10_000_000);
+      const decimals = numbers.filter(n => n !== Math.floor(n) && n > 0);
+
+      if (integers.length >= 1 && decimals.length >= 1) {
+        // Clear case: first integer = qty, first decimal = avg price
+        qty = integers[0];
+        price = decimals[0];
       } else if (numbers.length === 2) {
+        // Two numbers: smaller one is likely qty, larger is price (or vice versa)
+        // But typically qty comes first in BD broker PDFs
         qty = numbers[0];
         price = numbers[1];
-      } else {
-        // Multiple numbers: use heuristic
-        // Find the best qty candidate (whole number, reasonable range)
-        // and price candidate (can be decimal, reasonable range for BDT)
+      } else if (numbers.length >= 3) {
+        // Multiple numbers: typical order is qty, avg_price, market_price, total_value...
+        // Qty is usually a whole number and among the smaller values
+        // Price is usually between 1-50000 BDT
         for (const n of numbers) {
-          if (!qty && n > 0 && n === Math.floor(n) && n < 10_000_000) {
+          if (!qty && n > 0 && n === Math.floor(n) && n < 1_000_000) {
             qty = n;
-          } else if (qty && !price && n > 0 && n < 100_000) {
+          } else if (qty && !price && n > 0.1 && n < 100_000) {
             price = n;
           }
         }
-        if (!qty && numbers[0] > 0) qty = numbers[0];
-        if (!price && numbers.length > 1 && numbers[1] > 0) price = numbers[1];
+        if (!qty) qty = numbers[0];
+        if (!price && numbers.length > 1) price = numbers[1];
       }
 
       if (qty > 0 && price > 0) {
@@ -350,12 +382,16 @@ export function PortfolioUploadModal({ open, onClose, onLocalImport }: Props) {
   const [uploading, setUploading] = useState(false);
   const [parsing, setParsing] = useState(false);
   const [step, setStep] = useState<'select' | 'preview' | 'done'>('select');
+  const [rawText, setRawText] = useState('');
+  const [showRaw, setShowRaw] = useState(false);
 
   function reset() {
     setFile(null);
     setParsed([]);
     setError('');
     setParsing(false);
+    setRawText('');
+    setShowRaw(false);
     setStep('select');
   }
 
@@ -368,6 +404,7 @@ export function PortfolioUploadModal({ open, onClose, onLocalImport }: Props) {
       setParsing(true);
       try {
         const text = await extractTextFromPDF(f);
+        setRawText(text);
         if (!text.trim()) {
           setError('Could not extract any text from the PDF. The file may be image-based (scanned). Please try exporting as CSV from your broker instead.');
           setParsing(false);
@@ -420,6 +457,7 @@ export function PortfolioUploadModal({ open, onClose, onLocalImport }: Props) {
         }
         toast.success(`Successfully imported ${parsed.length} holdings locally`);
         setStep('done');
+        setUploading(false);
         return;
       }
 
@@ -676,6 +714,19 @@ export function PortfolioUploadModal({ open, onClose, onLocalImport }: Props) {
                 This will update your portfolio. Existing holdings for the same stock symbol will be replaced with the uploaded values.
               </p>
 
+              {rawText && (
+                <div>
+                  <button onClick={() => setShowRaw(!showRaw)} className="text-xs text-info hover:underline">
+                    {showRaw ? 'Hide' : 'Show'} extracted text (debug)
+                  </button>
+                  {showRaw && (
+                    <pre className="mt-2 p-3 rounded-lg bg-gray-50 border border-border text-[10px] text-muted overflow-auto max-h-40 whitespace-pre-wrap font-mono">
+                      {rawText}
+                    </pre>
+                  )}
+                </div>
+              )}
+
               <div className="flex items-center gap-3 justify-end">
                 <Button variant="secondary" onClick={reset}>Back</Button>
                 <Button onClick={handleUpload} loading={uploading} icon={<Upload size={16} />}>
@@ -694,7 +745,7 @@ export function PortfolioUploadModal({ open, onClose, onLocalImport }: Props) {
               </p>
               <div className="flex items-center gap-3 justify-center">
                 <Button variant="secondary" onClick={() => { reset(); }}>Upload Another</Button>
-                <Button onClick={() => { onClose(); window.location.reload(); }}>View Portfolio</Button>
+                <Button onClick={() => { onClose(); reset(); }}>View Portfolio</Button>
               </div>
             </div>
           )}
