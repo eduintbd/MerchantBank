@@ -171,7 +171,24 @@ export function usePriceHistory(symbol?: string, period: string = '3M') {
         .order('trade_date', { ascending: true });
 
       if (error) return [];
-      return data || [];
+
+      // Filter out holiday/bad data:
+      // 1. Null OHLC = scraper ran on holiday with no data
+      // 2. Exact duplicate OHLCV as previous row = scraper copied stale data on a closed day
+      const clean = (data || []).filter(
+        (bar: any) => bar.open != null && bar.high != null && bar.low != null && bar.close != null
+      );
+      return clean.filter((bar: any, i: number) => {
+        if (i === 0) return true;
+        const prev = clean[i - 1];
+        return !(
+          bar.open === prev.open &&
+          bar.high === prev.high &&
+          bar.low === prev.low &&
+          bar.close === prev.close &&
+          bar.volume === prev.volume
+        );
+      });
     },
     staleTime: 5 * 60 * 1000,
   });

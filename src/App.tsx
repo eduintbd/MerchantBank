@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { DemoProvider } from '@/contexts/DemoContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AuthPage } from '@/pages/AuthPage';
 import { Dashboard } from '@/pages/Dashboard';
@@ -140,6 +141,7 @@ function AppRoutes() {
 
 function AppShell() {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <DemoProvider>
         <AppRoutes />
@@ -157,6 +159,7 @@ function AppShell() {
         />
       </DemoProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 
