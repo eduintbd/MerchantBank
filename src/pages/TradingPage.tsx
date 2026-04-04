@@ -300,7 +300,7 @@ export function TradingPage() {
           <div>
             <div className="flex items-center gap-2">
               <Zap size={22} className="text-[#f0b429]" />
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Stock Signals</h1>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">Hero Signal</h1>
             </div>
             <p className="text-muted text-sm mt-1">AI-ranked BUY/SELL signals for DSE & CSE stocks</p>
           </div>
