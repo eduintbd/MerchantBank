@@ -1,27 +1,15 @@
 // Supabase Edge Function: scan-social-media
-// Runs every hour via cron to aggregate Bangladesh stock market posts
-// from Twitter/X, Reddit, YouTube, Facebook, LinkedIn
+// Scrapes Bangladesh capital market news from business news sites + social media
+// Sources: The Daily Star, Financial Express BD, DSE news, Reddit, Twitter, YouTube
 //
 // Deploy: supabase functions deploy scan-social-media
-// Cron:   Set up in Supabase Dashboard > Database > Extensions > pg_cron
-//         SELECT cron.schedule('scan-social-media', '0 * * * *',
-//           $$SELECT net.http_post(
-//             url := 'https://fnwmvopralrpvryncxdc.supabase.co/functions/v1/scan-social-media',
-//             headers := '{"Authorization": "Bearer YOUR_ANON_KEY"}'::jsonb,
-//             body := '{}'::jsonb
-//           );$$
-//         );
+// Manual trigger: curl -X POST https://fnwmvopralrpvryncxdc.supabase.co/functions/v1/scan-social-media
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-// ─── Platform scrapers ───
-// Each returns an array of posts in our schema format.
-// Replace placeholder logic with real API calls.
 
 interface ScrapedPost {
   platform: string;
@@ -45,17 +33,18 @@ interface ScrapedPost {
   posted_at: string;
 }
 
-// DSE stock symbols for keyword matching
 const DSE_KEYWORDS = [
-  'DSE', 'DSEX', 'DSES', 'DS30', 'CSE', 'Dhaka Stock', 'Bangladesh stock',
-  'পুঁজিবাজার', 'শেয়ার বাজার', 'ঢাকা স্টক',
-  'BSEC', 'SEC Bangladesh',
+  'DSE', 'DSEX', 'DSES', 'DS30', 'CSE', 'CASPI', 'Dhaka Stock', 'Chittagong Stock',
+  'Bangladesh stock', 'পুঁজিবাজার', 'শেয়ার বাজার', 'ঢাকা স্টক', 'capital market',
+  'BSEC', 'SEC Bangladesh', 'stock exchange', 'share market', 'turnover', 'IPO',
 ];
 
 const POPULAR_SYMBOLS = [
   'GP', 'BATBC', 'SQURPHARMA', 'BXPHARMA', 'BRACBANK', 'DUTCHBANGLA',
   'EBL', 'ICB', 'LHBL', 'MARICO', 'UPGDCL', 'WALTONHIL', 'BEXIMCO',
-  'RENATA', 'BERGERPBL', 'OLYMPIC', 'POWERGRID', 'ISLAMIBANK',
+  'RENATA', 'BERGERPBL', 'OLYMPIC', 'POWERGRID', 'ISLAMIBANK', 'CITYBANK',
+  'JANATAINS', 'LANKABAFIN', 'PUBALIBANK', 'PRIMEBANK', 'RUPALIBANK',
+  'SQURCERAMICS', 'PREMIERCEM', 'HEIDELBCEM', 'MEGHNACEM', 'CONFIDCEM',
 ];
 
 function detectSymbols(text: string): string[] {
@@ -64,134 +53,370 @@ function detectSymbols(text: string): string[] {
 }
 
 function detectLanguage(text: string): string {
-  // Simple Bengali detection via Unicode range
   return /[\u0980-\u09FF]/.test(text) ? 'bn' : 'en';
 }
 
-function isRelevant(text: string): boolean {
+function analyzeSentiment(text: string): string {
   const lower = text.toLowerCase();
-  return DSE_KEYWORDS.some(k => lower.includes(k.toLowerCase())) || detectSymbols(text).length > 0;
+  const positiveWords = ['rally', 'up', 'gain', 'bull', 'growth', 'surge', 'profit', 'buy', 'strong', 'high', 'positive', 'approved', 'dividend', 'opportunity', 'rise', 'record', 'best', 'recovery', 'boost', 'uptrend'];
+  const negativeWords = ['crash', 'down', 'loss', 'bear', 'fall', 'sell', 'drop', 'decline', 'weak', 'low', 'negative', 'correction', 'risk', 'warning', 'volatile', 'plunge', 'slump', 'worst', 'concern', 'crisis'];
+  let pos = 0, neg = 0;
+  positiveWords.forEach(w => { if (lower.includes(w)) pos++; });
+  negativeWords.forEach(w => { if (lower.includes(w)) neg++; });
+  if (pos > neg + 1) return 'positive';
+  if (neg > pos + 1) return 'negative';
+  if (pos > 0 && neg > 0) return 'mixed';
+  return 'neutral';
 }
 
-// ─── Twitter/X via API (requires Bearer token) ───
-async function scrapeTwitter(): Promise<ScrapedPost[]> {
-  const TWITTER_BEARER = Deno.env.get('TWITTER_BEARER_TOKEN');
-  if (!TWITTER_BEARER) {
-    console.log('TWITTER_BEARER_TOKEN not set, skipping Twitter');
-    return [];
-  }
+function categorizePost(text: string): string {
+  const lower = text.toLowerCase();
+  if (lower.includes('breaking') || lower.includes('exclusive') || lower.includes('just in')) return 'breaking';
+  if (lower.includes('ipo') || lower.includes('subscription') || lower.includes('public offer')) return 'ipo';
+  if (lower.includes('bsec') || lower.includes('regulation') || lower.includes('circular') || lower.includes('policy')) return 'regulation';
+  if (lower.includes('dsex') || lower.includes('market') || lower.includes('turnover') || lower.includes('index') || lower.includes('volume')) return 'market';
+  if (lower.includes('analysis') || lower.includes('technical') || lower.includes('valuation') || lower.includes('forecast')) return 'analysis';
+  if (lower.includes('dividend') || lower.includes('earning') || lower.includes('revenue') || lower.includes('eps') || lower.includes('profit')) return 'stock';
+  if (lower.includes('think') || lower.includes('opinion') || lower.includes('believe') || lower.includes('outlook')) return 'opinion';
+  return 'market';
+}
 
+const HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9',
+};
+
+// ─── The Daily Star Business ───
+async function scrapeDailyStar(): Promise<ScrapedPost[]> {
   try {
-    // Search recent tweets about DSE/Bangladesh stocks
-    const query = encodeURIComponent('(DSE OR DSEX OR "Dhaka Stock" OR "Bangladesh stock" OR BSEC) -is:retweet lang:en');
-    const res = await fetch(
-      `https://api.twitter.com/2/tweets/search/recent?query=${query}&max_results=20&tweet.fields=created_at,public_metrics,author_id&expansions=author_id&user.fields=name,username,verified`,
-      { headers: { Authorization: `Bearer ${TWITTER_BEARER}` } }
-    );
+    const res = await fetch('https://www.thedailystar.net/business/economy/stock', { headers: HEADERS });
+    if (!res.ok) return [];
+    const html = await res.text();
+    const posts: ScrapedPost[] = [];
 
-    if (!res.ok) {
-      console.error('Twitter API error:', res.status, await res.text());
-      return [];
-    }
+    // Extract article links and titles
+    const articleRegex = /<h[23][^>]*class="[^"]*title[^"]*"[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    const seen = new Set<string>();
+    let match;
 
-    const data = await res.json();
-    const users = new Map((data.includes?.users || []).map((u: any) => [u.id, u]));
+    while ((match = articleRegex.exec(html)) !== null && posts.length < 15) {
+      const url = match[1].startsWith('http') ? match[1] : `https://www.thedailystar.net${match[1]}`;
+      const title = match[2].replace(/<[^>]+>/g, '').trim();
+      if (!title || title.length < 15 || seen.has(title)) continue;
+      seen.add(title);
 
-    return (data.data || [])
-      .filter((t: any) => isRelevant(t.text))
-      .map((t: any) => {
-        const author = users.get(t.author_id) || {};
-        const metrics = t.public_metrics || {};
-        return {
-          platform: 'twitter',
-          external_id: t.id,
-          author_name: author.name || 'Unknown',
-          author_handle: author.username ? `@${author.username}` : undefined,
-          author_verified: author.verified || false,
-          content: t.text,
-          post_url: `https://twitter.com/${author.username}/status/${t.id}`,
-          likes_count: metrics.like_count || 0,
-          comments_count: metrics.reply_count || 0,
-          shares_count: metrics.retweet_count || 0,
-          views_count: metrics.impression_count || 0,
-          symbols: detectSymbols(t.text),
-          sentiment: 'neutral',
-          relevance_score: 0.7,
-          category: 'general',
-          tags: [],
-          language: detectLanguage(t.text),
-          posted_at: t.created_at,
-        };
+      posts.push({
+        platform: 'news',
+        external_id: `tds_${Buffer.from(url).toString('base64').slice(0, 32)}`,
+        author_name: 'The Daily Star',
+        author_handle: 'thedailystar',
+        author_verified: true,
+        content: title,
+        post_url: url,
+        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+        symbols: detectSymbols(title),
+        sentiment: 'neutral',
+        relevance_score: 0.8,
+        category: 'market',
+        tags: ['news', 'daily-star'],
+        language: detectLanguage(title),
+        posted_at: new Date().toISOString(),
       });
+    }
+    return posts;
   } catch (err) {
-    console.error('Twitter scrape error:', err);
+    console.error('Daily Star error:', err);
     return [];
   }
 }
 
-// ─── Reddit via public JSON API ───
+// ─── Financial Express BD ───
+async function scrapeFinancialExpress(): Promise<ScrapedPost[]> {
+  try {
+    const res = await fetch('https://thefinancialexpress.com.bd/stock', { headers: HEADERS });
+    if (!res.ok) return [];
+    const html = await res.text();
+    const posts: ScrapedPost[] = [];
+
+    const articleRegex = /<h[234][^>]*>\s*<a[^>]*href="(https:\/\/thefinancialexpress\.com\.bd\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    const seen = new Set<string>();
+    let match;
+
+    while ((match = articleRegex.exec(html)) !== null && posts.length < 15) {
+      const url = match[1];
+      const title = match[2].replace(/<[^>]+>/g, '').trim();
+      if (!title || title.length < 15 || seen.has(title)) continue;
+      seen.add(title);
+
+      posts.push({
+        platform: 'news',
+        external_id: `fe_${Buffer.from(url).toString('base64').slice(0, 32)}`,
+        author_name: 'Financial Express',
+        author_handle: 'financialexpress',
+        author_verified: true,
+        content: title,
+        post_url: url,
+        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+        symbols: detectSymbols(title),
+        sentiment: 'neutral',
+        relevance_score: 0.8,
+        category: 'market',
+        tags: ['news', 'financial-express'],
+        language: detectLanguage(title),
+        posted_at: new Date().toISOString(),
+      });
+    }
+    return posts;
+  } catch (err) {
+    console.error('Financial Express error:', err);
+    return [];
+  }
+}
+
+// ─── Dhaka Tribune Business ───
+async function scrapeDhakaTribune(): Promise<ScrapedPost[]> {
+  try {
+    const res = await fetch('https://www.dhakatribune.com/business', { headers: HEADERS });
+    if (!res.ok) return [];
+    const html = await res.text();
+    const posts: ScrapedPost[] = [];
+
+    const articleRegex = /<h[234][^>]*>\s*<a[^>]*href="(https:\/\/www\.dhakatribune\.com\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    const seen = new Set<string>();
+    let match;
+
+    while ((match = articleRegex.exec(html)) !== null && posts.length < 10) {
+      const url = match[1];
+      const title = match[2].replace(/<[^>]+>/g, '').trim();
+      if (!title || title.length < 15 || seen.has(title)) continue;
+      seen.add(title);
+
+      // Only include capital market related articles
+      const isRelevant = DSE_KEYWORDS.some(k => title.toLowerCase().includes(k.toLowerCase())) || detectSymbols(title).length > 0;
+      if (!isRelevant && !title.toLowerCase().includes('stock') && !title.toLowerCase().includes('market') && !title.toLowerCase().includes('business')) continue;
+
+      posts.push({
+        platform: 'news',
+        external_id: `dt_${Buffer.from(url).toString('base64').slice(0, 32)}`,
+        author_name: 'Dhaka Tribune',
+        author_handle: 'dhakatribune',
+        author_verified: true,
+        content: title,
+        post_url: url,
+        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+        symbols: detectSymbols(title),
+        sentiment: 'neutral',
+        relevance_score: 0.75,
+        category: 'market',
+        tags: ['news', 'dhaka-tribune'],
+        language: detectLanguage(title),
+        posted_at: new Date().toISOString(),
+      });
+    }
+    return posts;
+  } catch (err) {
+    console.error('Dhaka Tribune error:', err);
+    return [];
+  }
+}
+
+// ─── DSE BD Official News ───
+async function scrapeDSENews(): Promise<ScrapedPost[]> {
+  try {
+    const res = await fetch('https://www.dsebd.org/', { headers: HEADERS });
+    if (!res.ok) return [];
+    const html = await res.text();
+    const posts: ScrapedPost[] = [];
+
+    // Extract news/announcements from DSE homepage
+    const newsRegex = /<a[^>]*href="([^"]*(?:news|announcement|circular|notice)[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi;
+    const seen = new Set<string>();
+    let match;
+
+    while ((match = newsRegex.exec(html)) !== null && posts.length < 10) {
+      const url = match[1].startsWith('http') ? match[1] : `https://www.dsebd.org/${match[1]}`;
+      const title = match[2].replace(/<[^>]+>/g, '').replace(/&[^;]+;/g, ' ').trim();
+      if (!title || title.length < 10 || seen.has(title)) continue;
+      seen.add(title);
+
+      posts.push({
+        platform: 'news',
+        external_id: `dse_${Buffer.from(url).toString('base64').slice(0, 32)}`,
+        author_name: 'Dhaka Stock Exchange',
+        author_handle: 'dsebd',
+        author_verified: true,
+        content: title,
+        post_url: url,
+        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+        symbols: detectSymbols(title),
+        sentiment: 'neutral',
+        relevance_score: 0.9,
+        category: 'regulation',
+        tags: ['official', 'dse'],
+        language: detectLanguage(title),
+        posted_at: new Date().toISOString(),
+      });
+    }
+    return posts;
+  } catch (err) {
+    console.error('DSE BD error:', err);
+    return [];
+  }
+}
+
+// ─── Prothom Alo Business (Bangla) ───
+async function scrapeProthomAlo(): Promise<ScrapedPost[]> {
+  try {
+    const res = await fetch('https://www.prothomalo.com/business', { headers: HEADERS });
+    if (!res.ok) return [];
+    const html = await res.text();
+    const posts: ScrapedPost[] = [];
+
+    const articleRegex = /<h[234][^>]*>\s*<a[^>]*href="(https:\/\/www\.prothomalo\.com\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    const seen = new Set<string>();
+    let match;
+
+    while ((match = articleRegex.exec(html)) !== null && posts.length < 10) {
+      const url = match[1];
+      const title = match[2].replace(/<[^>]+>/g, '').trim();
+      if (!title || title.length < 10 || seen.has(title)) continue;
+      seen.add(title);
+
+      const isRelevant = DSE_KEYWORDS.some(k => title.toLowerCase().includes(k.toLowerCase())) ||
+        title.includes('পুঁজিবাজার') || title.includes('শেয়ার') || title.includes('স্টক') ||
+        title.toLowerCase().includes('stock') || title.toLowerCase().includes('market');
+      if (!isRelevant) continue;
+
+      posts.push({
+        platform: 'news',
+        external_id: `pa_${Buffer.from(url).toString('base64').slice(0, 32)}`,
+        author_name: 'প্রথম আলো',
+        author_handle: 'prabortonalo',
+        author_verified: true,
+        content: title,
+        post_url: url,
+        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+        symbols: detectSymbols(title),
+        sentiment: 'neutral',
+        relevance_score: 0.75,
+        category: 'market',
+        tags: ['news', 'prothom-alo', 'bangla'],
+        language: 'bn',
+        posted_at: new Date().toISOString(),
+      });
+    }
+    return posts;
+  } catch (err) {
+    console.error('Prothom Alo error:', err);
+    return [];
+  }
+}
+
+// ─── Reddit (no API key needed) ───
 async function scrapeReddit(): Promise<ScrapedPost[]> {
   try {
     const subreddits = ['BangladeshStocks', 'DhakaStockExchange', 'bangladesh'];
     const posts: ScrapedPost[] = [];
 
     for (const sub of subreddits) {
-      const res = await fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=15`, {
-        headers: { 'User-Agent': 'HeroStock/1.0' },
-      });
-
-      if (!res.ok) continue;
-      const data = await res.json();
-
-      for (const child of (data.data?.children || [])) {
-        const p = child.data;
-        if (!isRelevant(p.title + ' ' + (p.selftext || ''))) continue;
-        const text = p.selftext ? `${p.title}\n\n${p.selftext.slice(0, 500)}` : p.title;
-
-        posts.push({
-          platform: 'reddit',
-          external_id: p.id,
-          author_name: `u/${p.author}`,
-          author_handle: p.author,
-          author_verified: false,
-          content: text,
-          post_url: `https://reddit.com${p.permalink}`,
-          likes_count: p.ups || 0,
-          comments_count: p.num_comments || 0,
-          shares_count: 0,
-          views_count: 0,
-          symbols: detectSymbols(text),
-          sentiment: 'neutral',
-          relevance_score: 0.7,
-          category: 'general',
-          tags: [],
-          language: detectLanguage(text),
-          posted_at: new Date(p.created_utc * 1000).toISOString(),
+      try {
+        const res = await fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=10`, {
+          headers: { 'User-Agent': 'HeroStock/1.0' },
         });
-      }
-    }
+        if (!res.ok) continue;
+        const data = await res.json();
 
+        for (const child of (data.data?.children || [])) {
+          const p = child.data;
+          const text = p.selftext ? `${p.title}\n\n${p.selftext.slice(0, 400)}` : p.title;
+          const isRelevant = DSE_KEYWORDS.some(k => text.toLowerCase().includes(k.toLowerCase())) || detectSymbols(text).length > 0;
+          if (!isRelevant) continue;
+
+          posts.push({
+            platform: 'reddit',
+            external_id: p.id,
+            author_name: `u/${p.author}`,
+            author_handle: p.author,
+            author_verified: false,
+            content: text,
+            post_url: `https://reddit.com${p.permalink}`,
+            likes_count: p.ups || 0,
+            comments_count: p.num_comments || 0,
+            shares_count: 0, views_count: 0,
+            symbols: detectSymbols(text),
+            sentiment: 'neutral',
+            relevance_score: 0.7,
+            category: 'general',
+            tags: ['reddit', sub],
+            language: detectLanguage(text),
+            posted_at: new Date(p.created_utc * 1000).toISOString(),
+          });
+        }
+      } catch { /* skip failed subreddit */ }
+    }
     return posts;
   } catch (err) {
-    console.error('Reddit scrape error:', err);
+    console.error('Reddit error:', err);
     return [];
   }
 }
 
-// ─── YouTube via Data API v3 ───
-async function scrapeYouTube(): Promise<ScrapedPost[]> {
-  const YT_KEY = Deno.env.get('YOUTUBE_API_KEY');
-  if (!YT_KEY) {
-    console.log('YOUTUBE_API_KEY not set, skipping YouTube');
+// ─── Twitter/X (optional, needs bearer token) ───
+async function scrapeTwitter(): Promise<ScrapedPost[]> {
+  const TWITTER_BEARER = Deno.env.get('TWITTER_BEARER_TOKEN');
+  if (!TWITTER_BEARER) return [];
+
+  try {
+    const query = encodeURIComponent('(DSE OR DSEX OR "Dhaka Stock" OR "Bangladesh stock" OR BSEC) -is:retweet lang:en');
+    const res = await fetch(
+      `https://api.twitter.com/2/tweets/search/recent?query=${query}&max_results=20&tweet.fields=created_at,public_metrics,author_id&expansions=author_id&user.fields=name,username,verified`,
+      { headers: { Authorization: `Bearer ${TWITTER_BEARER}` } }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    const users = new Map((data.includes?.users || []).map((u: any) => [u.id, u]));
+
+    return (data.data || []).map((t: any) => {
+      const author = users.get(t.author_id) || {};
+      const metrics = t.public_metrics || {};
+      return {
+        platform: 'twitter',
+        external_id: t.id,
+        author_name: author.name || 'Unknown',
+        author_handle: author.username ? `@${author.username}` : undefined,
+        author_verified: author.verified || false,
+        content: t.text,
+        post_url: `https://twitter.com/${author.username}/status/${t.id}`,
+        likes_count: metrics.like_count || 0,
+        comments_count: metrics.reply_count || 0,
+        shares_count: metrics.retweet_count || 0,
+        views_count: metrics.impression_count || 0,
+        symbols: detectSymbols(t.text),
+        sentiment: 'neutral',
+        relevance_score: 0.7,
+        category: 'general',
+        tags: ['twitter'],
+        language: detectLanguage(t.text),
+        posted_at: t.created_at,
+      };
+    });
+  } catch (err) {
+    console.error('Twitter error:', err);
     return [];
   }
+}
+
+// ─── YouTube (optional, needs API key) ───
+async function scrapeYouTube(): Promise<ScrapedPost[]> {
+  const YT_KEY = Deno.env.get('YOUTUBE_API_KEY');
+  if (!YT_KEY) return [];
 
   try {
     const query = encodeURIComponent('DSE Bangladesh stock market');
     const res = await fetch(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&maxResults=10&order=date&key=${YT_KEY}`
     );
-
     if (!res.ok) return [];
     const data = await res.json();
 
@@ -204,279 +429,73 @@ async function scrapeYouTube(): Promise<ScrapedPost[]> {
       content: item.snippet.title + (item.snippet.description ? `\n\n${item.snippet.description.slice(0, 300)}` : ''),
       media_url: item.snippet.thumbnails?.high?.url,
       post_url: `https://youtube.com/watch?v=${item.id.videoId}`,
-      likes_count: 0,
-      comments_count: 0,
-      shares_count: 0,
-      views_count: 0,
+      likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
       symbols: detectSymbols(item.snippet.title + ' ' + item.snippet.description),
       sentiment: 'neutral',
       relevance_score: 0.7,
       category: 'analysis',
-      tags: ['video'],
+      tags: ['video', 'youtube'],
       language: detectLanguage(item.snippet.title),
       posted_at: item.snippet.publishedAt,
     }));
   } catch (err) {
-    console.error('YouTube scrape error:', err);
+    console.error('YouTube error:', err);
     return [];
   }
-}
-
-// ─── Facebook via public page scraping ───
-async function scrapeFacebook(): Promise<ScrapedPost[]> {
-  try {
-    // Public Facebook pages about Bangladesh stock market
-    const pages = [
-      { slug: 'DSEBDofficial', name: 'Dhaka Stock Exchange' },
-      { slug: 'baborShareMarket', name: 'Babor Share Market' },
-      { slug: 'stockbangladesh', name: 'Stock Bangladesh' },
-      { slug: 'BangladeshStockMarketAnalysis', name: 'BD Stock Analysis' },
-    ];
-
-    const posts: ScrapedPost[] = [];
-
-    for (const page of pages) {
-      try {
-        // Use mobile version for simpler HTML
-        const res = await fetch(`https://m.facebook.com/${page.slug}`, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
-            'Accept': 'text/html',
-            'Accept-Language': 'en-US,en;q=0.9',
-          },
-        });
-
-        if (!res.ok) continue;
-        const html = await res.text();
-
-        // Extract post content from story divs
-        const storyRegex = /<div[^>]*data-ft[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/gi;
-        const textRegex = /<p>([\s\S]*?)<\/p>/gi;
-        let storyMatch;
-        let count = 0;
-
-        while ((storyMatch = storyRegex.exec(html)) !== null && count < 5) {
-          const storyHtml = storyMatch[1];
-          const texts: string[] = [];
-          let textMatch;
-          while ((textMatch = textRegex.exec(storyHtml)) !== null) {
-            const cleaned = textMatch[1].replace(/<[^>]+>/g, '').replace(/&[^;]+;/g, ' ').trim();
-            if (cleaned.length > 20) texts.push(cleaned);
-          }
-
-          if (texts.length === 0) continue;
-          const content = texts.join('\n').slice(0, 500);
-          if (!isRelevant(content)) continue;
-
-          posts.push({
-            platform: 'facebook',
-            external_id: `fb_${page.slug}_${count}_${Date.now()}`,
-            author_name: page.name,
-            author_handle: page.slug,
-            author_verified: false,
-            content,
-            post_url: `https://facebook.com/${page.slug}`,
-            likes_count: 0,
-            comments_count: 0,
-            shares_count: 0,
-            views_count: 0,
-            symbols: detectSymbols(content),
-            sentiment: 'neutral',
-            relevance_score: 0.6,
-            category: 'general',
-            tags: ['facebook'],
-            language: detectLanguage(content),
-            posted_at: new Date().toISOString(),
-          });
-          count++;
-        }
-      } catch (err) {
-        console.error(`Facebook page ${page.slug} error:`, err);
-      }
-    }
-
-    return posts;
-  } catch (err) {
-    console.error('Facebook scrape error:', err);
-    return [];
-  }
-}
-
-// ─── TikTok via web search scraping ───
-async function scrapeTikTok(): Promise<ScrapedPost[]> {
-  try {
-    const searchQueries = [
-      'DSE Bangladesh stock market',
-      'Dhaka stock exchange',
-      'Bangladesh share bazar',
-    ];
-
-    const posts: ScrapedPost[] = [];
-
-    for (const query of searchQueries) {
-      try {
-        const res = await fetch(
-          `https://www.tiktok.com/api/search/general/full/?keyword=${encodeURIComponent(query)}&offset=0&search_source=normal_search`,
-          {
-            headers: {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-              'Accept': 'application/json',
-              'Referer': 'https://www.tiktok.com/',
-            },
-          }
-        );
-
-        if (!res.ok) {
-          // Fallback: scrape TikTok search page HTML
-          const htmlRes = await fetch(
-            `https://www.tiktok.com/search?q=${encodeURIComponent(query)}`,
-            {
-              headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                'Accept': 'text/html',
-              },
-            }
-          );
-
-          if (!htmlRes.ok) continue;
-          const html = await htmlRes.text();
-
-          // Extract video descriptions from search results
-          const descRegex = /"desc"\s*:\s*"([^"]{20,500})"/g;
-          const authorRegex = /"uniqueId"\s*:\s*"([^"]+)"/g;
-          const idRegex = /"id"\s*:\s*"(\d{15,})"/g;
-
-          const descs: string[] = [];
-          const authors: string[] = [];
-          const ids: string[] = [];
-
-          let m;
-          while ((m = descRegex.exec(html)) !== null) descs.push(m[1]);
-          while ((m = authorRegex.exec(html)) !== null) authors.push(m[1]);
-          while ((m = idRegex.exec(html)) !== null) ids.push(m[1]);
-
-          for (let i = 0; i < Math.min(descs.length, 10); i++) {
-            const content = descs[i].replace(/\\n/g, '\n').replace(/\\u[\dA-Fa-f]{4}/g, '');
-            if (!isRelevant(content)) continue;
-
-            const author = authors[i] || 'TikTok User';
-            const videoId = ids[i] || `${Date.now()}_${i}`;
-
-            posts.push({
-              platform: 'facebook', // using 'facebook' as platform since 'tiktok' may not be in CHECK constraint
-              external_id: `tiktok_${videoId}`,
-              author_name: `@${author}`,
-              author_handle: `@${author}`,
-              author_verified: false,
-              content: `[TikTok] ${content}`,
-              post_url: `https://www.tiktok.com/@${author}/video/${videoId}`,
-              likes_count: 0,
-              comments_count: 0,
-              shares_count: 0,
-              views_count: 0,
-              symbols: detectSymbols(content),
-              sentiment: 'neutral',
-              relevance_score: 0.6,
-              category: 'general',
-              tags: ['tiktok', 'video'],
-              language: detectLanguage(content),
-              posted_at: new Date().toISOString(),
-            });
-          }
-          continue;
-        }
-
-        // If API worked, parse JSON response
-        const data = await res.json();
-        for (const item of (data.data || [])) {
-          const videoData = item.item || {};
-          const authorData = videoData.author || {};
-          const stats = videoData.stats || {};
-          const content = videoData.desc || '';
-
-          if (!isRelevant(content)) continue;
-
-          posts.push({
-            platform: 'facebook', // using 'facebook' since tiktok not in CHECK constraint
-            external_id: `tiktok_${videoData.id}`,
-            author_name: authorData.nickname || authorData.uniqueId || 'TikTok User',
-            author_handle: `@${authorData.uniqueId || 'unknown'}`,
-            author_verified: authorData.verified || false,
-            content: `[TikTok] ${content}`,
-            media_url: videoData.video?.cover,
-            post_url: `https://www.tiktok.com/@${authorData.uniqueId}/video/${videoData.id}`,
-            likes_count: stats.diggCount || 0,
-            comments_count: stats.commentCount || 0,
-            shares_count: stats.shareCount || 0,
-            views_count: stats.playCount || 0,
-            symbols: detectSymbols(content),
-            sentiment: 'neutral',
-            relevance_score: 0.6,
-            category: 'general',
-            tags: ['tiktok', 'video'],
-            language: detectLanguage(content),
-            posted_at: new Date(videoData.createTime * 1000 || Date.now()).toISOString(),
-          });
-        }
-      } catch (err) {
-        console.error(`TikTok query "${query}" error:`, err);
-      }
-    }
-
-    return posts;
-  } catch (err) {
-    console.error('TikTok scrape error:', err);
-    return [];
-  }
-}
-
-// ─── Simple sentiment analysis ───
-function analyzeSentiment(text: string): string {
-  const lower = text.toLowerCase();
-  const positiveWords = ['rally', 'up', 'gain', 'bull', 'growth', 'surge', 'profit', 'buy', 'strong', 'high', 'positive', 'prequalification', 'approved', 'dividend', 'opportunity'];
-  const negativeWords = ['crash', 'down', 'loss', 'bear', 'fall', 'sell', 'drop', 'decline', 'weak', 'low', 'negative', 'correction', 'risk', 'warning', 'volatile'];
-
-  let pos = 0, neg = 0;
-  positiveWords.forEach(w => { if (lower.includes(w)) pos++; });
-  negativeWords.forEach(w => { if (lower.includes(w)) neg++; });
-
-  if (pos > neg + 1) return 'positive';
-  if (neg > pos + 1) return 'negative';
-  if (pos > 0 && neg > 0) return 'mixed';
-  return 'neutral';
-}
-
-function categorizePost(text: string): string {
-  const lower = text.toLowerCase();
-  if (lower.includes('breaking') || lower.includes('exclusive')) return 'breaking';
-  if (lower.includes('ipo') || lower.includes('subscription')) return 'ipo';
-  if (lower.includes('bsec') || lower.includes('regulation') || lower.includes('circular')) return 'regulation';
-  if (lower.includes('dsex') || lower.includes('market') || lower.includes('turnover') || lower.includes('index')) return 'market';
-  if (lower.includes('analysis') || lower.includes('technical') || lower.includes('dd:') || lower.includes('valuation')) return 'analysis';
-  if (lower.includes('dividend') || lower.includes('earning') || lower.includes('revenue')) return 'stock';
-  if (lower.includes('think') || lower.includes('opinion') || lower.includes('believe')) return 'opinion';
-  return 'general';
 }
 
 // ─── Main handler ───
-Deno.serve(async (req) => {
+Deno.serve(async (_req) => {
   try {
-    console.log('Starting social media scan...');
+    console.log('Starting capital market news scan...');
 
-    // Scrape all platforms in parallel
-    const [twitterPosts, redditPosts, youtubePosts, facebookPosts, tiktokPosts] = await Promise.all([
-      scrapeTwitter(),
+    // Scrape all sources in parallel — news sites first (no API keys needed)
+    const [
+      dailyStarPosts,
+      financialExpressPosts,
+      dhakaTribunePosts,
+      dseNewsPosts,
+      prothomAloPosts,
+      redditPosts,
+      twitterPosts,
+      youtubePosts,
+    ] = await Promise.all([
+      scrapeDailyStar(),
+      scrapeFinancialExpress(),
+      scrapeDhakaTribune(),
+      scrapeDSENews(),
+      scrapeProthomAlo(),
       scrapeReddit(),
+      scrapeTwitter(),
       scrapeYouTube(),
-      scrapeFacebook(),
-      scrapeTikTok(),
     ]);
 
-    const allPosts = [...twitterPosts, ...redditPosts, ...youtubePosts, ...facebookPosts, ...tiktokPosts];
-    console.log(`Scraped ${allPosts.length} total posts (Twitter:${twitterPosts.length} Reddit:${redditPosts.length} YouTube:${youtubePosts.length} Facebook:${facebookPosts.length} TikTok:${tiktokPosts.length})`);
+    const allPosts = [
+      ...dailyStarPosts,
+      ...financialExpressPosts,
+      ...dhakaTribunePosts,
+      ...dseNewsPosts,
+      ...prothomAloPosts,
+      ...redditPosts,
+      ...twitterPosts,
+      ...youtubePosts,
+    ];
+
+    const sourceCounts = {
+      daily_star: dailyStarPosts.length,
+      financial_express: financialExpressPosts.length,
+      dhaka_tribune: dhakaTribunePosts.length,
+      dse_official: dseNewsPosts.length,
+      prothom_alo: prothomAloPosts.length,
+      reddit: redditPosts.length,
+      twitter: twitterPosts.length,
+      youtube: youtubePosts.length,
+    };
+
+    console.log(`Scraped ${allPosts.length} total posts:`, JSON.stringify(sourceCounts));
 
     if (allPosts.length === 0) {
-      return new Response(JSON.stringify({ message: 'No new posts found', count: 0 }), {
+      return new Response(JSON.stringify({ message: 'No new posts found', count: 0, sources: sourceCounts }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
@@ -486,58 +505,36 @@ Deno.serve(async (req) => {
       ...post,
       sentiment: analyzeSentiment(post.content),
       category: categorizePost(post.content),
-      relevance_score: Math.min(0.99, 0.5 + (post.symbols.length * 0.1) + (post.likes_count > 100 ? 0.1 : 0) + (post.comments_count > 20 ? 0.05 : 0)),
+      relevance_score: Math.min(0.99, post.relevance_score + (post.symbols.length * 0.05)),
+      scraped_at: new Date().toISOString(),
     }));
 
-    // Upsert into database (dedup on platform + external_id)
-    const { data, error } = await supabase
-      .from('social_media_posts')
-      .upsert(
-        enrichedPosts.map(p => ({
-          platform: p.platform,
-          external_id: p.external_id,
-          author_name: p.author_name,
-          author_handle: p.author_handle,
-          author_verified: p.author_verified,
-          content: p.content,
-          media_url: p.media_url,
-          post_url: p.post_url,
-          likes_count: p.likes_count,
-          comments_count: p.comments_count,
-          shares_count: p.shares_count,
-          views_count: p.views_count,
-          symbols: p.symbols,
-          sentiment: p.sentiment,
-          relevance_score: p.relevance_score,
-          category: p.category,
-          tags: p.tags,
-          language: p.language,
-          posted_at: p.posted_at,
-          scraped_at: new Date().toISOString(),
-        })),
-        { onConflict: 'platform,external_id' }
-      );
+    // Upsert (dedup on platform + external_id)
+    const BATCH = 50;
+    let upsertCount = 0;
+    let upsertError: string | null = null;
 
-    if (error) {
-      console.error('Upsert error:', error);
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    for (let i = 0; i < enrichedPosts.length; i += BATCH) {
+      const batch = enrichedPosts.slice(i, i + BATCH);
+      const { error } = await supabase
+        .from('social_media_posts')
+        .upsert(batch, { onConflict: 'platform,external_id' });
+
+      if (error) {
+        upsertError = error.message;
+        console.error('Upsert error:', error.message);
+      } else {
+        upsertCount += batch.length;
+      }
     }
 
-    console.log(`Upserted ${enrichedPosts.length} posts successfully`);
+    console.log(`Upserted ${upsertCount} posts successfully`);
 
     return new Response(JSON.stringify({
       message: 'Scan complete',
-      count: enrichedPosts.length,
-      platforms: {
-        twitter: twitterPosts.length,
-        reddit: redditPosts.length,
-        youtube: youtubePosts.length,
-        facebook: facebookPosts.length,
-        tiktok: tiktokPosts.length,
-      },
+      count: upsertCount,
+      error: upsertError,
+      sources: sourceCounts,
     }), {
       headers: { 'Content-Type': 'application/json' },
     });
