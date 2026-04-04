@@ -42,11 +42,14 @@ export interface FamilyMember {
 export type OrderType = 'buy' | 'sell';
 export type OrderStatus = 'pending' | 'executed' | 'partially_filled' | 'cancelled' | 'rejected';
 
+export type Exchange = 'DSE' | 'CSE';
+
 export interface Stock {
   id: string;
   symbol: string;
   company_name: string;
   sector: string;
+  exchange: Exchange;
   last_price: number;
   change: number;
   change_percent: number;

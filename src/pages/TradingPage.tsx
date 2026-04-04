@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useStocks, usePlaceOrder, useOrders } from '@/hooks/useStocks';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { ExchangeToggle, type ExchangeFilter } from '@/components/ui/ExchangeToggle';
 import { formatCurrency, formatPercent, getChangeColor, formatDateTime, cn } from '@/lib/utils';
 import { Search, TrendingUp, TrendingDown, ShoppingCart, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -16,10 +17,17 @@ export function TradingPage() {
   const [orderType, setOrderType] = useState<OrderType>('buy');
   const [quantity, setQuantity] = useState('');
   const [price, setPrice] = useState('');
+  const [exchangeFilter, setExchangeFilter] = useState<ExchangeFilter>('ALL');
 
-  const { data: stocks, isLoading } = useStocks(search);
+  const { data: allStocks, isLoading } = useStocks(search);
   const { data: orders } = useOrders();
   const placeOrder = usePlaceOrder();
+
+  const stocks = useMemo(() => {
+    if (!allStocks) return [];
+    if (exchangeFilter === 'ALL') return allStocks;
+    return allStocks.filter(s => s.exchange === exchangeFilter);
+  }, [allStocks, exchangeFilter]);
 
   function handleSelectStock(stock: Stock) {
     setSelectedStock(stock);
@@ -53,8 +61,13 @@ export function TradingPage() {
     <div className="min-h-screen bg-white animate-fade-in">
       <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Trading Terminal</h1>
-        <p className="text-muted text-sm sm:text-base mt-1">Buy and sell DSE listed stocks in real time</p>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-foreground">Trading Terminal</h1>
+            <p className="text-muted text-sm sm:text-base mt-1">Buy and sell DSE & CSE listed stocks in real time</p>
+          </div>
+          <ExchangeToggle value={exchangeFilter} onChange={setExchangeFilter} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
@@ -114,7 +127,12 @@ export function TradingPage() {
                             'absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full transition-colors',
                             stock.change >= 0 ? 'bg-success' : 'bg-danger'
                           )} />
-                          <div className="font-semibold text-foreground tracking-tight">{stock.symbol}</div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-foreground tracking-tight">{stock.symbol}</span>
+                            <span className={cn('text-[9px] font-bold px-1.5 py-0.5 rounded',
+                              stock.exchange === 'CSE' ? 'bg-orange-500/10 text-orange-500' : 'bg-blue-500/10 text-blue-500'
+                            )}>{stock.exchange}</span>
+                          </div>
                           <div className="text-[11px] text-muted truncate max-w-[120px] sm:max-w-[200px] mt-0.5">{stock.company_name}</div>
                         </td>
                         <td className="px-3 py-4 text-right font-num font-semibold text-foreground">{formatCurrency(stock.last_price)}</td>

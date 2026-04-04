@@ -169,8 +169,11 @@ export function StockDetailPage() {
         <div className="rounded-xl border border-border bg-card-solid p-4 sm:p-5 shadow-[var(--shadow-card)]">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-foreground">{stock.symbol}</h1>
+                <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded',
+                  stock.exchange === 'CSE' ? 'bg-orange-500/10 text-orange-500' : 'bg-blue-500/10 text-blue-500'
+                )}>{stock.exchange || 'DSE'}</span>
                 <span className={cn(
                   'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold',
                   isGain ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'

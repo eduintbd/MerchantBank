@@ -2,6 +2,7 @@ import { useState, useMemo, lazy, Suspense } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDemo } from '@/contexts/DemoContext';
+import { ExchangeToggle, type ExchangeFilter } from '@/components/ui/ExchangeToggle';
 import { usePortfolio } from '@/hooks/useStocks';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useLearningProgress } from '@/hooks/useLearning';
@@ -105,7 +106,7 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
             </div>
             {lastUpdated && (
               <div className="text-xs text-[#aaa] mt-2">
-                As of {formatDateTime(lastUpdated)} · Dhaka Stock Exchange
+                As of {formatDateTime(lastUpdated)} · DSE & CSE
               </div>
             )}
           </div>
@@ -518,9 +519,12 @@ export function Dashboard() {
                 <span className="sm:hidden">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
               </span>
             </div>
-            <Link to="/trading" className="px-3 sm:px-4 py-2 rounded bg-[#0b8a00] text-white text-xs sm:text-sm font-semibold hover:bg-[#097300] transition-colors shrink-0">
-              Trade Now
-            </Link>
+            <div className="flex items-center gap-2 shrink-0">
+              <ExchangeToggle value="ALL" onChange={() => {}} size="sm" />
+              <Link to="/trading" className="px-3 sm:px-4 py-2 rounded bg-[#0b8a00] text-white text-xs sm:text-sm font-semibold hover:bg-[#097300] transition-colors">
+                Trade Now
+              </Link>
+            </div>
           </div>
 
           {/* DSEX Hero Landing */}

@@ -4,6 +4,7 @@ import { useMarketData } from '@/hooks/useMarketData';
 import { useSocialMediaPosts } from '@/hooks/useSocialMedia';
 import { useNewsComments, useCreateNewsComment } from '@/hooks/useNewsComments';
 import { MarketIndexCards } from '@/components/dashboard/MarketIndexCards';
+import { ExchangeToggle, type ExchangeFilter } from '@/components/ui/ExchangeToggle';
 import { MarketStrength } from '@/components/dashboard/MarketStrength';
 import { MarketSentiment } from '@/components/dashboard/MarketSentiment';
 import { GlobalExchangeComparison } from '@/components/dashboard/GlobalExchangeComparison';
@@ -576,6 +577,7 @@ function PublicHeader({ isMarketOpen }: { isMarketOpen: boolean }) {
 export function MarketPage() {
   const { data, isLoading, error } = useMarketData();
   const [activeTab, setActiveTab] = useState<TopMoverTab>('gainer');
+  const [exchangeFilter, setExchangeFilter] = useState<ExchangeFilter>('ALL');
 
   if (error) return (
     <div className="min-h-screen bg-white">
@@ -622,7 +624,7 @@ export function MarketPage() {
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <BarChart3 size={24} className="text-info" />
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">DSE Market</h1>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">DSE & CSE Market</h1>
                 <div className={cn(
                   'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide border sm:hidden',
                   isMarketOpen
@@ -637,22 +639,25 @@ export function MarketPage() {
                 </div>
               </div>
               <p className="text-muted text-sm">
-                Real-time DSE market data &middot; {data.stats.totalStocks} stocks &middot; Auto-refreshes every 30s
+                Real-time DSE & CSE market data &middot; {data.stats.totalStocks} stocks &middot; Auto-refreshes every 30s
               </p>
             </div>
-            {data.lastUpdated && (
-              <div className="flex items-center gap-1.5 text-[11px] text-muted">
-                <Activity size={12} className={isMarketOpen ? 'text-success animate-pulse' : 'text-muted'} />
-                <span>Last updated {formatDateTime(data.lastUpdated)}</span>
-              </div>
-            )}
+            <div className="flex items-center gap-3">
+              <ExchangeToggle value={exchangeFilter} onChange={setExchangeFilter} size="sm" />
+              {data.lastUpdated && (
+                <div className="flex items-center gap-1.5 text-[11px] text-muted">
+                  <Activity size={12} className={isMarketOpen ? 'text-success animate-pulse' : 'text-muted'} />
+                  <span>Last updated {formatDateTime(data.lastUpdated)}</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Ticker Strip */}
           <TickerStrip prices={data.livePrices} />
 
           {/* Index Cards + Stats */}
-          <MarketIndexCards indices={data.indices} stats={data.stats} />
+          <MarketIndexCards indices={data.indices} stats={data.stats} exchange={exchangeFilter} />
 
           {/* Top Movers + News */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
