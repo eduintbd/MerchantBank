@@ -90,39 +90,54 @@ const HEADERS = {
 // ─── The Daily Star Business ───
 async function scrapeDailyStar(): Promise<ScrapedPost[]> {
   try {
-    const res = await fetch('https://www.thedailystar.net/business/economy/stock', { headers: HEADERS });
-    if (!res.ok) return [];
-    const html = await res.text();
+    // Daily Star may block — try multiple URLs
+    const urls = [
+      'https://www.thedailystar.net/business/economy/stock',
+      'https://www.thedailystar.net/business/economy',
+    ];
+    let html = '';
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, { headers: HEADERS });
+        if (res.ok) { html = await res.text(); break; }
+      } catch { /* try next */ }
+    }
+    if (!html) return [];
     const posts: ScrapedPost[] = [];
 
-    // Extract article links and titles
-    const articleRegex = /<h[23][^>]*class="[^"]*title[^"]*"[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    // Generic: find all <a href="...">...<h2|h3>TITLE</h2|h3>...</a> or <h2|h3><a href>TITLE</a></h3>
+    const patterns = [
+      /<a[^>]*href="([^"]*\/business\/[^"]+)"[^>]*>[\s\S]*?<h[23][^>]*>([\s\S]*?)<\/h[23]>/gi,
+      /<h[23][^>]*>\s*<a[^>]*href="([^"]*\/business\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi,
+    ];
     const seen = new Set<string>();
-    let match;
 
-    while ((match = articleRegex.exec(html)) !== null && posts.length < 15) {
-      const url = match[1].startsWith('http') ? match[1] : `https://www.thedailystar.net${match[1]}`;
-      const title = match[2].replace(/<[^>]+>/g, '').trim();
-      if (!title || title.length < 15 || seen.has(title)) continue;
-      seen.add(title);
+    for (const regex of patterns) {
+      let match;
+      while ((match = regex.exec(html)) !== null && posts.length < 15) {
+        const url = match[1].startsWith('http') ? match[1] : `https://www.thedailystar.net${match[1]}`;
+        const title = match[2].replace(/<[^>]+>/g, '').trim();
+        if (!title || title.length < 15 || seen.has(title)) continue;
+        seen.add(title);
 
-      posts.push({
-        platform: 'news',
-        external_id: `tds_${Buffer.from(url).toString('base64').slice(0, 32)}`,
-        author_name: 'The Daily Star',
-        author_handle: 'thedailystar',
-        author_verified: true,
-        content: title,
-        post_url: url,
-        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
-        symbols: detectSymbols(title),
-        sentiment: 'neutral',
-        relevance_score: 0.8,
-        category: 'market',
-        tags: ['news', 'daily-star'],
-        language: detectLanguage(title),
-        posted_at: new Date().toISOString(),
-      });
+        posts.push({
+          platform: 'news',
+          external_id: `tds_${btoa(url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 48)}`,
+          author_name: 'The Daily Star',
+          author_handle: 'thedailystar',
+          author_verified: true,
+          content: title,
+          post_url: url,
+          likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+          symbols: detectSymbols(title),
+          sentiment: 'neutral',
+          relevance_score: 0.8,
+          category: 'market',
+          tags: ['news', 'daily-star'],
+          language: detectLanguage(title),
+          posted_at: new Date().toISOString(),
+        });
+      }
     }
     return posts;
   } catch (err) {
@@ -139,33 +154,41 @@ async function scrapeFinancialExpress(): Promise<ScrapedPost[]> {
     const html = await res.text();
     const posts: ScrapedPost[] = [];
 
-    const articleRegex = /<h[234][^>]*>\s*<a[^>]*href="(https:\/\/thefinancialexpress\.com\.bd\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    // Pattern: <a href="/stock/slug"><h3>Title</h3></a>
+    const patterns = [
+      /<a[^>]*href="(\/stock\/[^"]+)"[^>]*>[\s\S]*?<h[234][^>]*>([\s\S]*?)<\/h[234]>/gi,
+      /<h[234][^>]*>\s*<a[^>]*href="(\/stock\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi,
+      /<a[^>]*href="(https:\/\/thefinancialexpress\.com\.bd\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi,
+    ];
     const seen = new Set<string>();
-    let match;
 
-    while ((match = articleRegex.exec(html)) !== null && posts.length < 15) {
-      const url = match[1];
-      const title = match[2].replace(/<[^>]+>/g, '').trim();
-      if (!title || title.length < 15 || seen.has(title)) continue;
-      seen.add(title);
+    for (const regex of patterns) {
+      let match;
+      while ((match = regex.exec(html)) !== null && posts.length < 15) {
+        const rawUrl = match[1];
+        const url = rawUrl.startsWith('http') ? rawUrl : `https://thefinancialexpress.com.bd${rawUrl}`;
+        const title = match[2].replace(/<[^>]+>/g, '').trim();
+        if (!title || title.length < 15 || seen.has(title)) continue;
+        seen.add(title);
 
-      posts.push({
-        platform: 'news',
-        external_id: `fe_${Buffer.from(url).toString('base64').slice(0, 32)}`,
-        author_name: 'Financial Express',
-        author_handle: 'financialexpress',
-        author_verified: true,
-        content: title,
-        post_url: url,
-        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
-        symbols: detectSymbols(title),
-        sentiment: 'neutral',
-        relevance_score: 0.8,
-        category: 'market',
-        tags: ['news', 'financial-express'],
-        language: detectLanguage(title),
-        posted_at: new Date().toISOString(),
-      });
+        posts.push({
+          platform: 'news',
+          external_id: `fe_${btoa(url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 48)}`,
+          author_name: 'Financial Express',
+          author_handle: 'financialexpress',
+          author_verified: true,
+          content: title,
+          post_url: url,
+          likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+          symbols: detectSymbols(title),
+          sentiment: 'neutral',
+          relevance_score: 0.8,
+          category: 'market',
+          tags: ['news', 'financial-express'],
+          language: detectLanguage(title),
+          posted_at: new Date().toISOString(),
+        });
+      }
     }
     return posts;
   } catch (err) {
@@ -182,37 +205,40 @@ async function scrapeDhakaTribune(): Promise<ScrapedPost[]> {
     const html = await res.text();
     const posts: ScrapedPost[] = [];
 
-    const articleRegex = /<h[234][^>]*>\s*<a[^>]*href="(https:\/\/www\.dhakatribune\.com\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
+    // Pattern: <a href="//www.dhakatribune.com/business/...">Title</a>
+    const patterns = [
+      /<a[^>]*href="(?:https?:)?\/\/www\.dhakatribune\.com\/(business\/[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi,
+      /<h[234][^>]*>\s*<a[^>]*href="([^"]*business[^"]*)"[^>]*>([\s\S]*?)<\/a>/gi,
+    ];
     const seen = new Set<string>();
-    let match;
 
-    while ((match = articleRegex.exec(html)) !== null && posts.length < 10) {
-      const url = match[1];
-      const title = match[2].replace(/<[^>]+>/g, '').trim();
-      if (!title || title.length < 15 || seen.has(title)) continue;
-      seen.add(title);
+    for (const regex of patterns) {
+      let match;
+      while ((match = regex.exec(html)) !== null && posts.length < 15) {
+        const rawUrl = match[1];
+        const url = rawUrl.startsWith('http') ? rawUrl : `https://www.dhakatribune.com/${rawUrl}`;
+        const title = match[2].replace(/<[^>]+>/g, '').trim();
+        if (!title || title.length < 15 || seen.has(title)) continue;
+        seen.add(title);
 
-      // Only include capital market related articles
-      const isRelevant = DSE_KEYWORDS.some(k => title.toLowerCase().includes(k.toLowerCase())) || detectSymbols(title).length > 0;
-      if (!isRelevant && !title.toLowerCase().includes('stock') && !title.toLowerCase().includes('market') && !title.toLowerCase().includes('business')) continue;
-
-      posts.push({
-        platform: 'news',
-        external_id: `dt_${Buffer.from(url).toString('base64').slice(0, 32)}`,
-        author_name: 'Dhaka Tribune',
-        author_handle: 'dhakatribune',
-        author_verified: true,
-        content: title,
-        post_url: url,
-        likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
-        symbols: detectSymbols(title),
-        sentiment: 'neutral',
-        relevance_score: 0.75,
-        category: 'market',
-        tags: ['news', 'dhaka-tribune'],
-        language: detectLanguage(title),
-        posted_at: new Date().toISOString(),
-      });
+        posts.push({
+          platform: 'news',
+          external_id: `dt_${btoa(url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 48)}`,
+          author_name: 'Dhaka Tribune',
+          author_handle: 'dhakatribune',
+          author_verified: true,
+          content: title,
+          post_url: url,
+          likes_count: 0, comments_count: 0, shares_count: 0, views_count: 0,
+          symbols: detectSymbols(title),
+          sentiment: 'neutral',
+          relevance_score: 0.75,
+          category: 'market',
+          tags: ['news', 'dhaka-tribune'],
+          language: detectLanguage(title),
+          posted_at: new Date().toISOString(),
+        });
+      }
     }
     return posts;
   } catch (err) {
@@ -242,7 +268,7 @@ async function scrapeDSENews(): Promise<ScrapedPost[]> {
 
       posts.push({
         platform: 'news',
-        external_id: `dse_${Buffer.from(url).toString('base64').slice(0, 32)}`,
+        external_id: `dse_${btoa(url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 48)}`,
         author_name: 'Dhaka Stock Exchange',
         author_handle: 'dsebd',
         author_verified: true,
@@ -290,7 +316,7 @@ async function scrapeProthomAlo(): Promise<ScrapedPost[]> {
 
       posts.push({
         platform: 'news',
-        external_id: `pa_${Buffer.from(url).toString('base64').slice(0, 32)}`,
+        external_id: `pa_${btoa(url).replace(/[^a-zA-Z0-9]/g, '').slice(0, 48)}`,
         author_name: 'প্রথম আলো',
         author_handle: 'prabortonalo',
         author_verified: true,
@@ -500,14 +526,22 @@ Deno.serve(async (_req) => {
       });
     }
 
-    // Enrich with sentiment and category
-    const enrichedPosts = allPosts.map(post => ({
-      ...post,
-      sentiment: analyzeSentiment(post.content),
-      category: categorizePost(post.content),
-      relevance_score: Math.min(0.99, post.relevance_score + (post.symbols.length * 0.05)),
-      scraped_at: new Date().toISOString(),
-    }));
+    // Enrich with sentiment and category, then deduplicate by external_id
+    const seenIds = new Set<string>();
+    const enrichedPosts = allPosts
+      .map(post => ({
+        ...post,
+        sentiment: analyzeSentiment(post.content),
+        category: categorizePost(post.content),
+        relevance_score: Math.min(0.99, post.relevance_score + (post.symbols.length * 0.05)),
+        scraped_at: new Date().toISOString(),
+      }))
+      .filter(post => {
+        const key = `${post.platform}_${post.external_id}`;
+        if (seenIds.has(key)) return false;
+        seenIds.add(key);
+        return true;
+      });
 
     // Upsert (dedup on platform + external_id)
     const BATCH = 50;
