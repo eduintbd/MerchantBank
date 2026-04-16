@@ -6,16 +6,18 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { DemoProvider } from '@/contexts/DemoContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { AuthPage } from '@/pages/AuthPage';
 import { Dashboard } from '@/pages/Dashboard';
 import { TradingPage } from '@/pages/TradingPage';
 import { PortfolioPage } from '@/pages/PortfolioPage';
 import { LearningPage } from '@/pages/LearningPage';
-import { KycPage } from '@/pages/KycPage';
-import { MarketingPage } from '@/pages/MarketingPage';
-import { AdminOrdersPage } from '@/pages/AdminOrdersPage';
-import { LandingPage } from '@/pages/LandingPage';
 import type { ReactNode } from 'react';
+
+// Lazy-loaded auth/landing/admin pages (not needed on dashboard entry)
+const AuthPage = lazy(() => import('@/pages/AuthPage').then(m => ({ default: m.AuthPage })));
+const LandingPage = lazy(() => import('@/pages/LandingPage').then(m => ({ default: m.LandingPage })));
+const MarketingPage = lazy(() => import('@/pages/MarketingPage').then(m => ({ default: m.MarketingPage })));
+const KycPage = lazy(() => import('@/pages/KycPage').then(m => ({ default: m.KycPage })));
+const AdminOrdersPage = lazy(() => import('@/pages/AdminOrdersPage').then(m => ({ default: m.AdminOrdersPage })));
 
 // Lazy-loaded new pages
 const HalalStocksPage = lazy(() => import('@/pages/HalalStocksPage').then(m => ({ default: m.HalalStocksPage })));
@@ -84,10 +86,10 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Landing page — always accessible, users can explore or go to dashboard */}
-      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/landing" element={<Suspense fallback={<PageLoader />}><LandingPage /></Suspense>} />
 
       {/* Auth page — available for guests who want to create a real account */}
-      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/auth" element={<Suspense fallback={<PageLoader />}><AuthPage /></Suspense>} />
 
       {/* Market page — open to everyone */}
       <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
@@ -102,9 +104,9 @@ function AppRoutes() {
         <Route path="/trading" element={<TradingPage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
         <Route path="/learning" element={<LearningPage />} />
-        <Route path="/kyc" element={<KycPage />} />
-        <Route path="/marketing" element={<MarketingPage />} />
-        <Route path="/admin/orders" element={<AdminOrdersPage />} />
+        <Route path="/kyc" element={<Suspense fallback={<PageLoader />}><KycPage /></Suspense>} />
+        <Route path="/marketing" element={<Suspense fallback={<PageLoader />}><MarketingPage /></Suspense>} />
+        <Route path="/admin/orders" element={<Suspense fallback={<PageLoader />}><AdminOrdersPage /></Suspense>} />
 
         {/* Feature pages */}
         <Route path="/halal" element={<Suspense fallback={<PageLoader />}><HalalStocksPage /></Suspense>} />

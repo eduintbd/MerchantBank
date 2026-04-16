@@ -3,7 +3,7 @@ import { MarketIndexCards } from './MarketIndexCards';
 import { MarketStrength } from './MarketStrength';
 import { MarketSentiment } from './MarketSentiment';
 import { TopMovers } from './TopMovers';
-import { formatDateTime, formatCurrency, cn } from '@/lib/utils';
+import { formatDateTime, formatCurrency, cn, isDseMarketOpen } from '@/lib/utils';
 import { Activity } from 'lucide-react';
 
 function TickerStrip({ prices }: { prices: { symbol: string; ltp: number; change_pct: number }[] }) {
@@ -81,12 +81,7 @@ export function MarketOverview() {
     );
   }
 
-  // Determine market status from data timestamp
-  const now = new Date();
-  const lastUpdate = data.lastUpdated ? new Date(data.lastUpdated) : null;
-  const timeDiffMin = lastUpdate ? (now.getTime() - lastUpdate.getTime()) / 60000 : Infinity;
-  // Consider market "open" if data was updated within the last 10 minutes
-  const isMarketOpen = timeDiffMin < 10;
+  const isMarketOpen = isDseMarketOpen();
 
   return (
     <div className="space-y-4 sm:space-y-5">

@@ -90,7 +90,7 @@ async function scrapeLivePrices() {
       ltp,
       high,
       low,
-      open: closeP,
+      open_price: closeP,
       close_prev: ycp,
       change,
       change_pct: Math.round(changePct * 10000) / 10000,
@@ -185,24 +185,25 @@ async function main() {
     console.log(`        ${prices[prices.length - 1].symbol} LTP=${prices[prices.length - 1].ltp}`);
   }
 
-  // Upsert prices in batches
+  // Update prices by symbol
   if (prices.length > 0) {
-    console.log('\nUpserting prices to Supabase...');
-    const BATCH = 100;
-    let total = 0;
-    for (let i = 0; i < prices.length; i += BATCH) {
-      const batch = prices.slice(i, i + BATCH);
+    console.log('\nUpdating prices in Supabase...');
+    let updated = 0;
+    let failed = 0;
+    for (const p of prices) {
+      const { symbol, ...fields } = p;
       const { error } = await supabase
         .from('live_prices')
-        .upsert(batch, { onConflict: 'symbol' });
+        .update(fields)
+        .eq('symbol', symbol);
       if (error) {
-        console.error(`  Batch ${i / BATCH + 1} error:`, error.message);
+        failed++;
+        if (failed <= 3) console.error(`  ${symbol} error:`, error.message);
       } else {
-        total += batch.length;
-        console.log(`  Batch ${i / BATCH + 1}: ${batch.length} rows`);
+        updated++;
       }
     }
-    console.log(`  Total: ${total} prices upserted`);
+    console.log(`  Updated: ${updated}, Failed: ${failed}`);
   }
 
   // Update indices

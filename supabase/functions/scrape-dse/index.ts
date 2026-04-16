@@ -21,7 +21,7 @@ interface LivePrice {
   ltp: number;
   high: number;
   low: number;
-  open: number;
+  open_price: number;
   close_prev: number;
   change: number;
   change_pct: number;
@@ -103,7 +103,7 @@ async function scrapeLivePrices(): Promise<LivePrice[]> {
       ltp,
       high,
       low,
-      open: closeP,
+      open_price: closeP,
       close_prev: ycp,
       change,
       change_pct: Math.round(changePct * 10000) / 10000,
@@ -177,13 +177,14 @@ Deno.serve(async (_req) => {
     let priceError: string | null = null;
 
     if (prices.length > 0) {
-      const BATCH = 100;
-      for (let i = 0; i < prices.length; i += BATCH) {
+      for (const p of prices) {
+        const { symbol, ...fields } = p;
         const { error } = await supabase
           .from('live_prices')
-          .upsert(prices.slice(i, i + BATCH), { onConflict: 'symbol' });
+          .update(fields)
+          .eq('symbol', symbol);
         if (error) priceError = error.message;
-        else priceCount += prices.slice(i, i + BATCH).length;
+        else priceCount++;
       }
     }
 

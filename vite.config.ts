@@ -19,4 +19,19 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'supabase': ['@supabase/supabase-js'],
+          'recharts': ['recharts'],
+          'query': ['@tanstack/react-query'],
+          'forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          'ui': ['lucide-react', 'sonner', 'class-variance-authority', 'clsx', 'tailwind-merge', 'date-fns'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
 })

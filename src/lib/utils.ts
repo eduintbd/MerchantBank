@@ -69,6 +69,27 @@ export function formatValueBn(n: number): string {
   return n.toLocaleString();
 }
 
+// DSE trading session: Sunday–Thursday, 10:00–14:30 Asia/Dhaka (UTC+6).
+// Returns true only if `now` falls inside that window.
+export function isDseMarketOpen(now: Date = new Date()): boolean {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Dhaka',
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(now);
+
+  const weekday = parts.find(p => p.type === 'weekday')?.value;
+  const hour = parseInt(parts.find(p => p.type === 'hour')?.value ?? '0', 10);
+  const minute = parseInt(parts.find(p => p.type === 'minute')?.value ?? '0', 10);
+
+  if (weekday === 'Fri' || weekday === 'Sat') return false;
+
+  const mins = hour * 60 + minute;
+  return mins >= 10 * 60 && mins < 14 * 60 + 30;
+}
+
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
     pending: 'bg-warning-dim text-warning border border-warning/20',

@@ -9,7 +9,7 @@ import { MarketStrength } from '@/components/dashboard/MarketStrength';
 import { MarketSentiment } from '@/components/dashboard/MarketSentiment';
 import { GlobalExchangeComparison } from '@/components/dashboard/GlobalExchangeComparison';
 import { Card } from '@/components/ui/Card';
-import { formatCurrency, formatVolume, formatValueBn, formatDateTime, cn } from '@/lib/utils';
+import { formatCurrency, formatVolume, formatValueBn, formatDateTime, cn, isDseMarketOpen } from '@/lib/utils';
 import {
   BarChart3, Search, TrendingUp, TrendingDown, Activity,
   Layers, Newspaper, Clock, ExternalLink, ArrowRight,
@@ -606,10 +606,7 @@ export function MarketPage() {
     );
   }
 
-  const now = new Date();
-  const lastUpdate = data.lastUpdated ? new Date(data.lastUpdated) : null;
-  const timeDiffMin = lastUpdate ? (now.getTime() - lastUpdate.getTime()) / 60000 : Infinity;
-  const isMarketOpen = timeDiffMin < 10;
+  const isMarketOpen = isDseMarketOpen();
   const movers = getTopMovers(data.livePrices, activeTab);
 
   return (
