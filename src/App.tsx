@@ -100,8 +100,8 @@ function AppRoutes() {
       {/* Auth page — available for guests who want to create a real account */}
       <Route path="/auth" element={<Suspense fallback={<PageLoader />}><AuthPage /></Suspense>} />
 
-      {/* Market page — open to everyone */}
-      <Route path="/market" element={<Suspense fallback={<PageLoader />}><MarketPage /></Suspense>} />
+      {/* Market page — redirects to home (unified single page) */}
+      <Route path="/market" element={<Navigate to="/dashboard" replace />} />
 
       {/* All app routes — no auth gate, guest auto-login handles it */}
       <Route element={<AppLayout />}>
