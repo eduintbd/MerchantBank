@@ -7,6 +7,7 @@ import { usePortfolio } from '@/hooks/useStocks';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useLearningProgress } from '@/hooks/useLearning';
 import { formatCurrency, formatPercent, formatDateTime, formatVolume, cn } from '@/lib/utils';
+import { isDseMarketOpen } from '@/lib/market-hours';
 import type { LivePrice, MarketIndex } from '@/types';
 import {
   TrendingUp, TrendingDown, Briefcase, GraduationCap, ShieldCheck,
@@ -498,9 +499,7 @@ export function Dashboard() {
     );
   }
 
-  const lastUpdate = market?.lastUpdated ? new Date(market.lastUpdated) : null;
-  const timeDiffMin = lastUpdate ? (Date.now() - lastUpdate.getTime()) / 60000 : Infinity;
-  const isMarketOpen = timeDiffMin < 10;
+  const isMarketOpen = isDseMarketOpen(market?.lastUpdated);
 
   return (
     <div className="animate-fade-in min-h-screen bg-white">

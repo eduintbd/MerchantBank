@@ -3,7 +3,8 @@ import { MarketIndexCards } from './MarketIndexCards';
 import { MarketStrength } from './MarketStrength';
 import { MarketSentiment } from './MarketSentiment';
 import { TopMovers } from './TopMovers';
-import { formatDateTime, formatCurrency, cn, isDseMarketOpen } from '@/lib/utils';
+import { formatDateTime, formatCurrency, cn } from '@/lib/utils';
+import { isDseMarketOpen } from '@/lib/market-hours';
 import { Activity } from 'lucide-react';
 
 function TickerStrip({ prices }: { prices: { symbol: string; ltp: number; change_pct: number }[] }) {
@@ -81,7 +82,7 @@ export function MarketOverview() {
     );
   }
 
-  const isMarketOpen = isDseMarketOpen();
+  const isMarketOpen = isDseMarketOpen(data.lastUpdated);
 
   return (
     <div className="space-y-4 sm:space-y-5">

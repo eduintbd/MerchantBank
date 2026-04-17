@@ -66,6 +66,53 @@ function IndexCard({ index }: { index: MarketIndex | undefined; name: string }) 
   );
 }
 
+function CSERow({ index }: { index: MarketIndex | undefined; }) {
+  if (!index) return null;
+  const config = indexConfig[index.index_name] || indexConfig.CASPI;
+  const isPositive = index.change >= 0;
+  return (
+    <div className="flex-1 min-w-0 px-3 sm:px-4 py-2.5 first:pl-4 last:pr-4">
+      <div className="flex items-center gap-2 mb-1">
+        <span className={cn('text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md', config.accentBg)}>
+          {config.label}
+        </span>
+        <div className={cn(
+          'flex items-center gap-0.5 text-[11px] font-semibold font-num ml-auto',
+          isPositive ? 'text-success' : 'text-danger'
+        )}>
+          {isPositive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+          {isPositive ? '+' : ''}{index.change_pct.toFixed(2)}%
+        </div>
+      </div>
+      <p className="text-xl sm:text-[22px] font-bold font-num leading-none tracking-tight text-foreground truncate">
+        {index.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      </p>
+      <span className={cn('text-[11px] font-medium font-num', isPositive ? 'text-success' : 'text-danger')}>
+        {isPositive ? '+' : ''}{index.change.toFixed(2)} pts
+      </span>
+    </div>
+  );
+}
+
+function CombinedCSECard({ caspi, cse30, cses }: { caspi?: MarketIndex; cse30?: MarketIndex; cses?: MarketIndex }) {
+  return (
+    <Card className="border-l-4 border-l-orange-500 !rounded-xl !p-0 overflow-hidden" padding={false}>
+      <div className="flex items-center justify-between px-4 pt-3 pb-2 border-b border-border/60">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-500">CSE</span>
+          <span className="text-sm font-semibold text-foreground">Chittagong Stock Exchange</span>
+        </div>
+        <span className="text-[10px] font-semibold text-muted/60 uppercase tracking-wider">3 Indices</span>
+      </div>
+      <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-border/60">
+        <CSERow index={caspi} />
+        <CSERow index={cse30} />
+        <CSERow index={cses} />
+      </div>
+    </Card>
+  );
+}
+
 export function MarketIndexCards({ indices, stats, exchange = 'ALL' }: Props) {
   const dsex = indices.find(i => i.index_name === 'DSEX');
   const dses = indices.find(i => i.index_name === 'DSES');
@@ -91,14 +138,10 @@ export function MarketIndexCards({ indices, stats, exchange = 'ALL' }: Props) {
         </div>
       )}
 
-      {/* CSE Indices */}
+      {/* CSE Indices — all three in one card */}
       {showCSE && (
         cseIndices ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <IndexCard index={caspi} name="CASPI" />
-            <IndexCard index={cse30} name="CSE30" />
-            <IndexCard index={cses} name="CSES" />
-          </div>
+          <CombinedCSECard caspi={caspi} cse30={cse30} cses={cses} />
         ) : (
           <div className="rounded-xl border border-border bg-card-solid p-4 shadow-[var(--shadow-card)]">
             <div className="flex items-center justify-between">

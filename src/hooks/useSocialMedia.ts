@@ -31,17 +31,21 @@ interface UseSocialMediaOptions {
   category?: string;
   sentiment?: string;
   limit?: number;
+  daysBack?: number;
 }
 
 export function useSocialMediaPosts(options: UseSocialMediaOptions = {}) {
-  const { platform, category, sentiment, limit = 50 } = options;
+  const { platform, category, sentiment, limit = 50, daysBack = 3 } = options;
 
   return useQuery({
-    queryKey: ['social-media-posts', platform, category, sentiment, limit],
+    queryKey: ['social-media-posts', platform, category, sentiment, limit, daysBack],
     queryFn: async (): Promise<SocialMediaPost[]> => {
+      const cutoff = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000).toISOString();
+
       let query = supabase
         .from('social_media_posts')
         .select('*')
+        .gte('posted_at', cutoff)
         .order('posted_at', { ascending: false })
         .limit(limit);
 
@@ -59,7 +63,7 @@ export function useSocialMediaPosts(options: UseSocialMediaOptions = {}) {
       if (error) throw error;
       return (data || []) as SocialMediaPost[];
     },
-    refetchInterval: 60_000, // Auto-refresh every 60s
+    refetchInterval: 30_000,
   });
 }
 
@@ -74,7 +78,6 @@ export function useTrendingSymbols() {
 
       if (error) throw error;
 
-      // Count symbol mentions
       const counts: Record<string, number> = {};
       (data || []).forEach((row: any) => {
         (row.symbols || []).forEach((s: string) => {

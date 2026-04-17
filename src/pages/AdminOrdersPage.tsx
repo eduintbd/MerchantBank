@@ -5,6 +5,7 @@ import { Card, StatCard } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatCurrency, formatDateTime, formatVolume, formatValueBn, cn } from '@/lib/utils';
+import { isDseMarketOpen } from '@/lib/market-hours';
 import {
   ShieldCheck,
   CheckCircle,
@@ -77,9 +78,7 @@ export function AdminOrdersPage() {
     };
   }, [allOrders, pendingOrders]);
 
-  // Market status
-  const lastUpdate = market?.lastUpdated ? new Date(market.lastUpdated) : null;
-  const isMarketOpen = lastUpdate ? (Date.now() - lastUpdate.getTime()) / 60000 < 10 : false;
+  const isMarketOpen = isDseMarketOpen(market?.lastUpdated);
 
   return (
     <div className="min-h-screen bg-white animate-fade-in">
