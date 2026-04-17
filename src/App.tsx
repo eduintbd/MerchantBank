@@ -44,6 +44,13 @@ const CashLedgerPage = lazy(() => import('@/pages/CashLedgerPage').then(m => ({ 
 const EodReplayPage = lazy(() => import('@/pages/EodReplayPage').then(m => ({ default: m.EodReplayPage })));
 const DemoReportsPage = lazy(() => import('@/pages/DemoReportsPage').then(m => ({ default: m.DemoReportsPage })));
 const AdminLearnersPage = lazy(() => import('@/pages/AdminLearnersPage').then(m => ({ default: m.AdminLearnersPage })));
+const AdminKycPage = lazy(() => import('@/pages/AdminKycPage').then(m => ({ default: m.AdminKycPage })));
+const ClientDetailPage = lazy(() => import('@/pages/ClientDetailPage').then(m => ({ default: m.ClientDetailPage })));
+const PortfolioManagementPage = lazy(() => import('@/pages/PortfolioManagementPage').then(m => ({ default: m.PortfolioManagementPage })));
+const FundAccountingPage = lazy(() => import('@/pages/FundAccountingPage').then(m => ({ default: m.FundAccountingPage })));
+const CustodianOpsPage = lazy(() => import('@/pages/CustodianOpsPage').then(m => ({ default: m.CustodianOpsPage })));
+const ReconciliationPage = lazy(() => import('@/pages/ReconciliationPage').then(m => ({ default: m.ReconciliationPage })));
+const BrokerOrdersPage = lazy(() => import('@/pages/BrokerOrdersPage').then(m => ({ default: m.BrokerOrdersPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -131,6 +138,13 @@ function AppRoutes() {
         <Route path="/demo/eod" element={<Suspense fallback={<PageLoader />}><EodReplayPage /></Suspense>} />
         <Route path="/demo/reports" element={<Suspense fallback={<PageLoader />}><DemoReportsPage /></Suspense>} />
         <Route path="/admin/learners" element={<Suspense fallback={<PageLoader />}><AdminLearnersPage /></Suspense>} />
+        <Route path="/admin/kyc" element={<Suspense fallback={<PageLoader />}><AdminKycPage /></Suspense>} />
+        <Route path="/admin/clients/:id" element={<Suspense fallback={<PageLoader />}><ClientDetailPage /></Suspense>} />
+        <Route path="/admin/portfolios" element={<Suspense fallback={<PageLoader />}><PortfolioManagementPage /></Suspense>} />
+        <Route path="/admin/funds" element={<Suspense fallback={<PageLoader />}><FundAccountingPage /></Suspense>} />
+        <Route path="/admin/custodian" element={<Suspense fallback={<PageLoader />}><CustodianOpsPage /></Suspense>} />
+        <Route path="/admin/reconciliation" element={<Suspense fallback={<PageLoader />}><ReconciliationPage /></Suspense>} />
+        <Route path="/admin/broker-orders" element={<Suspense fallback={<PageLoader />}><BrokerOrdersPage /></Suspense>} />
       </Route>
 
       {/* Onboarding — standalone page */}

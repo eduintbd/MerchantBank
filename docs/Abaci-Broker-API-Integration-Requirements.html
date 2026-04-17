@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Abaci Investments — Broker API Integration Requirements</title>
+<style>
+  @page { size: A4; margin: 20mm 18mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; line-height: 1.6; color: #1a1a2e; background: #fff; }
+  .page { max-width: 210mm; margin: 0 auto; padding: 20mm 18mm; }
+  .cover { text-align: center; padding: 60px 0 40px; page-break-after: always; }
+  .cover img { width: 80px; height: 80px; border-radius: 16px; margin-bottom: 24px; }
+  .cover h1 { font-size: 28px; font-weight: 800; color: #1a1a2e; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .cover .subtitle { font-size: 16px; color: #6366f1; font-weight: 600; margin-bottom: 32px; }
+  .cover .meta { font-size: 12px; color: #64748b; line-height: 2; }
+  .cover .meta strong { color: #1a1a2e; }
+  .cover .classification { display: inline-block; background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 8px; margin-top: 24px; letter-spacing: 1px; }
+
+  h2 { font-size: 18px; color: #1a1a2e; border-bottom: 3px solid #6366f1; padding-bottom: 6px; margin: 32px 0 16px; page-break-after: avoid; }
+  h3 { font-size: 14px; color: #334155; margin: 20px 0 10px; page-break-after: avoid; }
+  h4 { font-size: 12px; color: #475569; margin: 14px 0 8px; }
+  p { margin-bottom: 10px; text-align: justify; }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 4px; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 10.5px; page-break-inside: avoid; }
+  th { background: #f1f5f9; color: #334155; font-weight: 700; text-align: left; padding: 8px 10px; border: 1px solid #e2e8f0; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 7px 10px; border: 1px solid #e2e8f0; vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+
+  .highlight { background: #eff6ff; border-left: 4px solid #6366f1; padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+  .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 12px 0; border-radius: 0 8px 8px 0; }
+  .section-num { color: #6366f1; font-weight: 800; margin-right: 8px; }
+
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 10px; color: #e11d48; }
+  pre { background: #1e293b; color: #e2e8f0; padding: 14px 16px; border-radius: 8px; margin: 10px 0 16px; font-size: 10px; overflow-x: auto; font-family: 'Consolas', monospace; line-height: 1.5; }
+  pre .key { color: #7dd3fc; }
+  pre .str { color: #86efac; }
+  pre .num { color: #fbbf24; }
+  pre .comment { color: #64748b; font-style: italic; }
+
+  .toc { page-break-after: always; }
+  .toc h2 { border-bottom-color: #334155; }
+  .toc ol { counter-reset: section; list-style: none; margin-left: 0; }
+  .toc > ol > li { margin-bottom: 6px; font-weight: 600; }
+  .toc ol ol { margin-left: 20px; margin-top: 4px; }
+  .toc ol ol li { font-weight: 400; font-size: 10.5px; }
+
+  .footer { text-align: center; font-size: 9px; color: #94a3b8; margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2e8f0; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+  .badge-required { background: #fee2e2; color: #dc2626; }
+  .badge-optional { background: #e0f2fe; color: #0284c7; }
+  .badge-phase1 { background: #dcfce7; color: #16a34a; }
+  .badge-phase2 { background: #fef9c3; color: #ca8a04; }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="page cover">
+  <div style="font-size: 48px; margin-bottom: 16px;">🏛️</div>
+  <h1>Broker API Integration<br/>Requirements Specification</h1>
+  <div class="subtitle">Abaci Investments Limited</div>
+  <p style="font-size: 13px; color: #64748b; max-width: 400px; margin: 0 auto 32px;">
+    Technical specification for API connectivity between Abaci Investments (Merchant Bank / Custodian / Portfolio Manager) and executing broker(s) for the Bangladesh capital market.
+  </p>
+  <div class="meta">
+    <strong>Document Version:</strong> 1.0<br/>
+    <strong>Date:</strong> April 17, 2026<br/>
+    <strong>Prepared By:</strong> Abaci Investments — Technology Division<br/>
+    <strong>Intended Audience:</strong> Broker CTO / Tech Team / API Integration Team<br/>
+    <strong>Regulatory Context:</strong> BSEC Licensed Merchant Bank Operations<br/>
+  </div>
+  <div class="classification">CONFIDENTIAL — FOR BROKER PARTNER USE ONLY</div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page toc">
+  <h2>Table of Contents</h2>
+  <ol>
+    <li>Executive Summary</li>
+    <li>Business Context & Relationship Model
+      <ol>
+        <li>Abaci's Role</li>
+        <li>Broker's Role</li>
+        <li>Data Flow Architecture</li>
+      </ol>
+    </li>
+    <li>API Integration Requirements
+      <ol>
+        <li>Order Submission API</li>
+        <li>Execution Report API</li>
+        <li>Order Status & Management API</li>
+        <li>Portfolio & Position Query API</li>
+        <li>Settlement & Reconciliation API</li>
+        <li>Market Data Feed (Optional)</li>
+      </ol>
+    </li>
+    <li>Data Schemas & Field Specifications
+      <ol>
+        <li>Order Request Schema</li>
+        <li>Execution Report Schema</li>
+        <li>Position Statement Schema</li>
+        <li>Settlement Report Schema</li>
+        <li>Daily Reconciliation File Format</li>
+      </ol>
+    </li>
+    <li>Technical Requirements
+      <ol>
+        <li>Authentication & Security</li>
+        <li>Transport & Protocol</li>
+        <li>Rate Limits & SLA</li>
+        <li>Error Handling</li>
+        <li>Environments</li>
+      </ol>
+    </li>
+    <li>Reconciliation Process
+      <ol>
+        <li>Daily Reconciliation Workflow</li>
+        <li>Discrepancy Handling</li>
+        <li>Settlement Calendar</li>
+      </ol>
+    </li>
+    <li>Phased Implementation Plan</li>
+    <li>Appendices
+      <ol>
+        <li>Fee Schedule</li>
+        <li>BSEC Regulatory References</li>
+        <li>Contact Information</li>
+      </ol>
+    </li>
+  </ol>
+</div>
+
+<!-- CONTENT -->
+<div class="page">
+
+<h2><span class="section-num">1.</span> Executive Summary</h2>
+
+<p>Abaci Investments Limited operates as a <strong>BSEC-licensed Merchant Bank</strong> providing custodial and portfolio management services for clients trading on the Dhaka Stock Exchange (DSE) and Chittagong Stock Exchange (CSE). As a custodian and portfolio manager, Abaci does not execute trades directly — trade execution is the responsibility of our partner broker(s).</p>
+
+<p>This document specifies the <strong>API integration requirements</strong> for connecting Abaci's back-office system with the broker's order management and execution infrastructure. The integration enables:</p>
+
+<ul>
+  <li><strong>Order Routing:</strong> Abaci sends buy/sell orders on behalf of managed clients to the broker for execution on DSE/CSE</li>
+  <li><strong>Execution Reports:</strong> Broker sends real-time/batch execution confirmations back to Abaci</li>
+  <li><strong>Position & Settlement Data:</strong> Broker provides daily position statements and settlement reports for reconciliation</li>
+  <li><strong>Reconciliation:</strong> Automated matching of Abaci's records (system of record) against broker's execution data</li>
+</ul>
+
+<div class="highlight">
+  <strong>Key Principle:</strong> Abaci's back-office is the <strong>primary system of record</strong> for all client portfolios, holdings, and fund accounting. Broker data is consumed for execution confirmation and reconciliation purposes. Any discrepancy is flagged and resolved through the defined process.
+</div>
+
+<h2><span class="section-num">2.</span> Business Context & Relationship Model</h2>
+
+<h3>2.1 Abaci's Role (Merchant Bank / Custodian / Portfolio Manager)</h3>
+<ul>
+  <li>Manages client portfolios and makes investment decisions</li>
+  <li>Holds securities in custody via CDBL Depository Participant membership</li>
+  <li>Maintains the master record of client holdings, cash positions, and NAV</li>
+  <li>Initiates orders based on portfolio strategy and client mandates</li>
+  <li>Performs daily NAV calculation and client fund accounting</li>
+  <li>Handles corporate actions (dividends, rights, bonus) for custodial clients</li>
+  <li>Generates regulatory reports (BSEC, DSE, CDBL)</li>
+</ul>
+
+<h3>2.2 Broker's Role (Trade Execution)</h3>
+<ul>
+  <li>Receives orders from Abaci and routes to DSE/CSE for execution</li>
+  <li>Manages exchange connectivity, order book, and execution quality</li>
+  <li>Sends execution reports (fills, partial fills, rejections) back to Abaci</li>
+  <li>Provides daily position/trade statements for reconciliation</li>
+  <li>Handles exchange-level settlement (T+2) with clearing house</li>
+  <li>Calculates and applies brokerage fees, exchange fees, regulatory charges</li>
+</ul>
+
+<h3>2.3 Data Flow Architecture</h3>
+
+<pre>
+┌──────────────────────┐         ┌──────────────────────┐
+│   ABACI INVESTMENTS  │         │   BROKER PARTNER     │
+│   (Merchant Bank)    │         │   (Trade Execution)  │
+│                      │         │                      │
+│  Portfolio Manager   │─────────│  Order Management    │
+│  ├─ Order Decision   │  <span class="comment">API</span>    │  ├─ Order Validation  │
+│  ├─ Send Order ──────│────────>│  ├─ Route to DSE/CSE │
+│  │                   │         │  ├─ Execute          │
+│  ├─ Receive Fill  <──│<────────│──├─ Send Fill Report  │
+│  ├─ Update Holdings  │         │  │                   │
+│  ├─ Update Ledger    │         │  └─ Settlement       │
+│  │                   │         │                      │
+│  Reconciliation      │         │  Daily Reports       │
+│  ├─ Pull Positions <─│<────────│──├─ Position Stmt    │
+│  ├─ Pull Trades   <──│<────────│──├─ Trade Stmt       │
+│  ├─ Match & Flag     │         │  └─ Settlement Stmt  │
+│  └─ Resolve          │         │                      │
+└──────────────────────┘         └──────────────────────┘
+</pre>
+
+<h2><span class="section-num">3.</span> API Integration Requirements</h2>
+
+<h3>3.1 Order Submission API <span class="badge badge-required">REQUIRED</span> <span class="badge badge-phase1">PHASE 1</span></h3>
+
+<p>Abaci submits orders to the broker for execution. Each order represents a portfolio manager's investment decision for a specific client account.</p>
+
+<table>
+  <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>order_id</code></td><td>String</td><td>Yes</td><td>Abaci's unique order reference (UUID)</td></tr>
+  <tr><td><code>client_code</code></td><td>String</td><td>Yes</td><td>Client's BO account number or broker client code</td></tr>
+  <tr><td><code>portfolio_id</code></td><td>String</td><td>Yes</td><td>Abaci's internal portfolio reference</td></tr>
+  <tr><td><code>symbol</code></td><td>String</td><td>Yes</td><td>DSE/CSE trading code (e.g., "BRACBANK")</td></tr>
+  <tr><td><code>isin</code></td><td>String</td><td>No</td><td>ISIN code if available</td></tr>
+  <tr><td><code>exchange</code></td><td>Enum</td><td>Yes</td><td><code>DSE</code> | <code>CSE</code></td></tr>
+  <tr><td><code>side</code></td><td>Enum</td><td>Yes</td><td><code>BUY</code> | <code>SELL</code></td></tr>
+  <tr><td><code>order_type</code></td><td>Enum</td><td>Yes</td><td><code>MARKET</code> | <code>LIMIT</code></td></tr>
+  <tr><td><code>quantity</code></td><td>Integer</td><td>Yes</td><td>Number of shares</td></tr>
+  <tr><td><code>limit_price</code></td><td>Decimal</td><td>Conditional</td><td>Required for LIMIT orders. BDT per share</td></tr>
+  <tr><td><code>time_in_force</code></td><td>Enum</td><td>No</td><td><code>DAY</code> (default) | <code>IOC</code> | <code>GTC</code></td></tr>
+  <tr><td><code>board</code></td><td>Enum</td><td>No</td><td><code>PUBLIC</code> (default) | <code>BLOCK</code> | <code>SPOT</code></td></tr>
+  <tr><td><code>notes</code></td><td>String</td><td>No</td><td>Free-text instructions</td></tr>
+  <tr><td><code>timestamp</code></td><td>ISO 8601</td><td>Yes</td><td>Order submission time (UTC+6)</td></tr>
+</table>
+
+<p><strong>Expected Response:</strong></p>
+<pre>
+{
+  <span class="key">"status"</span>: <span class="str">"accepted"</span>,          <span class="comment">// accepted | rejected | pending</span>
+  <span class="key">"broker_order_id"</span>: <span class="str">"BRK-2026-00451"</span>, <span class="comment">// Broker's reference</span>
+  <span class="key">"abaci_order_id"</span>: <span class="str">"uuid-here"</span>,      <span class="comment">// Echo back</span>
+  <span class="key">"received_at"</span>: <span class="str">"2026-04-17T10:30:00+06:00"</span>,
+  <span class="key">"rejection_reason"</span>: <span class="str">null</span>            <span class="comment">// Populated if rejected</span>
+}
+</pre>
+
+<h3>3.2 Execution Report API <span class="badge badge-required">REQUIRED</span> <span class="badge badge-phase1">PHASE 1</span></h3>
+
+<p>Broker sends execution reports (fills) to Abaci. This can be via:</p>
+<ul>
+  <li><strong>Push (Webhook):</strong> Broker POSTs to Abaci's endpoint on each fill — preferred for real-time</li>
+  <li><strong>Pull (Polling):</strong> Abaci queries broker's API periodically — acceptable for batch processing</li>
+  <li><strong>File (Batch):</strong> Broker provides end-of-day trade file — minimum acceptable standard</li>
+</ul>
+
+<table>
+  <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+  <tr><td><code>exec_id</code></td><td>String</td><td>Yes</td><td>Broker's unique execution ID (for dedup)</td></tr>
+  <tr><td><code>broker_order_id</code></td><td>String</td><td>Yes</td><td>Broker's order reference</td></tr>
+  <tr><td><code>abaci_order_id</code></td><td>String</td><td>Yes</td><td>Abaci's original order reference</td></tr>
+  <tr><td><code>client_code</code></td><td>String</td><td>Yes</td><td>Client BO / broker code</td></tr>
+  <tr><td><code>symbol</code></td><td>String</td><td>Yes</td><td>Trading symbol</td></tr>
+  <tr><td><code>isin</code></td><td>String</td><td>No</td><td>ISIN code</td></tr>
+  <tr><td><code>exchange</code></td><td>Enum</td><td>Yes</td><td><code>DSE</code> | <code>CSE</code></td></tr>
+  <tr><td><code>side</code></td><td>Enum</td><td>Yes</td><td><code>BUY</code> | <code>SELL</code></td></tr>
+  <tr><td><code>exec_type</code></td><td>Enum</td><td>Yes</td><td><code>FILL</code> | <code>PARTIAL_FILL</code> | <code>CANCEL</code> | <code>REJECT</code></td></tr>
+  <tr><td><code>exec_qty</code></td><td>Integer</td><td>Yes</td><td>Executed quantity (this fill)</td></tr>
+  <tr><td><code>exec_price</code></td><td>Decimal</td><td>Yes</td><td>Execution price (BDT)</td></tr>
+  <tr><td><code>gross_value</code></td><td>Decimal</td><td>Yes</td><td>exec_qty × exec_price</td></tr>
+  <tr><td><code>commission</code></td><td>Decimal</td><td>Yes</td><td>Brokerage commission amount</td></tr>
+  <tr><td><code>exchange_fee</code></td><td>Decimal</td><td>Yes</td><td>Exchange/Laga fee</td></tr>
+  <tr><td><code>cdbl_fee</code></td><td>Decimal</td><td>Yes</td><td>CDBL settlement fee</td></tr>
+  <tr><td><code>ait</code></td><td>Decimal</td><td>Yes</td><td>Advance Income Tax</td></tr>
+  <tr><td><code>net_value</code></td><td>Decimal</td><td>Yes</td><td>Net amount (gross ± all fees)</td></tr>
+  <tr><td><code>trade_date</code></td><td>Date</td><td>Yes</td><td>Trade execution date</td></tr>
+  <tr><td><code>settlement_date</code></td><td>Date</td><td>Yes</td><td>Expected settlement date (T+2/T+3)</td></tr>
+  <tr><td><code>exec_time</code></td><td>ISO 8601</td><td>Yes</td><td>Exact execution timestamp</td></tr>
+  <tr><td><code>cum_qty</code></td><td>Integer</td><td>No</td><td>Cumulative filled quantity for this order</td></tr>
+  <tr><td><code>leaves_qty</code></td><td>Integer</td><td>No</td><td>Remaining unfilled quantity</td></tr>
+  <tr><td><code>category</code></td><td>String</td><td>No</td><td>Stock category (A/B/Z/N/G) — for settlement calc</td></tr>
+</table>
+
+<h3>3.3 Order Status & Management API <span class="badge badge-required">REQUIRED</span> <span class="badge badge-phase1">PHASE 1</span></h3>
+
+<table>
+  <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+  <tr><td><code>GET /orders/{abaci_order_id}</code></td><td>GET</td><td>Query status of a specific order</td></tr>
+  <tr><td><code>GET /orders?date={date}&client={code}</code></td><td>GET</td><td>List all orders for a date/client</td></tr>
+  <tr><td><code>DELETE /orders/{abaci_order_id}</code></td><td>DELETE</td><td>Cancel a pending order</td></tr>
+  <tr><td><code>PUT /orders/{abaci_order_id}</code></td><td>PUT</td><td>Modify pending order (qty/price)</td></tr>
+</table>
+
+<p><strong>Order Status Values:</strong></p>
+<table>
+  <tr><th>Status</th><th>Description</th></tr>
+  <tr><td><code>PENDING</code></td><td>Order received, awaiting routing to exchange</td></tr>
+  <tr><td><code>OPEN</code></td><td>Order placed on exchange, awaiting execution</td></tr>
+  <tr><td><code>PARTIALLY_FILLED</code></td><td>Some quantity executed, balance still open</td></tr>
+  <tr><td><code>FILLED</code></td><td>Fully executed</td></tr>
+  <tr><td><code>CANCELLED</code></td><td>Cancelled by Abaci or auto-cancelled (end of day)</td></tr>
+  <tr><td><code>REJECTED</code></td><td>Rejected by broker or exchange (with reason)</td></tr>
+  <tr><td><code>EXPIRED</code></td><td>Order expired (time in force exceeded)</td></tr>
+</table>
+
+<h3>3.4 Portfolio & Position Query API <span class="badge badge-required">REQUIRED</span> <span class="badge badge-phase1">PHASE 1</span></h3>
+
+<p>Abaci needs to query the broker's view of client positions for reconciliation. This should reflect the broker's record of holdings for each client.</p>
+
+<table>
+  <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+  <tr><td><code>GET /positions/{client_code}</code></td><td>GET</td><td>Current positions for a client</td></tr>
+  <tr><td><code>GET /positions?date={date}</code></td><td>GET</td><td>All client positions as of a date</td></tr>
+  <tr><td><code>GET /positions/{client_code}/{symbol}</code></td><td>GET</td><td>Specific holding detail</td></tr>
+</table>
+
+<p><strong>Position Record Fields:</strong></p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>client_code</code></td><td>String</td><td>Client identifier</td></tr>
+  <tr><td><code>symbol</code></td><td>String</td><td>Trading symbol</td></tr>
+  <tr><td><code>isin</code></td><td>String</td><td>ISIN code</td></tr>
+  <tr><td><code>total_qty</code></td><td>Integer</td><td>Total quantity held</td></tr>
+  <tr><td><code>saleable_qty</code></td><td>Integer</td><td>Qty available for sell (excl. unsettled)</td></tr>
+  <tr><td><code>avg_cost</code></td><td>Decimal</td><td>Weighted average cost per share</td></tr>
+  <tr><td><code>market_price</code></td><td>Decimal</td><td>Current/last market price</td></tr>
+  <tr><td><code>market_value</code></td><td>Decimal</td><td>total_qty × market_price</td></tr>
+  <tr><td><code>unsettled_buy_qty</code></td><td>Integer</td><td>Pending buy settlement</td></tr>
+  <tr><td><code>unsettled_sell_qty</code></td><td>Integer</td><td>Pending sell settlement</td></tr>
+  <tr><td><code>as_of_date</code></td><td>Date</td><td>Position date</td></tr>
+</table>
+
+<h3>3.5 Settlement & Reconciliation API <span class="badge badge-required">REQUIRED</span> <span class="badge badge-phase2">PHASE 2</span></h3>
+
+<table>
+  <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+  <tr><td><code>GET /settlements?date={date}</code></td><td>GET</td><td>Settlements due/completed on a date</td></tr>
+  <tr><td><code>GET /settlements/{client_code}?from={date}&to={date}</code></td><td>GET</td><td>Client settlement history</td></tr>
+  <tr><td><code>GET /reconciliation/daily?date={date}</code></td><td>GET</td><td>Full daily recon report (all clients)</td></tr>
+  <tr><td><code>GET /statements/{client_code}?date={date}</code></td><td>GET</td><td>Client's daily statement (trades + balance)</td></tr>
+</table>
+
+<p><strong>Settlement Record Fields:</strong></p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td><code>settlement_id</code></td><td>String</td><td>Unique settlement reference</td></tr>
+  <tr><td><code>exec_id</code></td><td>String</td><td>Related execution ID</td></tr>
+  <tr><td><code>client_code</code></td><td>String</td><td>Client identifier</td></tr>
+  <tr><td><code>symbol</code></td><td>String</td><td>Security symbol</td></tr>
+  <tr><td><code>side</code></td><td>Enum</td><td>BUY | SELL</td></tr>
+  <tr><td><code>quantity</code></td><td>Integer</td><td>Settlement quantity</td></tr>
+  <tr><td><code>amount</code></td><td>Decimal</td><td>Net settlement amount (BDT)</td></tr>
+  <tr><td><code>trade_date</code></td><td>Date</td><td>Original trade date</td></tr>
+  <tr><td><code>settlement_date</code></td><td>Date</td><td>Settlement due date</td></tr>
+  <tr><td><code>status</code></td><td>Enum</td><td>PENDING | SETTLED | FAILED</td></tr>
+  <tr><td><code>settled_date</code></td><td>Date</td><td>Actual settlement date (if settled)</td></tr>
+</table>
+
+<h3>3.6 Market Data Feed <span class="badge badge-optional">OPTIONAL</span> <span class="badge badge-phase2">PHASE 2</span></h3>
+
+<p>If the broker provides market data via API, Abaci would consume:</p>
+<ul>
+  <li>End-of-day closing prices for NAV calculation</li>
+  <li>Intraday LTP for real-time portfolio valuation</li>
+  <li>Corporate action announcements (dividends, rights, bonus)</li>
+</ul>
+
+<div class="highlight">
+  <strong>Note:</strong> Market data is optional from the broker. Abaci currently sources market data from DSE directly. However, if the broker can provide this, it simplifies the data pipeline and ensures price consistency for reconciliation.
+</div>
+
+<h2><span class="section-num">4.</span> Data Schemas & Field Specifications</h2>
+
+<h3>4.1 Daily Reconciliation File Format</h3>
+
+<p>If real-time API is not available initially, Abaci can accept daily batch files in the following formats (in order of preference):</p>
+
+<table>
+  <tr><th>Priority</th><th>Format</th><th>Description</th></tr>
+  <tr><td>1</td><td>JSON API</td><td>RESTful API responses as specified above</td></tr>
+  <tr><td>2</td><td>CSV/Excel</td><td>Structured flat file with defined column headers</td></tr>
+  <tr><td>3</td><td>XML</td><td>DSE standard XML format (as used for trade files)</td></tr>
+  <tr><td>4</td><td>FIX Protocol</td><td>Financial Information eXchange standard messages</td></tr>
+</table>
+
+<h4>Required Daily Files (if batch mode):</h4>
+
+<p><strong>File 1: Daily Trade Report</strong> — <code>trades_YYYYMMDD.csv</code></p>
+<pre>
+exec_id, client_code, symbol, isin, exchange, side, quantity, price,
+gross_value, commission, exchange_fee, cdbl_fee, ait, net_value,
+trade_date, settlement_date, trade_time, category, board
+</pre>
+
+<p><strong>File 2: Daily Position Statement</strong> — <code>positions_YYYYMMDD.csv</code></p>
+<pre>
+client_code, symbol, isin, total_qty, saleable_qty, avg_cost,
+market_price, market_value, unsettled_buy_qty, unsettled_sell_qty
+</pre>
+
+<p><strong>File 3: Settlement Report</strong> — <code>settlements_YYYYMMDD.csv</code></p>
+<pre>
+settlement_id, exec_id, client_code, symbol, side, quantity,
+amount, trade_date, settlement_date, status
+</pre>
+
+<p><strong>File 4: Cash Balance Report</strong> — <code>cash_YYYYMMDD.csv</code></p>
+<pre>
+client_code, ledger_balance, available_balance, receivables,
+payables, margin_used, equity
+</pre>
+
+<h2><span class="section-num">5.</span> Technical Requirements</h2>
+
+<h3>5.1 Authentication & Security</h3>
+
+<table>
+  <tr><th>Requirement</th><th>Specification</th></tr>
+  <tr><td>Authentication</td><td>API Key + Secret (HMAC-SHA256) or OAuth 2.0 Client Credentials</td></tr>
+  <tr><td>Transport</td><td>HTTPS/TLS 1.2+ mandatory. No plaintext HTTP.</td></tr>
+  <tr><td>IP Whitelisting</td><td>Abaci will provide static IP(s) for whitelisting</td></tr>
+  <tr><td>Request Signing</td><td>HMAC signature on request body to prevent tampering</td></tr>
+  <tr><td>Idempotency</td><td>All POST endpoints must support idempotency keys to prevent duplicate orders</td></tr>
+  <tr><td>Encryption</td><td>Sensitive fields (NID, account numbers) encrypted at rest</td></tr>
+</table>
+
+<h3>5.2 Transport & Protocol</h3>
+
+<table>
+  <tr><th>Requirement</th><th>Specification</th></tr>
+  <tr><td>Protocol</td><td>REST over HTTPS (primary), WebSocket for real-time fills (optional)</td></tr>
+  <tr><td>Data Format</td><td>JSON (Content-Type: application/json)</td></tr>
+  <tr><td>Character Encoding</td><td>UTF-8</td></tr>
+  <tr><td>Date Format</td><td>ISO 8601 (YYYY-MM-DD for dates, full ISO for timestamps)</td></tr>
+  <tr><td>Currency</td><td>BDT (all monetary values in Bangladeshi Taka)</td></tr>
+  <tr><td>Decimal Precision</td><td>Prices: 2 decimal places. Quantities: integers. Fees: 2 decimal places.</td></tr>
+  <tr><td>Pagination</td><td>Cursor-based or offset/limit for list endpoints</td></tr>
+</table>
+
+<h3>5.3 Rate Limits & SLA</h3>
+
+<table>
+  <tr><th>Metric</th><th>Requirement</th></tr>
+  <tr><td>Order Submission</td><td>≤ 500ms response time (95th percentile)</td></tr>
+  <tr><td>Execution Reports</td><td>≤ 2 second delivery latency (webhook) or ≤ 5 min polling interval</td></tr>
+  <tr><td>Position Queries</td><td>≤ 2 second response time</td></tr>
+  <tr><td>API Availability</td><td>99.5% uptime during market hours (Sun-Thu 10:00-14:30 BST)</td></tr>
+  <tr><td>Rate Limit</td><td>Minimum 100 requests/minute per API key</td></tr>
+  <tr><td>Daily File Delivery</td><td>By 17:00 BST on trade date (if batch mode)</td></tr>
+  <tr><td>Support Response</td><td>≤ 30 minutes during market hours for P1 issues</td></tr>
+</table>
+
+<h3>5.4 Error Handling</h3>
+
+<p>All API responses must follow a consistent error format:</p>
+
+<pre>
+{
+  <span class="key">"success"</span>: <span class="num">false</span>,
+  <span class="key">"error"</span>: {
+    <span class="key">"code"</span>: <span class="str">"INSUFFICIENT_BALANCE"</span>,
+    <span class="key">"message"</span>: <span class="str">"Client does not have sufficient funds for this order"</span>,
+    <span class="key">"details"</span>: {
+      <span class="key">"required"</span>: <span class="num">150000.00</span>,
+      <span class="key">"available"</span>: <span class="num">120000.00</span>
+    }
+  },
+  <span class="key">"request_id"</span>: <span class="str">"req-uuid"</span>,
+  <span class="key">"timestamp"</span>: <span class="str">"2026-04-17T10:30:00+06:00"</span>
+}
+</pre>
+
+<p><strong>Standard Error Codes:</strong></p>
+<table>
+  <tr><th>Code</th><th>HTTP</th><th>Description</th></tr>
+  <tr><td><code>INVALID_SYMBOL</code></td><td>400</td><td>Symbol not found or not tradeable</td></tr>
+  <tr><td><code>INSUFFICIENT_BALANCE</code></td><td>400</td><td>Client has insufficient funds</td></tr>
+  <tr><td><code>INSUFFICIENT_HOLDINGS</code></td><td>400</td><td>Client doesn't hold enough shares to sell</td></tr>
+  <tr><td><code>MARKET_CLOSED</code></td><td>400</td><td>Order submitted outside market hours</td></tr>
+  <tr><td><code>PRICE_OUT_OF_RANGE</code></td><td>400</td><td>Limit price outside circuit breaker range</td></tr>
+  <tr><td><code>DUPLICATE_ORDER</code></td><td>409</td><td>Order with same idempotency key already exists</td></tr>
+  <tr><td><code>ORDER_NOT_FOUND</code></td><td>404</td><td>Order ID not found</td></tr>
+  <tr><td><code>UNAUTHORIZED</code></td><td>401</td><td>Invalid API key or signature</td></tr>
+  <tr><td><code>RATE_LIMIT</code></td><td>429</td><td>Too many requests</td></tr>
+  <tr><td><code>INTERNAL_ERROR</code></td><td>500</td><td>Broker system error</td></tr>
+</table>
+
+<h3>5.5 Environments</h3>
+
+<table>
+  <tr><th>Environment</th><th>Purpose</th><th>Data</th></tr>
+  <tr><td>Sandbox / UAT</td><td>Integration testing with mock data</td><td>Simulated orders, test symbols</td></tr>
+  <tr><td>Production</td><td>Live trading</td><td>Real DSE/CSE orders</td></tr>
+</table>
+
+<div class="warning">
+  <strong>Requirement:</strong> A sandbox environment with simulated order matching is required before production go-live. Abaci will not route live orders until end-to-end testing is validated in sandbox.
+</div>
+
+<h2><span class="section-num">6.</span> Reconciliation Process</h2>
+
+<h3>6.1 Daily Reconciliation Workflow</h3>
+
+<p>Reconciliation runs daily after market close and compares Abaci's records (system of record) against broker's data:</p>
+
+<table>
+  <tr><th>Step</th><th>Time</th><th>Action</th><th>Owner</th></tr>
+  <tr><td>1</td><td>14:30 BST</td><td>Market closes. Broker finalizes trade data.</td><td>Broker</td></tr>
+  <tr><td>2</td><td>15:00 BST</td><td>Abaci pulls/receives execution reports for the day</td><td>Abaci</td></tr>
+  <tr><td>3</td><td>15:30 BST</td><td>Abaci pulls broker's position statement for all clients</td><td>Abaci</td></tr>
+  <tr><td>4</td><td>16:00 BST</td><td>Automated reconciliation runs: match Abaci holdings vs broker positions</td><td>Abaci</td></tr>
+  <tr><td>5</td><td>16:00 BST</td><td>Discrepancy report generated (if any mismatches)</td><td>Abaci</td></tr>
+  <tr><td>6</td><td>16:30 BST</td><td>Discrepancies communicated to broker for investigation</td><td>Both</td></tr>
+  <tr><td>7</td><td>17:00 BST</td><td>NAV calculation finalized using reconciled data</td><td>Abaci</td></tr>
+</table>
+
+<h3>6.2 Reconciliation Points</h3>
+
+<table>
+  <tr><th>Check</th><th>Abaci Field</th><th>Broker Field</th><th>Tolerance</th></tr>
+  <tr><td>Trade Count</td><td>portfolio_transactions count</td><td>Daily trade report count</td><td>Exact match</td></tr>
+  <tr><td>Execution Price</td><td>transaction.price</td><td>exec_report.exec_price</td><td>Exact match</td></tr>
+  <tr><td>Executed Qty</td><td>transaction.quantity</td><td>exec_report.exec_qty</td><td>Exact match</td></tr>
+  <tr><td>Holdings Qty</td><td>portfolio_holdings.quantity</td><td>position.total_qty</td><td>Exact match</td></tr>
+  <tr><td>Avg Cost</td><td>portfolio_holdings.avg_cost</td><td>position.avg_cost</td><td>BDT 0.10 (rounding)</td></tr>
+  <tr><td>Net Value</td><td>transaction.net_value</td><td>exec_report.net_value</td><td>BDT 1.00 (rounding)</td></tr>
+  <tr><td>Cash Balance</td><td>fund_accounts.cash_balance</td><td>cash_report.ledger_balance</td><td>BDT 10.00</td></tr>
+  <tr><td>Settlement Status</td><td>settlement_tracking.status</td><td>settlement.status</td><td>Exact match</td></tr>
+</table>
+
+<h3>6.3 Settlement Calendar (Bangladesh)</h3>
+
+<table>
+  <tr><th>Category</th><th>Buy Settlement</th><th>Sell Settlement</th></tr>
+  <tr><td>Category A, B, G, N</td><td>T+2 business days</td><td>T+2 business days</td></tr>
+  <tr><td>Category Z</td><td>T+3 business days</td><td>T+2 business days</td></tr>
+  <tr><td>Spot / Compulsory Spot</td><td>T+1 business day</td><td>T+0 (same day)</td></tr>
+  <tr><td>Block Trade</td><td>T+2 business days</td><td>T+2 business days</td></tr>
+</table>
+
+<p><strong>Business Days:</strong> Sunday through Thursday. Excludes Bangladesh public holidays and exchange-declared holidays.</p>
+
+<h2><span class="section-num">7.</span> Phased Implementation Plan</h2>
+
+<table>
+  <tr><th>Phase</th><th>Duration</th><th>Scope</th><th>Deliverables</th></tr>
+  <tr>
+    <td><strong>Phase 1A</strong><br/>Foundation</td>
+    <td>2-3 weeks</td>
+    <td>
+      • Broker provides API documentation<br/>
+      • API key provisioning<br/>
+      • Sandbox environment setup<br/>
+      • Client code mapping (Abaci ↔ Broker)
+    </td>
+    <td>
+      API credentials, endpoint URLs, sandbox access, client code mapping table
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Phase 1B</strong><br/>Order Flow</td>
+    <td>3-4 weeks</td>
+    <td>
+      • Order submission integration<br/>
+      • Execution report consumption<br/>
+      • Order status tracking<br/>
+      • End-to-end test with sandbox
+    </td>
+    <td>
+      Working order flow in sandbox, test results, error handling validated
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Phase 2A</strong><br/>Reconciliation</td>
+    <td>2-3 weeks</td>
+    <td>
+      • Position statement API integration<br/>
+      • Daily reconciliation automation<br/>
+      • Discrepancy flagging & reporting<br/>
+      • Settlement tracking
+    </td>
+    <td>
+      Automated daily recon, discrepancy dashboard, settlement calendar
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Phase 2B</strong><br/>Go-Live</td>
+    <td>1-2 weeks</td>
+    <td>
+      • Production credentials<br/>
+      • Parallel run (manual + API for 5 days)<br/>
+      • Production cutover<br/>
+      • Monitoring & alerting
+    </td>
+    <td>
+      Production API live, monitoring dashboard, runbook
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Phase 3</strong><br/>Enhancement</td>
+    <td>Ongoing</td>
+    <td>
+      • Real-time WebSocket fills<br/>
+      • Market data feed<br/>
+      • Multi-broker support<br/>
+      • Corporate action automation
+    </td>
+    <td>
+      Enhanced real-time capabilities, multi-broker routing
+    </td>
+  </tr>
+</table>
+
+<h2><span class="section-num">8.</span> Appendices</h2>
+
+<h3>A. Fee Schedule (Current BSEC Standard)</h3>
+
+<table>
+  <tr><th>Fee Component</th><th>Rate</th><th>Basis</th><th>Notes</th></tr>
+  <tr><td>Brokerage Commission</td><td>Max 0.40%</td><td>Trade value</td><td>Negotiable between Abaci & Broker</td></tr>
+  <tr><td>Exchange Fee (Laga)</td><td>0.03%</td><td>Trade value</td><td>0.0125% for block trades ≥ BDT 5M</td></tr>
+  <tr><td>CDBL Fee</td><td>0.0175%</td><td>Trade value</td><td>Minimum BDT 5 per transaction</td></tr>
+  <tr><td>AIT (Advance Income Tax)</td><td>0.05%</td><td>Trade value</td><td>Changing to 0.03% effective July 2026</td></tr>
+</table>
+
+<h3>B. BSEC Regulatory References</h3>
+
+<ul>
+  <li>BSEC (Alternative Trading System) Rules, 2021</li>
+  <li>BSEC (Stock Dealer, Stock Broker and Authorized Representative) Rules, 2000 (amended)</li>
+  <li>BSEC Guidelines on Electronic Know-Your-Customer (e-KYC)</li>
+  <li>BSEC (Margin) Rules, 2025</li>
+  <li>CDBL Operational Procedures</li>
+  <li>DSE & CSE Trading Rules and Settlement Procedures</li>
+</ul>
+
+<h3>C. Contact Information</h3>
+
+<table>
+  <tr><th>Role</th><th>Contact</th><th>Responsibility</th></tr>
+  <tr><td>Technical Lead</td><td>tech@abaci-investments.com</td><td>API integration, testing, go-live</td></tr>
+  <tr><td>Operations Lead</td><td>ops@abaci-investments.com</td><td>Client mapping, reconciliation, settlement</td></tr>
+  <tr><td>Compliance</td><td>compliance@abaci-investments.com</td><td>Regulatory requirements, audit trail</td></tr>
+</table>
+
+<div class="footer">
+  <p><strong>Abaci Investments Limited</strong> — BSEC Licensed Merchant Bank</p>
+  <p>This document is confidential and intended solely for the broker partner's technical team. Do not distribute without written consent.</p>
+  <p>Document Version 1.0 — April 17, 2026</p>
+</div>
+
+</div>
+</body>
+</html>
