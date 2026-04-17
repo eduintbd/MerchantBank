@@ -63,11 +63,13 @@ const queryClient = new QueryClient({
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="min-h-screen flex items-center justify-center bg-[#fafbfd]">
       <div className="text-center animate-fade-in">
-        <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-16 h-16 rounded-xl mx-auto mb-4 object-cover shadow-lg" />
-        <div className="w-8 h-8 border-2 border-info border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-xs text-muted mt-3">Loading...</p>
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <span className="text-[#c9a96e] font-bold text-2xl">A</span>
+        </div>
+        <div className="w-6 h-6 border-2 border-[#c9a96e] border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-[11px] text-[#9ba3b5] mt-3 font-medium tracking-wide">LOADING</p>
       </div>
     </div>
   );
@@ -167,9 +169,11 @@ function AppShell() {
           toastOptions={{
             style: {
               background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              color: '#1e293b',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+              border: '1px solid #e1e5ee',
+              color: '#1a2138',
+              boxShadow: '0 4px 24px rgba(26,33,56,0.1)',
+              borderRadius: '14px',
+              fontFamily: 'Inter, -apple-system, sans-serif',
             },
           }}
         />

@@ -55,49 +55,62 @@ export function TopNav() {
   return (
     <>
       {/* Desktop Header */}
-      <header className="sticky top-0 z-40 hidden sm:block bg-white" style={{ borderBottom: '1px solid #e5e5e5' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto' }} className="px-3 sm:px-4 lg:px-6">
-          <div className="flex items-center justify-between h-[56px]">
-            <div className="flex items-center gap-2.5 shrink-0">
-              <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-8 h-8 rounded object-cover" />
-              <span className="font-bold text-base text-[#333]">Abaci Investments</span>
+      <header className="sticky top-0 z-40 hidden sm:block bg-white/95 backdrop-blur-xl" style={{ borderBottom: '1px solid #e1e5ee' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto' }} className="px-4 lg:px-8">
+          <div className="flex items-center justify-between h-[58px]">
+            {/* Brand */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] flex items-center justify-center shadow-sm">
+                <span className="text-[#c9a96e] font-bold text-sm tracking-tight">A</span>
+              </div>
+              <div className="hidden lg:block">
+                <span className="font-bold text-[15px] text-[#1a2138] tracking-tight">Abaci</span>
+                <span className="text-[10px] text-[#9ba3b5] block -mt-0.5 font-medium tracking-wider uppercase">Investments</span>
+              </div>
+              <span className="lg:hidden font-bold text-[15px] text-[#1a2138] tracking-tight">Abaci</span>
             </div>
 
-            <nav className="flex items-center gap-0.5 lg:gap-1 overflow-x-auto scrollbar-hide">
+            {/* Nav */}
+            <nav className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide">
               {desktopNavItems.map(item => {
                 const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
                 return (
                   <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'}
-                    className={cn('group flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3.5 py-1.5 lg:py-2 text-[11px] lg:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-all duration-200',
+                    className={cn(
+                      'group flex items-center gap-1.5 px-3 lg:px-3.5 py-2 text-[12px] lg:text-[13px] font-semibold whitespace-nowrap rounded-lg transition-all duration-200',
                       isActive
-                        ? 'bg-[#0b8a00]/10 text-[#0b8a00]'
-                        : 'text-[#777] hover:bg-[#f5f5f5] hover:text-[#333]'
+                        ? 'bg-[#1a2744]/[0.06] text-[#1a2744]'
+                        : 'text-[#7c8498] hover:bg-[#f0f2f7] hover:text-[#2d3348]'
                     )}>
-                    <item.icon size={14} strokeWidth={isActive ? 2.2 : 1.8} className="transition-transform duration-200 group-hover:scale-110 shrink-0" />
+                    <item.icon size={15} strokeWidth={isActive ? 2.2 : 1.7} className="transition-transform duration-200 group-hover:scale-105 shrink-0" />
                     <span>{item.label}</span>
+                    {isActive && <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-[#c9a96e]" />}
                   </NavLink>
                 );
               })}
             </nav>
 
+            {/* User */}
             <div className="flex items-center gap-3 shrink-0">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <div className={cn(
-                  'w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold',
-                  isGuest ? 'bg-gray-400' : 'bg-[#0b8a00]'
+                  'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shadow-sm transition-all',
+                  isGuest
+                    ? 'bg-[#e1e5ee] text-[#7c8498]'
+                    : 'bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] text-[#c9a96e]'
                 )}>
                   {displayInitial}
                 </div>
-                <span className="text-sm font-semibold text-[#333] hidden lg:block truncate max-w-[120px]">{displayName}</span>
+                <span className="text-[13px] font-semibold text-[#2d3348] hidden lg:block truncate max-w-[120px]">{displayName}</span>
               </div>
               {isGuest ? (
-                <Link to="/auth" className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#0b8a00] rounded-lg hover:brightness-110 transition-all" title="Create Account">
+                <Link to="/auth" className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-[#1a2744] to-[#2a3f6b] rounded-lg hover:shadow-md transition-all" title="Create Account">
                   <UserPlus size={13} />
-                  <span className="hidden lg:inline">Sign Up</span>
+                  <span className="hidden lg:inline">Get Started</span>
                 </Link>
               ) : (
-                <button onClick={signOut} className="text-sm text-[#aaa] hover:text-[#d32f2f] transition-colors" title="Sign Out">
-                  <LogOut size={16} />
+                <button onClick={signOut} className="text-[#9ba3b5] hover:text-[#c53030] transition-colors p-1.5 rounded-lg hover:bg-[#f0f2f7]" title="Sign Out">
+                  <LogOut size={15} />
                 </button>
               )}
             </div>
@@ -106,27 +119,29 @@ export function TopNav() {
       </header>
 
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 sm:hidden bg-white" style={{ borderBottom: '1px solid #e5e5e5', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
-        <div className="flex items-center justify-between px-3" style={{ height: 52 }}>
-          <div className="flex items-center gap-2">
-            <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-6 h-6 rounded object-cover" />
-            <span className="font-bold text-sm text-[#333]">Abaci Investments</span>
+      <header className="fixed top-0 left-0 right-0 z-50 sm:hidden bg-white/95 backdrop-blur-xl" style={{ borderBottom: '1px solid #e1e5ee', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+        <div className="flex items-center justify-between px-4" style={{ height: 52 }}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] flex items-center justify-center">
+              <span className="text-[#c9a96e] font-bold text-[11px]">A</span>
+            </div>
+            <span className="font-bold text-sm text-[#1a2138] tracking-tight">Abaci</span>
           </div>
           <div className="flex items-center gap-2">
             {isGuest && (
-              <Link to="/auth" className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-white bg-[#0b8a00] rounded-md">
-                <UserPlus size={11} />
+              <Link to="/auth" className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold text-white bg-gradient-to-r from-[#1a2744] to-[#2a3f6b] rounded-md">
+                <UserPlus size={10} />
                 Sign Up
               </Link>
             )}
             <div className={cn(
-              'w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold',
-              isGuest ? 'bg-gray-400' : 'bg-[#0b8a00]'
+              'w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold',
+              isGuest ? 'bg-[#e1e5ee] text-[#7c8498]' : 'bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] text-[#c9a96e]'
             )}>
               {displayInitial}
             </div>
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="w-7 h-7 flex items-center justify-center">
-              {mobileMenuOpen ? <X size={18} className="text-[#333]" /> : <Menu size={18} className="text-[#333]" />}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#f0f2f7]">
+              {mobileMenuOpen ? <X size={18} className="text-[#2d3348]" /> : <Menu size={18} className="text-[#7c8498]" />}
             </button>
           </div>
         </div>
@@ -135,32 +150,34 @@ export function TopNav() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setMobileMenuOpen(false)}>
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute left-0 right-0 max-h-[80vh] overflow-y-auto bg-white" style={{ top: 'calc(52px + env(safe-area-inset-top, 0px))', borderBottom: '1px solid #e5e5e5', animation: 'slideDown 0.2s ease-out' }} onClick={e => e.stopPropagation()}>
-            <div className="px-4 py-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
-              <p className="text-sm font-semibold text-[#333]">{displayName}</p>
-              <p className="text-xs text-[#aaa]">{isGuest ? 'Guest account — no sign-up required' : user?.email}</p>
+          <div className="absolute inset-0 bg-[#1a2744]/40 backdrop-blur-sm" />
+          <div className="absolute left-0 right-0 max-h-[80vh] overflow-y-auto bg-white" style={{ top: 'calc(52px + env(safe-area-inset-top, 0px))', borderBottom: '1px solid #e1e5ee', animation: 'slideDown 0.2s ease-out' }} onClick={e => e.stopPropagation()}>
+            <div className="px-4 py-3" style={{ borderBottom: '1px solid #ebeef5' }}>
+              <p className="text-sm font-semibold text-[#1a2138]">{displayName}</p>
+              <p className="text-xs text-[#9ba3b5]">{isGuest ? 'Guest account' : user?.email}</p>
             </div>
             <div className="py-1">
               {navItems.map(item => {
                 const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(item.to);
                 return (
                   <NavLink key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)}
-                    className={cn('flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium', isActive ? 'text-[#0b8a00] bg-[#f0faf0]' : 'text-[#666] hover:bg-[#f9f9f9]')}>
+                    className={cn('flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium transition-colors',
+                      isActive ? 'text-[#1a2744] bg-[#1a2744]/[0.04]' : 'text-[#7c8498] hover:bg-[#f0f2f7]')}>
                     <item.icon size={16} strokeWidth={1.8} />
                     <span>{item.label}</span>
+                    {isActive && <div className="ml-auto w-1 h-4 rounded-full bg-[#c9a96e]" />}
                   </NavLink>
                 );
               })}
             </div>
-            <div className="px-4 py-3" style={{ borderTop: '1px solid #f0f0f0' }}>
+            <div className="px-4 py-3" style={{ borderTop: '1px solid #ebeef5' }}>
               {isGuest ? (
-                <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5 text-sm font-medium text-[#0b8a00]">
+                <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2.5 text-sm font-semibold text-[#1a2744]">
                   <UserPlus size={16} strokeWidth={1.8} />
                   <span>Create Account</span>
                 </Link>
               ) : (
-                <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center gap-2.5 text-sm font-medium text-[#d32f2f]">
+                <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center gap-2.5 text-sm font-medium text-[#c53030]">
                   <LogOut size={16} strokeWidth={1.8} />
                   <span>Sign Out</span>
                 </button>
@@ -171,21 +188,22 @@ export function TopNav() {
       )}
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white" style={{ borderTop: '1px solid #e5e5e5', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <nav className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-white/95 backdrop-blur-xl" style={{ borderTop: '1px solid #e1e5ee', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="h-14 grid grid-cols-5">
           {mobileBottomItems.map(item => {
             const isActive = item.to === '/dashboard' ? location.pathname === '/dashboard' : item.to === '/more' ? location.pathname === '/more' : location.pathname.startsWith(item.to);
             return (
-              <NavLink key={item.to} to={item.to} className="flex flex-col items-center justify-center gap-0.5 min-w-0">
-                <item.icon size={18} strokeWidth={isActive ? 2.2 : 1.5} className={cn('shrink-0', isActive ? 'text-[#0b8a00]' : 'text-[#aaa]')} />
-                <span className={cn('text-[9px] sm:text-[10px] font-medium truncate max-w-full', isActive ? 'text-[#0b8a00]' : 'text-[#aaa]')}>{item.label}</span>
+              <NavLink key={item.to} to={item.to} className="flex flex-col items-center justify-center gap-0.5 min-w-0 relative">
+                {isActive && <div className="absolute top-0 w-6 h-[2px] rounded-b-full bg-[#c9a96e]" />}
+                <item.icon size={18} strokeWidth={isActive ? 2 : 1.5} className={cn('shrink-0 transition-colors', isActive ? 'text-[#1a2744]' : 'text-[#9ba3b5]')} />
+                <span className={cn('text-[9px] font-semibold truncate max-w-full transition-colors', isActive ? 'text-[#1a2744]' : 'text-[#9ba3b5]')}>{item.label}</span>
               </NavLink>
             );
           })}
         </div>
       </nav>
 
-      <style>{`@keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      <style>{`@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </>
   );
 }

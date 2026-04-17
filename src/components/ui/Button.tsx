@@ -2,18 +2,19 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'success';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'success' | 'gold';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   icon?: ReactNode;
 }
 
 const variants = {
-  primary: 'bg-primary text-white shadow-sm shadow-primary/25 hover:shadow-md hover:shadow-primary/30 hover:brightness-110 active:brightness-90',
-  secondary: 'bg-white/[0.06] border border-border text-foreground hover:bg-white/[0.10] shadow-[var(--shadow-card)]',
-  danger: 'bg-danger-dim text-danger border border-danger/20 hover:bg-danger/20',
-  ghost: 'text-muted hover:text-foreground hover:bg-white/[0.06]',
-  success: 'bg-success-dim text-success border border-success/20 hover:bg-success/20',
+  primary: 'bg-gradient-to-r from-[#1a2744] to-[#2a3f6b] text-white shadow-sm shadow-[#1a2744]/15 hover:shadow-md hover:shadow-[#1a2744]/20 hover:brightness-110 active:brightness-95',
+  secondary: 'bg-white border border-[#e1e5ee] text-[#2d3348] hover:bg-[#f0f2f7] hover:border-[#c9a96e]/30 shadow-[0_1px_2px_rgba(26,33,56,0.04)]',
+  danger: 'bg-[#c53030]/8 text-[#c53030] border border-[#c53030]/15 hover:bg-[#c53030]/15',
+  ghost: 'text-[#7c8498] hover:text-[#2d3348] hover:bg-[#f0f2f7]',
+  success: 'bg-[#0d9b5c]/8 text-[#0d9b5c] border border-[#0d9b5c]/15 hover:bg-[#0d9b5c]/15',
+  gold: 'bg-gradient-to-r from-[#c9a96e] to-[#dcc18e] text-[#1a2744] shadow-sm hover:shadow-md font-bold',
 };
 
 const sizes = {
@@ -35,9 +36,9 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
-        'hover:scale-[1.02] active:scale-[0.98]',
+        'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a96e]/40 focus-visible:ring-offset-1',
+        'hover:scale-[1.01] active:scale-[0.99]',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100',
         variants[variant],
         sizes[size],
