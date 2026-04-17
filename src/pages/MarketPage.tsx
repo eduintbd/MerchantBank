@@ -531,19 +531,19 @@ function StockTable({ prices }: { prices: LivePrice[] }) {
 
 function PublicHeader({ isMarketOpen }: { isMarketOpen: boolean }) {
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl" style={{ borderBottom: '1px solid #e1e5ee' }}>
       <div className="px-4 sm:px-6 md:px-8 lg:px-12">
         <div className="flex items-center justify-between h-[56px] sm:h-[60px]">
-          {/* Logo */}
           <Link to="/" className="flex items-center gap-3 shrink-0">
-            <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] flex items-center justify-center shadow-sm">
+              <span className="text-[#c9a96e] font-bold text-sm">A</span>
+            </div>
             <div>
-              <span className="font-bold text-base text-foreground tracking-tight">Abaci<span className="text-primary"> Investments</span></span>
-              <p className="text-[10px] text-muted leading-none mt-0.5 hidden sm:block">DSE Market Data</p>
+              <span className="font-bold text-base text-[#1a2138] tracking-tight">Abaci<span className="text-[#c9a96e]"> Investments</span></span>
+              <p className="text-[10px] text-[#9ba3b5] leading-none mt-0.5 hidden sm:block font-medium tracking-wider uppercase">Capital Markets</p>
             </div>
           </Link>
 
-          {/* Center — Market Status */}
           <div className="hidden sm:flex items-center gap-4">
             <div className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border',
@@ -559,11 +559,10 @@ function PublicHeader({ isMarketOpen }: { isMarketOpen: boolean }) {
             </div>
           </div>
 
-          {/* Right — Dashboard CTA */}
           <div className="flex items-center gap-2">
             <Link
               to="/dashboard"
-              className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#1a2744] to-[#2a3f6b] text-white rounded-xl text-xs font-semibold hover:shadow-md transition-all"
             >
               <LayoutDashboard size={14} />
               <span>Dashboard</span>

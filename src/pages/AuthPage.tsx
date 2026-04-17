@@ -45,18 +45,12 @@ export function AuthPage() {
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         overflow: 'hidden',
       }} className="hidden md:flex">
-        <img
-          src="/abaci-logo.jpeg"
-          alt="Abaci Investments"
-          style={{
-            width: '420px', height: 'auto', objectFit: 'contain',
-            filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))',
-            marginBottom: 32,
-          }}
-        />
-        <h2 style={{ fontSize: 28, fontWeight: 800, color: '#f8fafc', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
+        <div style={{ width: 100, height: 100, borderRadius: 24, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 32, boxShadow: '0 20px 40px rgba(26,39,68,0.3)' }}>
+          <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 44 }}>A</span>
+        </div>
+        <h2 style={{ fontSize: 28, fontWeight: 800, color: '#1a2138', textAlign: 'center', lineHeight: 1.3, margin: 0 }}>
           Invest in Bangladesh's<br />
-          <span style={{ color: '#60a5fa' }}>Future</span>
+          <span style={{ color: '#c9a96e' }}>Capital Markets</span>
         </h2>
         <p style={{ fontSize: 15, color: '#94a3b8', textAlign: 'center', marginTop: 12, maxWidth: 360, lineHeight: 1.6 }}>
           Trade on the Dhaka Stock Exchange. BSEC regulated. Zero account fees.
@@ -84,21 +78,21 @@ export function AuthPage() {
           position: 'fixed', inset: 0, zIndex: 0,
           background: 'linear-gradient(180deg, #f8fafc 0%, #fff 100%)',
         }}>
-          <img src="/abaci-logo.jpeg" alt="" style={{
+          <div style={{
             position: 'absolute', top: '8%', left: '50%', transform: 'translateX(-50%)',
-            width: '180px', opacity: 0.15, objectFit: 'contain',
-          }} />
+            width: 80, height: 80, borderRadius: 20, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.08,
+          }}>
+            <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 36 }}>A</span>
+          </div>
         </div>
 
         <div style={{ width: '100%', maxWidth: 420, position: 'relative', zIndex: 2 }}>
           {/* Logo */}
           <div style={{ textAlign: 'center', marginBottom: 36 }}>
             <Link to="/dashboard">
-              <img
-                src="/abaci-logo.jpeg"
-                alt="Abaci Investments"
-                style={{ width: 80, height: 80, borderRadius: 16, objectFit: 'cover', margin: '0 auto 16px', display: 'block', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
-              />
+              <div style={{ width: 64, height: 64, borderRadius: 16, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 8px 24px rgba(26,39,68,0.2)' }}>
+                <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 28 }}>A</span>
+              </div>
             </Link>
             <h1 style={{ fontSize: 26, fontWeight: 800, color: '#0f172a', margin: 0 }}>
               {mode === 'login' ? 'Welcome back' : 'Create your account'}

@@ -98,7 +98,7 @@ export function LandingPage() {
       }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src="/abaci-logo.jpeg" alt="Abaci Investments" style={{ width: 40, height: 40, borderRadius: T.radiusSm, objectFit: 'cover' }} />
+            <div style={{ width: 40, height: 40, borderRadius: T.radiusSm, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 18 }}>A</span></div>
             <div>
               <div style={{ fontFamily: T.fontTitle, fontWeight: 700, color: T.title, fontSize: 16, lineHeight: 1.2 }}>Abaci Investments</div>
               <div style={{ fontSize: 10, color: T.amber, fontWeight: 600, lineHeight: 1 }}>Demo Trading & Learning</div>
@@ -182,10 +182,12 @@ export function LandingPage() {
         background: `linear-gradient(170deg, ${T.bg} 0%, ${T.bgLight} 100%)`,
         position: 'relative',
       }}>
-        <img src="/abaci-logo.jpeg" alt="" style={{
+        <div style={{
           position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          width: '50vmin', maxWidth: 500, height: 'auto', objectFit: 'contain', opacity: 0.03, zIndex: 0, pointerEvents: 'none',
-        }} />
+          width: 300, height: 300, borderRadius: 60, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.03, zIndex: 0, pointerEvents: 'none',
+        }}>
+          <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 160 }}>A</span>
+        </div>
 
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 2 }} className="py-8 sm:py-12 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
@@ -240,8 +242,9 @@ export function LandingPage() {
 
             {/* Right: Logo + highlights */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-              <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-44 sm:w-56 lg:w-64"
-                style={{ height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 16px 40px rgba(0,0,0,0.12))', borderRadius: T.radius }} />
+              <div className="w-32 sm:w-40 lg:w-48 aspect-square" style={{ borderRadius: 32, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 16px 40px rgba(26,39,68,0.25)' }}>
+                <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: '4rem' }}>A</span>
+              </div>
 
               <div style={{ width: '100%', background: T.bgCard, borderRadius: 20, padding: 20, border: `1px solid ${T.border}`, boxShadow: '0 10px 40px rgba(0,0,0,0.04)' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.titleSub, marginBottom: 16 }}>What You'll Learn</div>
@@ -391,7 +394,7 @@ export function LandingPage() {
       <footer style={{ background: T.bgLight, padding: '56px 0 32px', borderTop: `1px solid ${T.border}` }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-            <img src="/abaci-logo.jpeg" alt="Abaci Investments" style={{ width: 36, height: 36, borderRadius: T.radiusSm, objectFit: 'cover' }} />
+            <div style={{ width: 36, height: 36, borderRadius: T.radiusSm, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 16 }}>A</span></div>
             <div>
               <div style={{ fontFamily: T.fontTitle, fontWeight: 700, fontSize: 15, color: T.title }}>Abaci Investments</div>
               <div style={{ fontSize: 10, color: T.amber, fontWeight: 600 }}>Demo Trading & Learning Platform</div>

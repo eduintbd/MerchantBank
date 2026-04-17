@@ -190,7 +190,7 @@ export function OurStoryPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <Link to="/" className="flex items-center gap-2.5">
-              <img src="/logo.jpeg" alt="Abaci Investments" className="w-8 h-8 rounded-lg object-cover" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] flex items-center justify-center"><span className="text-[#c9a96e] font-bold text-sm">A</span></div>
               <span className="font-semibold text-sm">Abaci Investments</span>
             </Link>
             <div className="flex items-center gap-2">
