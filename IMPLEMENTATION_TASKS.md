@@ -1,6 +1,6 @@
-# HeroStock.ai Demo Trading + Learning — Implementation Tasks
+# Abaci Investments Demo Trading + Learning — Implementation Tasks
 
-> Generated from PRD: `herostock-demo-learning-prd.pdf`
+> Generated from PRD: `abaci-demo-learning-prd.pdf`
 > Baseline: Current `hero-frontend` codebase as of 2026-03-30
 
 ---

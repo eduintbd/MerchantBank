@@ -91,7 +91,7 @@ If 1,000 people want to buy BEXIMCO shares but only 200 are selling, the price r
 
 ### Reading Price Changes on DSE
 
-On the HeroStock Market page, you see:
+On the Abaci Market page, you see:
 - **LTP (Last Traded Price)**: The most recent price someone paid
 - **Change**: How much the price moved from yesterday's close
 - **Change %**: The percentage change (e.g., +2.5% means it went up 2.5%)
@@ -766,7 +766,7 @@ The best value stocks on DSE typically have:
 - Dividend yield above 4%
 - Consistent EPS growth
 
-### Check These on HeroStock
+### Check These on Abaci
 
 Go to any **Stock Detail** page to see the fundamentals section with EPS, P/E, NAV, and dividend history.`,
       },
@@ -815,7 +815,7 @@ Key sections:
 
 ### Where to Find This
 
-On HeroStock, go to any stock's detail page and look for the **Financials** section with annual and quarterly data.`,
+On Abaci, go to any stock's detail page and look for the **Financials** section with annual and quarterly data.`,
       },
     ],
   },
@@ -1016,7 +1016,7 @@ After a loss, you trade aggressively to "win it back." This usually leads to big
 4. **Take breaks**: After a big loss, step away for a day
 5. **Review weekly**: What went right? What went wrong?
 
-### The HeroStock Advantage
+### The Abaci Advantage
 
 Our **Coaching Layer** automatically detects when you're overtrading, concentrating too much in one stock, or chasing losses. Pay attention to those alerts — they're designed to protect you.`,
       },
@@ -1026,7 +1026,7 @@ Our **Coaching Layer** automatically detects when you're overtrading, concentrat
 
 // ── Progress management via localStorage ──
 
-const PROGRESS_KEY = 'herostock_academy_progress';
+const PROGRESS_KEY = 'abaci_academy_progress';
 
 export interface AcademyProgress {
   completedLessons: string[];

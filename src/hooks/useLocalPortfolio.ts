@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { dseSupabase } from '@/lib/supabase';
 import type { PortfolioItem, PortfolioSummary } from '@/types';
 
-const STORAGE_KEY = 'herostock_local_portfolio';
+const STORAGE_KEY = 'abaci_local_portfolio';
 
 export interface LocalHolding {
   stock_symbol: string;

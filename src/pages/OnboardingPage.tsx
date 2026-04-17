@@ -9,7 +9,7 @@ export function OnboardingPage() {
           <div className="w-10 h-10 rounded-xl bg-[#0b8a00] flex items-center justify-center">
             <span className="text-white font-bold text-lg">H</span>
           </div>
-          <span className="text-xl font-bold text-gray-900 tracking-tight">HeroStock.ai</span>
+          <span className="text-xl font-bold text-gray-900 tracking-tight">Abaci Investments</span>
         </div>
         <p className="text-sm text-gray-500">Demo Trading Platform</p>
       </div>

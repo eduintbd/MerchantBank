@@ -84,7 +84,7 @@ export function OnboardingWizard() {
               <div className="w-16 h-16 rounded-2xl bg-[#0b8a00]/10 flex items-center justify-center mx-auto mb-4">
                 <Sparkles size={28} className="text-[#0b8a00]" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Welcome to HeroStock.ai</h2>
+              <h2 className="text-xl font-bold text-gray-900">Welcome to Abaci Investments</h2>
               <p className="text-sm text-gray-500 mt-2 max-w-md mx-auto">
                 Practice trading Dhaka Stock Exchange securities with virtual money. Learn without risk, build real skills.
               </p>

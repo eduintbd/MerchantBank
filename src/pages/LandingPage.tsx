@@ -81,7 +81,7 @@ const COURSES = [
   { emoji: '🛡️', title: 'Risk Management', lessons: 4, required: true },
 ];
 
-const DISCLAIMER = 'IMPORTANT DISCLAIMER: HeroStock.AI is an educational demo trading platform designed for learning purposes only. No real money is involved. No real securities transactions are executed. All trades are simulated using virtual currency (৳100,000 virtual BDT). HeroStock.AI is not a registered broker, dealer, or investment adviser. This platform does not provide investment advice. Past simulated performance does not guarantee future results. Real trading involves substantial risk of loss. Please consult a licensed financial adviser before investing real money.';
+const DISCLAIMER = 'IMPORTANT DISCLAIMER: Abaci Investments is an educational demo trading platform designed for learning purposes only. No real money is involved. No real securities transactions are executed. All trades are simulated using virtual currency (৳100,000 virtual BDT). Abaci Investments is not a registered broker, dealer, or investment adviser. This platform does not provide investment advice. Past simulated performance does not guarantee future results. Real trading involves substantial risk of loss. Please consult a licensed financial adviser before investing real money.';
 
 /* ─── Component ─── */
 export function LandingPage() {
@@ -98,9 +98,9 @@ export function LandingPage() {
       }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src="/herostock-logo.jpeg" alt="HeroStock.AI" style={{ width: 40, height: 40, borderRadius: T.radiusSm, objectFit: 'cover' }} />
+            <img src="/abaci-logo.jpeg" alt="Abaci Investments" style={{ width: 40, height: 40, borderRadius: T.radiusSm, objectFit: 'cover' }} />
             <div>
-              <div style={{ fontFamily: T.fontTitle, fontWeight: 700, color: T.title, fontSize: 16, lineHeight: 1.2 }}>HeroStock.AI</div>
+              <div style={{ fontFamily: T.fontTitle, fontWeight: 700, color: T.title, fontSize: 16, lineHeight: 1.2 }}>Abaci Investments</div>
               <div style={{ fontSize: 10, color: T.amber, fontWeight: 600, lineHeight: 1 }}>Demo Trading & Learning</div>
             </div>
           </div>
@@ -171,7 +171,7 @@ export function LandingPage() {
           <AlertTriangle size={18} color={T.amber} style={{ marginTop: 1, flexShrink: 0 }} />
           <p style={{ fontSize: 12, color: '#92400e', lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
             <strong>This is a demo trading & learning platform.</strong> No real money is involved. No real orders are placed on any exchange.
-            All trades use virtual currency (৳100,000 BDT). HeroStock.AI is not a brokerage or investment adviser.
+            All trades use virtual currency (৳100,000 BDT). Abaci Investments is not a brokerage or investment adviser.
           </p>
         </div>
       </div>
@@ -182,7 +182,7 @@ export function LandingPage() {
         background: `linear-gradient(170deg, ${T.bg} 0%, ${T.bgLight} 100%)`,
         position: 'relative',
       }}>
-        <img src="/herostock-logo.jpeg" alt="" style={{
+        <img src="/abaci-logo.jpeg" alt="" style={{
           position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
           width: '50vmin', maxWidth: 500, height: 'auto', objectFit: 'contain', opacity: 0.03, zIndex: 0, pointerEvents: 'none',
         }} />
@@ -240,7 +240,7 @@ export function LandingPage() {
 
             {/* Right: Logo + highlights */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-              <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-44 sm:w-56 lg:w-64"
+              <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-44 sm:w-56 lg:w-64"
                 style={{ height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 16px 40px rgba(0,0,0,0.12))', borderRadius: T.radius }} />
 
               <div style={{ width: '100%', background: T.bgCard, borderRadius: 20, padding: 20, border: `1px solid ${T.border}`, boxShadow: '0 10px 40px rgba(0,0,0,0.04)' }}>
@@ -391,9 +391,9 @@ export function LandingPage() {
       <footer style={{ background: T.bgLight, padding: '56px 0 32px', borderTop: `1px solid ${T.border}` }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-            <img src="/herostock-logo.jpeg" alt="HeroStock.AI" style={{ width: 36, height: 36, borderRadius: T.radiusSm, objectFit: 'cover' }} />
+            <img src="/abaci-logo.jpeg" alt="Abaci Investments" style={{ width: 36, height: 36, borderRadius: T.radiusSm, objectFit: 'cover' }} />
             <div>
-              <div style={{ fontFamily: T.fontTitle, fontWeight: 700, fontSize: 15, color: T.title }}>HeroStock.AI</div>
+              <div style={{ fontFamily: T.fontTitle, fontWeight: 700, fontSize: 15, color: T.title }}>Abaci Investments</div>
               <div style={{ fontSize: 10, color: T.amber, fontWeight: 600 }}>Demo Trading & Learning Platform</div>
             </div>
           </div>
@@ -436,7 +436,7 @@ export function LandingPage() {
           </div>
 
           <p style={{ fontSize: 11, color: T.titleSub }}>
-            &copy; {new Date().getFullYear()} HeroStock.AI — Demo Trading & Learning Platform. All rights reserved.
+            &copy; {new Date().getFullYear()} Abaci Investments — Demo Trading & Learning Platform. All rights reserved.
           </p>
         </div>
       </footer>

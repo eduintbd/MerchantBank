@@ -1,5 +1,5 @@
 -- ============================================
--- HeroStock.AI — Database Setup
+-- Abaci Investments — Database Setup
 -- Run this in Supabase SQL Editor (fnwmvopralrpvryncxdc)
 -- https://supabase.com/dashboard/project/fnwmvopralrpvryncxdc/sql
 --
@@ -63,7 +63,7 @@ CREATE TRIGGER on_auth_user_created
 INSERT INTO public.lessons (id, course_id, title, content, sort_order) VALUES
   -- DSE Basics
   (gen_random_uuid(), 'c8f04099-d216-4382-b673-55c77a4e9cfc', 'What is the DSE?', 'The Dhaka Stock Exchange (DSE) is the main stock exchange of Bangladesh, established in 1954. It is one of the oldest exchanges in South Asia. The DSE facilitates buying and selling of shares, debentures, and mutual fund units for listed companies. Understanding the DSE is the first step to becoming a successful investor in Bangladesh.', 1),
-  (gen_random_uuid(), 'c8f04099-d216-4382-b673-55c77a4e9cfc', 'How Stock Trading Works', 'Stock trading involves buying shares at a lower price and selling at a higher price. Orders are placed through licensed brokers or online trading platforms like HeroStock.AI. The DSE uses a T+2 settlement cycle — meaning trades settle 2 business days after execution. Key order types include Market Orders (execute immediately at best price) and Limit Orders (execute only at your specified price or better).', 2),
+  (gen_random_uuid(), 'c8f04099-d216-4382-b673-55c77a4e9cfc', 'How Stock Trading Works', 'Stock trading involves buying shares at a lower price and selling at a higher price. Orders are placed through licensed brokers or online trading platforms like Abaci Investments. The DSE uses a T+2 settlement cycle — meaning trades settle 2 business days after execution. Key order types include Market Orders (execute immediately at best price) and Limit Orders (execute only at your specified price or better).', 2),
   (gen_random_uuid(), 'c8f04099-d216-4382-b673-55c77a4e9cfc', 'Understanding DSEX, DSES & DS30', 'DSEX is the benchmark index of the DSE, tracking all listed companies weighted by free-float market capitalization. DSES (DSE Shariah Index) tracks Shariah-compliant stocks. DS30 tracks the top 30 most liquid stocks. When these indices go up, it generally means the overall market is performing well. As an investor, tracking these indices helps you understand market trends and sentiment.', 3),
 
   -- Reading Stock Charts
@@ -74,7 +74,7 @@ INSERT INTO public.lessons (id, course_id, title, content, sort_order) VALUES
   -- Fundamental Analysis
   (gen_random_uuid(), '1fe702b5-3534-40d6-9607-23806ed371bb', 'EPS & P/E Ratio', 'Earnings Per Share (EPS) = Net Profit / Total Shares. It tells you how much profit each share generates. Price-to-Earnings (P/E) Ratio = Share Price / EPS. A lower P/E may indicate an undervalued stock, while a higher P/E suggests investors expect growth. Compare P/E ratios within the same sector for meaningful analysis.', 1),
   (gen_random_uuid(), '1fe702b5-3534-40d6-9607-23806ed371bb', 'NAV & Book Value', 'Net Asset Value (NAV) per share = (Total Assets - Total Liabilities) / Total Shares. It represents the intrinsic value of each share based on the company''s balance sheet. If a stock trades below its NAV, it may be undervalued. The Price-to-Book (P/B) ratio compares market price to book value — a P/B below 1 could indicate a bargain.', 2),
-  (gen_random_uuid(), '1fe702b5-3534-40d6-9607-23806ed371bb', 'Dividend Analysis', 'Dividends are portions of profit distributed to shareholders. Cash dividends are paid in BDT per share, while stock dividends give additional shares. Dividend Yield = Annual Dividend / Share Price. Consistent dividend-paying companies are generally more stable. Check the dividend history on HeroStock.AI to identify reliable income stocks on the DSE.', 3)
+  (gen_random_uuid(), '1fe702b5-3534-40d6-9607-23806ed371bb', 'Dividend Analysis', 'Dividends are portions of profit distributed to shareholders. Cash dividends are paid in BDT per share, while stock dividends give additional shares. Dividend Yield = Annual Dividend / Share Price. Consistent dividend-paying companies are generally more stable. Check the dividend history on Abaci Investments to identify reliable income stocks on the DSE.', 3)
 ON CONFLICT DO NOTHING;
 
 -- 5. Disable email confirmation for new signups (allow immediate login)

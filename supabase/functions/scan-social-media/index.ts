@@ -348,7 +348,7 @@ async function scrapeReddit(): Promise<ScrapedPost[]> {
     for (const sub of subreddits) {
       try {
         const res = await fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=10`, {
-          headers: { 'User-Agent': 'HeroStock/1.0' },
+          headers: { 'User-Agent': 'Abaci/1.0' },
         });
         if (!res.ok) continue;
         const data = await res.json();

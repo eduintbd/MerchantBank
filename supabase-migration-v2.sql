@@ -1,5 +1,5 @@
 -- ============================================
--- HeroStock.AI — Schema V2 Migration
+-- Abaci Investments — Schema V2 Migration
 -- Adds: instrument, market_price_bar, fundamentals, news
 -- ============================================
 

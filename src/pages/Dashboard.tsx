@@ -655,7 +655,7 @@ export function Dashboard() {
 
           {/* Footer */}
           <div className="border-t border-[#e5e5e5] pt-3 flex items-center justify-between text-[11px] text-[#aaa]">
-            <span>© {new Date().getFullYear()} HeroStock.AI — Regulated by BSEC</span>
+            <span>© {new Date().getFullYear()} Abaci Investments — Regulated by BSEC</span>
             {market?.lastUpdated && <span className="font-num">Last updated: {new Date(market.lastUpdated).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>}
           </div>
 

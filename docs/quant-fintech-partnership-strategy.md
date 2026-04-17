@@ -1,7 +1,7 @@
-# HeroStock.AI x Monarch Holdings Ltd. x Quant Fintech Limited — Partnership Strategy & API Integration Requirements
+# Abaci Investments x Monarch Holdings Ltd. x Quant Fintech Limited — Partnership Strategy & API Integration Requirements
 
 **Date:** March 16, 2026
-**From:** HeroStock.AI (EduInt BD)
+**From:** Abaci Investments (EduInt BD)
 **To:** Monarch Holdings Ltd. (DSE TREC Holder & Brokerage) & Quant Fintech Limited (Trading Platform & OMS Provider)
 **Subject:** Tri-Party API Integration Partnership for DSE Trading, Market Data & Investor Education Platform
 
@@ -11,7 +11,7 @@
 
 ### 1.1 Who We Are
 
-**HeroStock.AI** is Bangladesh's emerging investor education and portfolio management platform targeting first-time retail investors on the Dhaka Stock Exchange (DSE). We are building a full-stack fintech experience that combines:
+**Abaci Investments** is Bangladesh's emerging investor education and portfolio management platform targeting first-time retail investors on the Dhaka Stock Exchange (DSE). We are building a full-stack fintech experience that combines:
 
 - **Investor Education** — Structured learning modules, quizzes, and certificates (BSEC compliance, fundamental analysis, technical analysis, Islamic finance/Halal investing)
 - **AI-Powered Onboarding** — Intelligent agent that guides new investors through KYC, risk profiling, and account setup
@@ -44,13 +44,13 @@ We are **not** building a brokerage or trading engine. We need Monarch as our **
 ### 1.4 Value Proposition for Monarch & Quant
 
 **For Monarch Holdings Ltd.:**
-- **New Client Acquisition** — HeroStock.AI brings educated, KYC-ready investors directly into Monarch BO accounts. Our learning funnel converts curious users into active traders.
+- **New Client Acquisition** — Abaci Investments brings educated, KYC-ready investors directly into Monarch BO accounts. Our learning funnel converts curious users into active traders.
 - **Reduced Support Load** — Users arrive pre-educated on market basics, order types, and risk management through our certification program.
 - **Increased Trading Volume** — Social intelligence, AI-powered stock analysis, and community features keep users engaged and trading daily.
 - **Young Demographic** — Access to first-time investors (18-35) who are mobile-first and underserved by traditional brokers.
 
 **For Quant Fintech Limited:**
-- **Platform Showcase** — HeroStock.AI becomes a flagship consumer-facing product built on Quant's OMS infrastructure.
+- **Platform Showcase** — Abaci Investments becomes a flagship consumer-facing product built on Quant's OMS infrastructure.
 - **API Revenue** — Monthly API licensing fee or per-transaction charges for OMS access.
 - **Market Expansion** — Proves Quant's technology can power B2C fintech apps, not just broker back-offices.
 - **Revenue Share Model** — Commission sharing on trades executed through our platform, premium subscription tiers.
@@ -147,15 +147,15 @@ GET /api/v1/transactions
 
 ```
 POST /api/v1/auth/register
-  → Create trading account linked to HeroStock user
-  → Body: { herostock_user_id, full_name, email, phone, nid_number }
+  → Create trading account linked to Abaci user
+  → Body: { abaci_user_id, full_name, email, phone, nid_number }
 
 POST /api/v1/auth/kyc-status
-  → Sync KYC verification status back to HeroStock
+  → Sync KYC verification status back to Abaci
   → Returns: { status: "pending"|"verified"|"rejected", bo_account_id }
 
 POST /api/v1/auth/token
-  → Exchange HeroStock session for Quant API token
+  → Exchange Abaci session for Quant API token
   → OAuth2 authorization_code flow preferred
 ```
 
@@ -163,7 +163,7 @@ POST /api/v1/auth/token
 
 ```
 ┌─────────────────────┐       ┌────────────────────┐       ┌──────────────────┐
-│   HeroStock.AI      │       │  Quant Fintech Ltd │       │ Monarch Holdings │
+│   Abaci Investments      │       │  Quant Fintech Ltd │       │ Monarch Holdings │
 │   (Frontend + BFF)  │◄─────►│  (OMS + Tech)      │◄─────►│ (Licensed Broker)│
 │                     │ REST/ │                    │  FIX  │                  │
 │ • React SPA         │  WS   │ • qTrader OMS      │Protocol│ • TREC Holder    │
@@ -179,7 +179,7 @@ POST /api/v1/auth/token
                progress, social posts)
 ```
 
-**Our Supabase Edge Functions** will act as a Backend-for-Frontend (BFF) layer — calling Quant's OMS APIs server-side, never exposing API keys to the browser. Orders flow: HeroStock → Quant OMS → Monarch → DSE.
+**Our Supabase Edge Functions** will act as a Backend-for-Frontend (BFF) layer — calling Quant's OMS APIs server-side, never exposing API keys to the browser. Orders flow: Abaci → Quant OMS → Monarch → DSE.
 
 ---
 
@@ -191,7 +191,7 @@ POST /api/v1/auth/token
 |---|---|---|
 | 1 | **API Documentation** | Full Swagger/OpenAPI spec for all available endpoints |
 | 2 | **Sandbox Environment** | Test API with mock data for development and demo trading |
-| 3 | **API Keys** | Sandbox credentials (API key + secret) for HeroStock dev team |
+| 3 | **API Keys** | Sandbox credentials (API key + secret) for Abaci dev team |
 | 4 | **WebSocket Spec** | Connection URL, subscription format, message schema |
 | 5 | **Rate Limits** | Requests per second/minute per endpoint |
 | 6 | **Data Dictionary** | Complete list of available fields, data types, update frequencies |
@@ -211,21 +211,21 @@ POST /api/v1/auth/token
 | Phase | Timeline | Scope | Dependencies |
 |---|---|---|---|
 | **Phase 1: Data** | Week 1-3 | Replace our DSE scraper with Quant's real-time data API. Display live prices, indices, and charts powered by Quant. | API docs, sandbox keys |
-| **Phase 2: Portfolio** | Week 3-5 | Portfolio sync — users see real holdings in HeroStock UI. Read-only initially. | Auth bridge, portfolio API |
-| **Phase 3: Trading** | Week 5-8 | Order placement from HeroStock trading page. Buy/sell with limit orders. | Order API, KYC bridge, compliance review |
+| **Phase 2: Portfolio** | Week 3-5 | Portfolio sync — users see real holdings in Abaci UI. Read-only initially. | Auth bridge, portfolio API |
+| **Phase 3: Trading** | Week 5-8 | Order placement from Abaci trading page. Buy/sell with limit orders. | Order API, KYC bridge, compliance review |
 | **Phase 4: Advanced** | Week 8-12 | Market depth, IPO subscriptions, margin info, advanced order types, price alerts via WebSocket. | WebSocket, IPO API |
 
 ### 3.4 Commercial Discussion Points
 
 - **Revenue Model:** Commission sharing on executed trades? Flat monthly API fee? Hybrid?
 - **SLA Requirements:** 99.9% uptime for data APIs during market hours (Sun-Thu 10:00-14:30 BST)
-- **Data Ownership:** HeroStock retains user data (profiles, learning, social). Quant retains trading data. Shared: portfolio/order data accessible to both.
+- **Data Ownership:** Abaci retains user data (profiles, learning, social). Quant retains trading data. Shared: portfolio/order data accessible to both.
 - **Compliance:** BSEC regulatory requirements for API-based trading. Who holds the broker license? Is Quant providing a white-label broker service or acting as executing broker?
-- **Exclusivity:** Is this partnership exclusive or can HeroStock integrate with other data/broker providers?
+- **Exclusivity:** Is this partnership exclusive or can Abaci integrate with other data/broker providers?
 
 ### 3.5 Key Contacts & Communication
 
-| Role | HeroStock.AI | Quant Fintech Ltd. | Monarch Holdings Ltd. |
+| Role | Abaci Investments | Quant Fintech Ltd. | Monarch Holdings Ltd. |
 |---|---|---|---|
 | **Project Lead** | [Your Name] | [TBD] | [TBD] |
 | **Technical Lead** | [Dev Lead] | [TBD] | [TBD] |
@@ -241,17 +241,17 @@ POST /api/v1/auth/token
 
 | # | Action | Owner | Due |
 |---|---|---|---|
-| 1 | Share this strategy note with Quant technical team | HeroStock | Today |
+| 1 | Share this strategy note with Quant technical team | Abaci | Today |
 | 2 | Schedule kickoff call | Both | This week |
 | 3 | Quant provides API documentation + sandbox access | Quant | Week 1 |
-| 4 | HeroStock builds data adapter layer (Supabase Edge Function) | HeroStock | Week 2 |
+| 4 | Abaci builds data adapter layer (Supabase Edge Function) | Abaci | Week 2 |
 | 5 | First live data flowing through Quant API on staging | Both | Week 3 |
 | 6 | Sign partnership / API usage agreement | Both | Week 2 |
 
 ---
 
-*This document is confidential and intended for discussion between HeroStock.AI (EduInt BD), Monarch Holdings Ltd., and Quant Fintech Limited only.*
+*This document is confidential and intended for discussion between Abaci Investments (EduInt BD), Monarch Holdings Ltd., and Quant Fintech Limited only.*
 
-**HeroStock.AI** — Empowering Bangladesh's Next Generation of Investors
+**Abaci Investments** — Empowering Bangladesh's Next Generation of Investors
 **Monarch Holdings Ltd.** — monarchholdingsbd.com
 **Quant Fintech Limited** — quantfintech.ai | quantbd.com

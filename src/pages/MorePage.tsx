@@ -27,7 +27,7 @@ export function MorePage() {
       <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">More Features</h1>
-        <p className="text-muted text-sm sm:text-base mt-1">Explore all HeroStock.AI tools and resources</p>
+        <p className="text-muted text-sm sm:text-base mt-1">Explore all Abaci Investments tools and resources</p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">

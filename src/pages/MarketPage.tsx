@@ -536,9 +536,9 @@ function PublicHeader({ isMarketOpen }: { isMarketOpen: boolean }) {
         <div className="flex items-center justify-between h-[56px] sm:h-[60px]">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 shrink-0">
-            <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
+            <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
             <div>
-              <span className="font-bold text-base text-foreground tracking-tight">HeroStock<span className="text-primary">.AI</span></span>
+              <span className="font-bold text-base text-foreground tracking-tight">Abaci<span className="text-primary"> Investments</span></span>
               <p className="text-[10px] text-muted leading-none mt-0.5 hidden sm:block">DSE Market Data</p>
             </div>
           </Link>
@@ -742,7 +742,7 @@ export function MarketPage() {
           {/* CTA Banner */}
           <div className="rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <h3 className="text-base font-bold text-foreground mb-1">Want more? Join HeroStock.AI</h3>
+              <h3 className="text-base font-bold text-foreground mb-1">Want more? Join Abaci Investments</h3>
               <p className="text-sm text-muted">Get portfolio tracking, AI analysis, demo trading, learning courses &amp; more.</p>
             </div>
             <Link

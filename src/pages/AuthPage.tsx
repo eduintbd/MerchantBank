@@ -46,8 +46,8 @@ export function AuthPage() {
         overflow: 'hidden',
       }} className="hidden md:flex">
         <img
-          src="/herostock-logo.jpeg"
-          alt="HeroStock.AI"
+          src="/abaci-logo.jpeg"
+          alt="Abaci Investments"
           style={{
             width: '420px', height: 'auto', objectFit: 'contain',
             filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))',
@@ -84,7 +84,7 @@ export function AuthPage() {
           position: 'fixed', inset: 0, zIndex: 0,
           background: 'linear-gradient(180deg, #f8fafc 0%, #fff 100%)',
         }}>
-          <img src="/herostock-logo.jpeg" alt="" style={{
+          <img src="/abaci-logo.jpeg" alt="" style={{
             position: 'absolute', top: '8%', left: '50%', transform: 'translateX(-50%)',
             width: '180px', opacity: 0.15, objectFit: 'contain',
           }} />
@@ -95,8 +95,8 @@ export function AuthPage() {
           <div style={{ textAlign: 'center', marginBottom: 36 }}>
             <Link to="/dashboard">
               <img
-                src="/herostock-logo.jpeg"
-                alt="HeroStock.AI"
+                src="/abaci-logo.jpeg"
+                alt="Abaci Investments"
                 style={{ width: 80, height: 80, borderRadius: 16, objectFit: 'cover', margin: '0 auto 16px', display: 'block', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
               />
             </Link>
@@ -114,7 +114,7 @@ export function AuthPage() {
               background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12,
               padding: '12px 16px', marginBottom: 20, fontSize: 13, color: '#15803d', lineHeight: 1.5,
             }}>
-              You're currently using HeroStock as a guest. Create an account to save your trading history and progress permanently.
+              You're currently using Abaci as a guest. Create an account to save your trading history and progress permanently.
             </div>
           )}
 
@@ -162,7 +162,7 @@ export function AuthPage() {
           </div>
 
           <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 20, lineHeight: 1.5 }}>
-            HeroStock.AI is regulated by BSEC.
+            Abaci Investments is regulated by BSEC.
           </p>
         </div>
       </div>

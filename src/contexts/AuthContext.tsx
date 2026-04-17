@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           phone: meta.phone || '',
           role: 'investor' as const,
           kyc_status: 'pending' as const,
-          referral_code: 'HERO-' + userId.substring(0, 6).toUpperCase(),
+          referral_code: 'ABCI-' + userId.substring(0, 6).toUpperCase(),
         };
         await supabase.from('profiles').upsert(fallback, { onConflict: 'id' });
         setState({
@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Auto-create profile (fallback if DB trigger doesn't exist)
     if (data.user) {
-      const code = 'HERO-' + data.user.id.substring(0, 6).toUpperCase();
+      const code = 'ABCI-' + data.user.id.substring(0, 6).toUpperCase();
       await supabase.from('profiles').upsert({
         id: data.user.id,
         email,

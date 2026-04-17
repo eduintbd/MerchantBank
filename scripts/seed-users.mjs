@@ -1,11 +1,11 @@
 /**
- * Seed test users for HeroStock.AI
+ * Seed test users for Abaci Investments
  *
  * Run:  node scripts/seed-users.mjs
  *
  * Creates:
- *   - Admin:    admin@herostock.ai    / Admin@123
- *   - Investor: investor@herostock.ai / Investor@123
+ *   - Admin:    admin@abaci-investments.com    / Admin@123
+ *   - Investor: investor@abaci-investments.com / Investor@123
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -26,7 +26,7 @@ const supabase = createClient(url, serviceKey || anonKey);
 
 const users = [
   {
-    email: 'admin@herostock.ai',
+    email: 'admin@abaci-investments.com',
     password: 'Admin@123',
     full_name: 'Admin User',
     role: 'admin',
@@ -34,7 +34,7 @@ const users = [
     is_approved: true,
   },
   {
-    email: 'investor@herostock.ai',
+    email: 'investor@abaci-investments.com',
     password: 'Investor@123',
     full_name: 'Test Investor',
     role: 'investor',
@@ -116,8 +116,8 @@ async function seedUsers() {
 
   console.log('\n--- Done ---');
   console.log('\nTest Credentials:');
-  console.log('  Admin:    admin@herostock.ai    / Admin@123');
-  console.log('  Investor: investor@herostock.ai / Investor@123');
+  console.log('  Admin:    admin@abaci-investments.com    / Admin@123');
+  console.log('  Investor: investor@abaci-investments.com / Investor@123');
 }
 
 seedUsers();

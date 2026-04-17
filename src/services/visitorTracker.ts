@@ -4,9 +4,9 @@ import { supabase } from '@/lib/supabase';
 // Visitor Tracking — identify and track users
 // ═══════════════════════════════════════════
 
-const VISITOR_KEY = 'herostock_visitor';
-const EVENTS_KEY = 'herostock_events';
-const LEAD_KEY = 'herostock_lead';
+const VISITOR_KEY = 'abaci_visitor';
+const EVENTS_KEY = 'abaci_events';
+const LEAD_KEY = 'abaci_lead';
 
 export interface VisitorProfile {
   id: string;

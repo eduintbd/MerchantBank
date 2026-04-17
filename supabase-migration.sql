@@ -1,5 +1,5 @@
 -- ============================================
--- HeroStock.AI — Database Migration
+-- Abaci Investments — Database Migration
 -- Creates all tables for the trading platform
 -- ============================================
 

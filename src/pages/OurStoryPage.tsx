@@ -65,7 +65,7 @@ const milestones = [
   },
   {
     year: 'Build',
-    title: 'HeroStock.AI is Born',
+    title: 'Abaci Investments is Born',
     desc: 'The vision becomes reality — Bangladesh\'s first AI-powered investment platform. Not just another OMS, but a global contender.',
     icon: BrainCircuit,
     color: 'text-info',
@@ -190,8 +190,8 @@ export function OurStoryPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <Link to="/" className="flex items-center gap-2.5">
-              <img src="/logo.jpeg" alt="HeroStock.AI" className="w-8 h-8 rounded-lg object-cover" />
-              <span className="font-semibold text-sm">HeroStock.AI</span>
+              <img src="/logo.jpeg" alt="Abaci Investments" className="w-8 h-8 rounded-lg object-cover" />
+              <span className="font-semibold text-sm">Abaci Investments</span>
             </Link>
             <div className="flex items-center gap-2">
               <Link to="/">
@@ -256,7 +256,7 @@ export function OurStoryPage() {
               <p>
                 His dedication earned him the title
                 <strong className="text-info"> "পুঁজিবাজার হিরো"</strong>. He founded
-                <strong className="text-info"> HeroStock.AI</strong> — zero brokerage, Kite-style trading,
+                <strong className="text-info"> Abaci Investments</strong> — zero brokerage, Kite-style trading,
                 Varsity-inspired education, AI-powered signals, and seamless BRAC Bank onboarding — all in
                 one platform that rivals anything in the world.
               </p>
@@ -337,7 +337,7 @@ export function OurStoryPage() {
           <div className="text-center mb-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple/10 border border-purple/20 text-purple text-xs font-medium mb-3">
               <Sparkles size={13} className="animate-pulse" />
-              AI-Powered &mdash; Exclusive to HeroStock.AI
+              AI-Powered &mdash; Exclusive to Abaci Investments
             </div>
             <h2 className="text-xl sm:text-2xl font-bold">Hiru Forecast</h2>
             <p className="text-muted mt-1.5 text-xs sm:text-sm max-w-xl mx-auto">
@@ -470,7 +470,7 @@ export function OurStoryPage() {
             </div>
             <p className="text-muted text-xs sm:text-sm leading-relaxed">
               From zero to hero — Abul Khayer started with nothing but a vision to transform Bangladesh's capital market.
-              Featured in national publications, connected with global fintech leaders, he founded HeroStock.AI to give
+              Featured in national publications, connected with global fintech leaders, he founded Abaci Investments to give
               every Bangladeshi investor access to world-class trading tools.
             </p>
           </div>
@@ -479,7 +479,7 @@ export function OurStoryPage() {
           <div className="rounded-xl border border-border grad-info p-6 sm:p-8 text-center">
             <h2 className="text-xl sm:text-2xl font-bold">Be Part of the Story</h2>
             <p className="text-muted mt-2 text-xs sm:text-sm max-w-md mx-auto">
-              Join thousands of investors who trust HeroStock.AI to navigate the Bangladesh capital market.
+              Join thousands of investors who trust Abaci Investments to navigate the Bangladesh capital market.
             </p>
             <div className="mt-5 flex items-center justify-center gap-3">
               <Link to="/dashboard">
@@ -496,7 +496,7 @@ export function OurStoryPage() {
       {/* ── Footer ─────────────────────────────────────────── */}
       <footer className="border-t border-border py-6 px-4 text-center">
         <p className="text-muted text-[10px]">
-          &copy; {new Date().getFullYear()} HeroStock.AI &middot; DSE &amp; CSE &middot; BRAC Bank Digital Onboarding &middot; BSEC Compliant
+          &copy; {new Date().getFullYear()} Abaci Investments &middot; DSE &amp; CSE &middot; BRAC Bank Digital Onboarding &middot; BSEC Compliant
         </p>
       </footer>
     </div>

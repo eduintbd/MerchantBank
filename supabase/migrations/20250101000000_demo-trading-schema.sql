@@ -1,5 +1,5 @@
 -- ============================================================
--- HeroStock.ai Demo Trading + Learning Schema
+-- Abaci Investments Demo Trading + Learning Schema
 -- ============================================================
 
 -- ── Learner Profiles ──

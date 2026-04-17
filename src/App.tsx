@@ -65,7 +65,7 @@ function LoadingScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center animate-fade-in">
-        <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-16 h-16 rounded-xl mx-auto mb-4 object-cover shadow-lg" />
+        <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-16 h-16 rounded-xl mx-auto mb-4 object-cover shadow-lg" />
         <div className="w-8 h-8 border-2 border-info border-t-transparent rounded-full animate-spin mx-auto" />
         <p className="text-xs text-muted mt-3">Loading...</p>
       </div>

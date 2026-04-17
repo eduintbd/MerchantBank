@@ -59,8 +59,8 @@ export function TopNav() {
         <div style={{ maxWidth: 1200, margin: '0 auto' }} className="px-3 sm:px-4 lg:px-6">
           <div className="flex items-center justify-between h-[56px]">
             <div className="flex items-center gap-2.5 shrink-0">
-              <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-8 h-8 rounded object-cover" />
-              <span className="font-bold text-base text-[#333]">HeroStock.AI</span>
+              <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-8 h-8 rounded object-cover" />
+              <span className="font-bold text-base text-[#333]">Abaci Investments</span>
             </div>
 
             <nav className="flex items-center gap-0.5 lg:gap-1 overflow-x-auto scrollbar-hide">
@@ -109,8 +109,8 @@ export function TopNav() {
       <header className="fixed top-0 left-0 right-0 z-50 sm:hidden bg-white" style={{ borderBottom: '1px solid #e5e5e5', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="flex items-center justify-between px-3" style={{ height: 52 }}>
           <div className="flex items-center gap-2">
-            <img src="/herostock-logo.jpeg" alt="HeroStock.AI" className="w-6 h-6 rounded object-cover" />
-            <span className="font-bold text-sm text-[#333]">HeroStock.AI</span>
+            <img src="/abaci-logo.jpeg" alt="Abaci Investments" className="w-6 h-6 rounded object-cover" />
+            <span className="font-bold text-sm text-[#333]">Abaci Investments</span>
           </div>
           <div className="flex items-center gap-2">
             {isGuest && (
