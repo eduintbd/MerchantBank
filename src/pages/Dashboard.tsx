@@ -2,7 +2,6 @@ import { useState, useMemo, lazy, Suspense } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDemo } from '@/contexts/DemoContext';
-import { ExchangeToggle, type ExchangeFilter } from '@/components/ui/ExchangeToggle';
 import { usePortfolio } from '@/hooks/useStocks';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useLearningProgress } from '@/hooks/useLearning';
@@ -43,9 +42,8 @@ function StockTicker({ prices }: { prices: LivePrice[] }) {
             className="inline-flex items-center gap-1.5 mx-4 text-xs hover:opacity-80 transition-opacity">
             <span className="font-semibold text-white/90">{p.symbol}</span>
             <span className="text-white/40 font-num">{p.ltp.toFixed(2)}</span>
-            <span className={cn('font-num font-semibold',
-              p.change_pct > 0 ? `text-[${GOLD}]` : p.change_pct < 0 ? 'text-red-400' : 'text-white/30'
-            )} style={{ color: p.change_pct > 0 ? GOLD : p.change_pct < 0 ? '#f87171' : undefined }}>
+            <span className="font-num font-semibold"
+              style={{ color: p.change_pct > 0 ? GOLD : p.change_pct < 0 ? '#f87171' : 'rgba(255,255,255,0.3)' }}>
               {p.change_pct >= 0 ? '+' : ''}{p.change_pct.toFixed(2)}%
             </span>
           </Link>
@@ -57,6 +55,7 @@ function StockTicker({ prices }: { prices: LivePrice[] }) {
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { animation: marquee 45s linear infinite; }
         .animate-marquee:hover { animation-play-state: paused; }
+        @media (prefers-reduced-motion: reduce) { .animate-marquee { animation: none; } }
       `}</style>
     </div>
   );
@@ -65,7 +64,7 @@ function StockTicker({ prices }: { prices: LivePrice[] }) {
 /* ═══════════════════════════════════════════════════════════
    3. INDEX CARDS (DSEX, DSES, DS30, CASPI)
    ═══════════════════════════════════════════════════════════ */
-function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
+function IndexOverview({ indices, stats, isMarketOpen, lastUpdated }: {
   indices: MarketIndex[];
   stats: { totalVolume: number; totalValue: number; totalTrades: number; advancers: number; decliners: number; unchanged: number; totalStocks: number };
   isMarketOpen: boolean;
@@ -101,7 +100,7 @@ function DSEXHero({ indices, stats, isMarketOpen, lastUpdated }: {
         })}
       </div>
 
-      {/* Hero Section */}
+      {/* Selected Index Detail */}
       <div className="p-4 sm:p-6 bg-white">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           {/* Left --- Main Index */}
@@ -614,7 +613,6 @@ export function Dashboard() {
               </div>
             </div>
             <div className="flex items-center gap-3 shrink-0">
-              <ExchangeToggle value="ALL" onChange={() => {}} size="sm" />
               <Link to="/trading"
                 className="px-5 py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:shadow-lg"
                 style={{ background: `linear-gradient(to right, ${NAVY}, #2a3f6b)` }}>
@@ -641,7 +639,7 @@ export function Dashboard() {
           {marketLoading ? (
             <div className="rounded-2xl h-44" style={{ background: SURFACE }} />
           ) : market && (
-            <DSEXHero indices={market.indices} stats={market.stats} isMarketOpen={isMarketOpen} lastUpdated={market.lastUpdated} />
+            <IndexOverview indices={market.indices} stats={market.stats} isMarketOpen={isMarketOpen} lastUpdated={market.lastUpdated} />
           )}
 
           {/* 4. Key Stats Row */}

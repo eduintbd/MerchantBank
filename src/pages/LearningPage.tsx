@@ -225,7 +225,7 @@ export function LearningPage() {
     );
   }
 
-  // ─── Courses Grid View (Hero Academy Home) ───
+  // ─── Courses Grid View (Abaci Academy Home) ───
   return (
     <div className="min-h-screen bg-white animate-fade-in">
       <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -234,7 +234,7 @@ export function LearningPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <GraduationCap size={24} className="text-[#0b8a00]" />
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-gray-900">Hero Academy</h1>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-gray-900">Abaci Academy</h1>
             </div>
             <p className="text-gray-500 text-sm sm:text-base mt-1">Learn Bangladesh stock market from basics to advanced — completely free</p>
           </div>

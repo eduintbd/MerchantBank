@@ -14,6 +14,8 @@ interface AuthState {
 interface AuthContextType extends AuthState {
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string, fullName: string, phone?: string) => Promise<{ error?: string }>;
+  signInWithPhone: (phone: string) => Promise<{ error?: string }>;
+  verifyPhoneOtp: (phone: string, token: string, fullName?: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<{ error?: string }>;
 }
@@ -165,6 +167,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return {};
   }
 
+  async function signInWithPhone(phone: string) {
+    const { error } = await supabase.auth.signInWithOtp({ phone });
+    if (error) return { error: error.message };
+    return {};
+  }
+
+  async function verifyPhoneOtp(phone: string, token: string, fullName?: string) {
+    const { data, error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
+    if (error) return { error: error.message };
+
+    // Create profile for new phone-based user
+    if (data.user) {
+      const code = 'ABCI-' + data.user.id.substring(0, 6).toUpperCase();
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        email: data.user.email || '',
+        full_name: fullName || '',
+        phone,
+        role: 'investor',
+        kyc_status: 'pending',
+        referral_code: code,
+      }, { onConflict: 'id' });
+    }
+
+    return {};
+  }
+
   async function signOut() {
     await supabase.auth.signOut();
   }
@@ -181,7 +210,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ ...state, signIn, signUp, signOut, updateProfile }}>
+    <AuthContext.Provider value={{ ...state, signIn, signUp, signInWithPhone, verifyPhoneOtp, signOut, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

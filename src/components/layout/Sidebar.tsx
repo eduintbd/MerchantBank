@@ -6,13 +6,12 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, TrendingUp, Briefcase, GraduationCap, ShieldCheck,
   Users, LogOut, ClipboardList, Menu, X, MessageSquare, Rocket,
-  MoreHorizontal, BarChart3, PlayCircle, FileText, Wallet, UserCog,
+  MoreHorizontal, PlayCircle, FileText, Wallet, UserCog,
   UserPlus,
 } from 'lucide-react';
 
 const liveNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
-  { to: '/market', icon: BarChart3, label: 'Market' },
   { to: '/trading', icon: TrendingUp, label: 'Trade' },
   { to: '/portfolio', icon: Briefcase, label: 'Portfolio' },
   { to: '/learning', icon: GraduationCap, label: 'Learn' },
@@ -24,7 +23,6 @@ const liveNavItems = [
 
 const demoNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
-  { to: '/market', icon: BarChart3, label: 'Market' },
   { to: '/demo/trading', icon: TrendingUp, label: 'Trade' },
   { to: '/demo/portfolio', icon: Briefcase, label: 'Portfolio' },
   { to: '/demo/ledger', icon: Wallet, label: 'Ledger' },

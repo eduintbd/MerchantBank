@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════
-// Hero Academy — Bangladesh Stock Market Education Content
+// Abaci Academy — Bangladesh Stock Market Education Content
 // ═══════════════════════════════════════════════════════════
 
 export interface AcademyLesson {

@@ -1,30 +1,46 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { MessageCircle, Phone, Mail, ArrowLeft, Loader2 } from 'lucide-react';
+
+const WHATSAPP_NUMBER = '8801898934855';
+const WHATSAPP_MESSAGE = encodeURIComponent('Hi, I want to open an Abaci Investments account.');
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
+
+type AuthMode = 'main' | 'email-login' | 'email-register' | 'phone' | 'otp';
 
 export function AuthPage() {
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<AuthMode>('main');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, isAuthenticated, isGuest } = useAuth();
+  const otpRef = useRef<HTMLInputElement>(null);
+  const { signIn, signUp, signInWithPhone, verifyPhoneOtp, isAuthenticated, isGuest } = useAuth();
 
-  // If user is already logged in with a real account, send to dashboard
   if (isAuthenticated && !isGuest) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function formatPhone(val: string): string {
+    const digits = val.replace(/\D/g, '');
+    if (digits.startsWith('880')) return '+' + digits;
+    if (digits.startsWith('0')) return '+88' + digits;
+    if (digits.startsWith('1') && digits.length <= 11) return '+880' + digits;
+    return val.startsWith('+') ? val : '+' + digits;
+  }
+
+  async function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      if (mode === 'login') {
+      if (mode === 'email-login') {
         const result = await signIn(email, password);
         if (result.error) setError(result.error);
       } else {
@@ -34,6 +50,31 @@ export function AuthPage() {
       }
     } finally { setLoading(false); }
   }
+
+  async function handleSendOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    const formatted = formatPhone(phone);
+    if (formatted.length < 14) { setError('Enter a valid Bangladesh phone number'); return; }
+    setLoading(true);
+    setPhone(formatted);
+    const result = await signInWithPhone(formatted);
+    setLoading(false);
+    if (result.error) { setError(result.error); }
+    else { setMode('otp'); setTimeout(() => otpRef.current?.focus(), 100); }
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    if (otp.length < 6) { setError('Enter the 6-digit code'); return; }
+    setLoading(true);
+    const result = await verifyPhoneOtp(phone, otp, fullName || undefined);
+    setLoading(false);
+    if (result.error) setError(result.error);
+  }
+
+  const isSubFlow = mode !== 'main';
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', position: 'relative', fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -65,13 +106,11 @@ export function AuthPage() {
         </div>
       </div>
 
-      {/* Right side — Auth form */}
+      {/* Right side — Auth */}
       <div style={{
         marginLeft: 'auto', width: '100%', maxWidth: '100%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '24px 16px',
-        position: 'relative',
-        background: 'transparent',
+        padding: '24px 16px', position: 'relative', background: 'transparent',
       }} className="sm:!p-[40px_24px] md:w-[45%] md:min-w-[45%] md:!bg-white">
 
         <div className="md:hidden" style={{
@@ -80,7 +119,8 @@ export function AuthPage() {
         }}>
           <div style={{
             position: 'absolute', top: '8%', left: '50%', transform: 'translateX(-50%)',
-            width: 80, height: 80, borderRadius: 20, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.08,
+            width: 80, height: 80, borderRadius: 20, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.08,
           }}>
             <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 36 }}>A</span>
           </div>
@@ -95,15 +135,15 @@ export function AuthPage() {
               </div>
             </Link>
             <h1 style={{ fontSize: 26, fontWeight: 800, color: '#0f172a', margin: 0 }}>
-              {mode === 'login' ? 'Welcome back' : 'Create your account'}
+              {mode === 'otp' ? 'Verify your number' : mode === 'phone' ? 'Sign up with phone' : mode === 'email-login' ? 'Welcome back' : mode === 'email-register' ? 'Create with email' : 'Get Started'}
             </h1>
             <p style={{ fontSize: 14, color: '#64748b', marginTop: 6 }}>
-              {mode === 'login' ? 'Sign in to save your progress' : 'Create an account to keep your data'}
+              {mode === 'otp' ? `Code sent to ${phone}` : mode === 'phone' ? "We'll send you a verification code" : mode === 'main' ? 'Create an account or sign in' : mode === 'email-login' ? 'Sign in with your email' : 'Create an account with email'}
             </p>
           </div>
 
           {/* Guest notice */}
-          {isGuest && (
+          {isGuest && mode === 'main' && (
             <div style={{
               background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12,
               padding: '12px 16px', marginBottom: 20, fontSize: 13, color: '#15803d', lineHeight: 1.5,
@@ -112,43 +152,171 @@ export function AuthPage() {
             </div>
           )}
 
-          {/* Form card */}
+          {/* Card */}
           <div style={{
             background: '#fff', borderRadius: 20, padding: '28px 24px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+            border: '1px solid #e2e8f0', boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
           }}>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {mode === 'register' && (
-                <>
+
+            {/* ══ Main — WhatsApp first ══ */}
+            {mode === 'main' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {/* WhatsApp — primary */}
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    width: '100%', padding: '14px 16px', borderRadius: 12,
+                    background: '#25D366', color: '#fff', fontWeight: 700, fontSize: 16,
+                    textDecoration: 'none', transition: 'opacity 0.15s', border: 'none', cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+                  <MessageCircle size={22} />
+                  Continue with WhatsApp
+                </a>
+
+                <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', margin: '2px 0', lineHeight: 1.4 }}>
+                  Message us on WhatsApp — we'll set up your account and help you get started.
+                </p>
+
+                {/* Divider */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '4px 0' }}>
+                  <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+                  <span style={{ fontSize: 11, color: '#c0c5d0', fontWeight: 500 }}>other options</span>
+                  <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+                </div>
+
+                {/* Phone OTP */}
+                <button onClick={() => { setMode('phone'); setError(''); }}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    width: '100%', padding: '12px 16px', borderRadius: 12,
+                    background: '#f8fafc', color: '#1a2744', fontWeight: 600, fontSize: 14,
+                    border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#f1f5f9')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#f8fafc')}>
+                  <Phone size={17} />
+                  Sign up with Phone Number
+                </button>
+
+                {/* Email login */}
+                <button onClick={() => { setMode('email-login'); setError(''); }}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    width: '100%', padding: '12px 16px', borderRadius: 12,
+                    background: '#f8fafc', color: '#1a2744', fontWeight: 600, fontSize: 14,
+                    border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#f1f5f9')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#f8fafc')}>
+                  <Mail size={17} />
+                  Sign in with Email
+                </button>
+              </div>
+            )}
+
+            {/* ══ Phone input ══ */}
+            {mode === 'phone' && (
+              <>
+                <button type="button" onClick={() => { setMode('main'); setError(''); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', marginBottom: 16 }}>
+                  <ArrowLeft size={14} /> Back
+                </button>
+                <form onSubmit={handleSendOtp} className="space-y-4">
+                  <Input label="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Your name (optional)" />
+                  <Input label="Phone Number" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="01XXX XXXXXX" required autoFocus />
+                  {error && <div style={{ fontSize: 13, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '10px 14px', borderRadius: 10 }}>{error}</div>}
+                  <Button type="submit" loading={loading} className="w-full" size="lg">Send Verification Code</Button>
+                </form>
+              </>
+            )}
+
+            {/* ══ OTP verify ══ */}
+            {mode === 'otp' && (
+              <>
+                <button type="button" onClick={() => { setMode('phone'); setError(''); setOtp(''); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', marginBottom: 16 }}>
+                  <ArrowLeft size={14} /> Change number
+                </button>
+                <form onSubmit={handleVerifyOtp} className="space-y-4">
+                  <div>
+                    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#475569', marginBottom: 6 }}>Verification Code</label>
+                    <input ref={otpRef} type="text" inputMode="numeric" maxLength={6}
+                      value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+                      placeholder="000000"
+                      style={{
+                        width: '100%', padding: '14px 16px', background: '#f8fafc', border: '1px solid #e2e8f0',
+                        borderRadius: 12, textAlign: 'center', fontSize: 24, fontFamily: 'monospace',
+                        letterSpacing: '0.3em', outline: 'none',
+                      }} />
+                  </div>
+                  {error && <div style={{ fontSize: 13, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '10px 14px', borderRadius: 10 }}>{error}</div>}
+                  <button type="submit" disabled={loading || otp.length < 6}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      padding: '14px', borderRadius: 12, border: 'none', cursor: 'pointer',
+                      background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', color: '#fff',
+                      fontWeight: 600, fontSize: 15, opacity: loading || otp.length < 6 ? 0.5 : 1,
+                    }}>
+                    {loading ? <Loader2 size={18} className="animate-spin" /> : 'Verify & Create Account'}
+                  </button>
+                  <button type="button" onClick={() => { setError(''); handleSendOtp(new Event('click') as any); }}
+                    style={{ width: '100%', textAlign: 'center', fontSize: 13, color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+                    Resend code
+                  </button>
+                </form>
+              </>
+            )}
+
+            {/* ══ Email login ══ */}
+            {mode === 'email-login' && (
+              <>
+                <button type="button" onClick={() => { setMode('main'); setError(''); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', marginBottom: 16 }}>
+                  <ArrowLeft size={14} /> Back
+                </button>
+                <form onSubmit={handleEmailSubmit} className="space-y-4">
+                  <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required autoFocus />
+                  <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" required minLength={6} />
+                  {error && <div style={{ fontSize: 13, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '10px 14px', borderRadius: 10 }}>{error}</div>}
+                  <Button type="submit" loading={loading} className="w-full" size="lg">Sign In</Button>
+                </form>
+                <div style={{ textAlign: 'center', marginTop: 16 }}>
+                  <button type="button" onClick={() => { setMode('email-register'); setError(''); }}
+                    style={{ fontSize: 14, fontWeight: 500, color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    Don't have an account? Sign up with email
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* ══ Email register ══ */}
+            {mode === 'email-register' && (
+              <>
+                <button type="button" onClick={() => { setMode('main'); setError(''); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', marginBottom: 16 }}>
+                  <ArrowLeft size={14} /> Back
+                </button>
+                <form onSubmit={handleEmailSubmit} className="space-y-4">
                   <Input label="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Enter your full name" required />
                   <Input label="Phone Number" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+880 1XXX XXXXXX" />
-                </>
-              )}
-              <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
-              <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" required minLength={6} />
-
-              {error && (
-                <div style={{ fontSize: 13, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '10px 14px', borderRadius: 10 }}>{error}</div>
-              )}
-
-              <Button type="submit" loading={loading} className="w-full" size="lg">
-                {mode === 'login' ? 'Sign In' : 'Create Account'}
-              </Button>
-            </form>
-
-            <div style={{ textAlign: 'center', marginTop: 20 }}>
-              <button
-                type="button"
-                onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}
-                style={{ fontSize: 14, fontWeight: 500, color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer' }}
-              >
-                {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-              </button>
-            </div>
+                  <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
+                  <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" required minLength={6} />
+                  {error && <div style={{ fontSize: 13, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '10px 14px', borderRadius: 10 }}>{error}</div>}
+                  <Button type="submit" loading={loading} className="w-full" size="lg">Create Account</Button>
+                </form>
+                <div style={{ textAlign: 'center', marginTop: 16 }}>
+                  <button type="button" onClick={() => { setMode('email-login'); setError(''); }}
+                    style={{ fontSize: 14, fontWeight: 500, color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    Already have an account? Sign in
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Skip link */}
+          {/* Skip */}
           <div style={{ textAlign: 'center', marginTop: 16 }}>
             <Link to="/dashboard" style={{ fontSize: 14, fontWeight: 500, color: '#64748b', textDecoration: 'none' }}>
               Skip — continue as guest

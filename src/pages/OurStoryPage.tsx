@@ -47,8 +47,8 @@ const milestones = [
   },
   {
     year: 'Rise',
-    title: 'Capital Market Hero',
-    desc: 'Recognized as "পুঁজিবাজার হিরো" — featured in national publications, invited to speak at capital market conferences.',
+    title: 'Capital Market Pioneer',
+    desc: 'Recognized as "পুঁজিবাজার অগ্রদূত" — featured in national publications, invited to speak at capital market conferences.',
     icon: Award,
     color: 'text-purple',
     bg: 'bg-purple/15',
@@ -73,8 +73,8 @@ const milestones = [
     border: 'border-info/30',
   },
   {
-    year: 'Hero',
-    title: 'From Zero to Hero',
+    year: 'Launch',
+    title: 'Full Platform Launch',
     desc: 'Full DSE & CSE integration, BRAC Bank digital onboarding, AI-driven analytics, and a growing community of investors.',
     icon: TrendingUp,
     color: 'text-warning',
@@ -95,7 +95,7 @@ const platformFeatures = [
   },
   {
     icon: CandlestickChart,
-    title: 'Hero Kite',
+    title: 'Abaci Trade',
     desc: 'Lightning-fast order placement, advanced charts, multi-timeframe analysis, and one-click trading.',
     highlight: '<1s',
     color: 'text-info',
@@ -103,7 +103,7 @@ const platformFeatures = [
   },
   {
     icon: GraduationCap,
-    title: 'Hero Varsity',
+    title: 'Abaci Academy',
     desc: 'The most comprehensive free stock market education platform in Bangladesh. Bengali & English.',
     highlight: '50+',
     color: 'text-warning',
@@ -119,7 +119,7 @@ const platformFeatures = [
   },
   {
     icon: Bell,
-    title: 'Hero Sentinel',
+    title: 'Abaci Sentinel',
     desc: 'Intelligent price alerts via push, SMS, or email. Never miss an opportunity.',
     highlight: '24/7',
     color: 'text-danger',
@@ -127,7 +127,7 @@ const platformFeatures = [
   },
   {
     icon: Wallet,
-    title: 'Hero Console',
+    title: 'Abaci Console',
     desc: 'Detailed P&L reports, tax statements, trade journal, dividend tracking, and portfolio health score.',
     highlight: '360°',
     color: 'text-info',
@@ -205,18 +205,18 @@ export function OurStoryPage() {
         </div>
       </nav>
 
-      {/* ── Hero Section ───────────────────────────────────── */}
+      {/* ── Banner Section ──────────────────────────────────── */}
       <section className="relative pt-28 sm:pt-36 pb-14 sm:pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto text-center animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-5">
             <Award size={13} />
-            পুঁজিবাজার হিরো &mdash; Capital Market Hero
+            পুঁজিবাজার অগ্রদূত &mdash; Capital Market Pioneer
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
-            From Zero
+            From Vision
             <br />
             <span className="bg-gradient-to-r from-info via-purple to-primary bg-clip-text text-transparent">
-              To Hero
+              To Reality
             </span>
           </h1>
           <p className="mt-4 text-muted text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
@@ -255,7 +255,7 @@ export function OurStoryPage() {
               </p>
               <p>
                 His dedication earned him the title
-                <strong className="text-info"> "পুঁজিবাজার হিরো"</strong>. He founded
+                <strong className="text-info"> "পুঁজিবাজার অগ্রদূত"</strong>. He founded
                 <strong className="text-info"> Abaci Investments</strong> — zero brokerage, Kite-style trading,
                 Varsity-inspired education, AI-powered signals, and seamless BRAC Bank onboarding — all in
                 one platform that rivals anything in the world.
@@ -307,7 +307,7 @@ export function OurStoryPage() {
               <Rocket size={13} />
               Inspired by Zerodha &mdash; Built for Bangladesh
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold">The Hero Ecosystem</h2>
+            <h2 className="text-xl sm:text-2xl font-bold">The Abaci Ecosystem</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -465,11 +465,11 @@ export function OurStoryPage() {
               <div>
                 <h3 className="font-bold text-base sm:text-lg">Abul Khayer</h3>
                 <p className="text-info text-xs font-medium">Founder & CEO</p>
-                <p className="text-primary/70 text-[10px] font-medium mt-0.5">পুঁজিবাজার হিরো — Capital Market Hero</p>
+                <p className="text-primary/70 text-[10px] font-medium mt-0.5">পুঁজিবাজার অগ্রদূত — Capital Market Pioneer</p>
               </div>
             </div>
             <p className="text-muted text-xs sm:text-sm leading-relaxed">
-              From zero to hero — Abul Khayer started with nothing but a vision to transform Bangladesh's capital market.
+              From vision to reality — Abul Khayer started with nothing but a vision to transform Bangladesh's capital market.
               Featured in national publications, connected with global fintech leaders, he founded Abaci Investments to give
               every Bangladeshi investor access to world-class trading tools.
             </p>

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { TopNav } from './Sidebar';
 import { DemoModeBanner } from './DemoModeBanner';
+import { WhatsAppFab } from './WhatsAppFab';
 import { CoachingOverlay } from '@/components/coaching/CoachingOverlay';
 import { LeadCaptureModal } from '@/components/ui/LeadCaptureModal';
 import { trackPageView, getVisitor } from '@/services/visitorTracker';
@@ -24,6 +25,7 @@ export function AppLayout() {
       </main>
       <CoachingOverlay />
       <LeadCaptureModal />
+      <WhatsAppFab />
     </div>
   );
 }

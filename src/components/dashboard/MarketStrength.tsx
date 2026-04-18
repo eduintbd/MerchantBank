@@ -51,7 +51,7 @@ export function MarketStrength({ stats }: Props) {
 
   return (
     <Card className="flex flex-col">
-      <h3 className="text-sm font-semibold tracking-wide">Hero&apos;s Strength</h3>
+      <h3 className="text-sm font-semibold tracking-wide">Market Strength</h3>
 
       <div className="flex-1 flex items-center justify-center mt-2">
         <div className="relative w-[190px] h-[190px] sm:w-[210px] sm:h-[210px]">

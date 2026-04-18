@@ -156,7 +156,7 @@ export function usePortfolio(userId?: string) {
       const id = userId || user?.id;
       if (!id) return emptyPortfolio;
 
-      // Fetch portfolio holdings from Hero Supabase
+      // Fetch portfolio holdings from Supabase
       const { data, error } = await supabase
         .from('portfolio')
         .select('*')

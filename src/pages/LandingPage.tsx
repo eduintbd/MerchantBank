@@ -45,7 +45,7 @@ const FEATURES = [
     desc: 'Track your virtual holdings with real-time DSE prices. See unrealized/realized P&L, sector allocation, average cost, and position breakdowns — just like a real brokerage account.',
   },
   {
-    icon: GraduationCap, title: 'Hero Academy — 5 Courses, 20 Lessons',
+    icon: GraduationCap, title: 'Abaci Academy — 5 Courses, 20 Lessons',
     desc: 'Structured courses on stock market basics, DSE indices, technical analysis (RSI, MACD, candlesticks), fundamental analysis (EPS, P/E, NAV), and risk management.',
   },
   {
@@ -65,7 +65,7 @@ const STEPS = [
   },
   {
     num: '02', title: 'Learn & Practice',
-    desc: 'Complete Hero Academy courses to understand how the DSE works. Place demo trades, study your portfolio, and run end-of-day simulations.',
+    desc: 'Complete Abaci Academy courses to understand how the DSE works. Place demo trades, study your portfolio, and run end-of-day simulations.',
   },
   {
     num: '03', title: 'Build Readiness',
@@ -324,7 +324,7 @@ export function LandingPage() {
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 14 }}>
               <GraduationCap size={18} color={T.accent} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Hero Academy</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Abaci Academy</span>
             </div>
             <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 700, color: T.title, margin: '0 0 14px' }}>5 Courses. 20 Lessons. Completely Free.</h2>
             <p style={{ fontSize: 16, color: T.titleSub, maxWidth: 520, margin: '0 auto' }}>Structured education on the Bangladesh stock market — from absolute beginner to informed investor.</p>
@@ -404,7 +404,7 @@ export function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px 20px', marginBottom: 36 }} className="sm:!grid-cols-4 sm:!gap-x-24">
             {[
               { title: 'Platform', links: [{ label: 'Dashboard', href: '/dashboard' }, { label: 'Demo Trading', href: '/demo/trading' }, { label: 'Portfolio', href: '/demo/portfolio' }] },
-              { title: 'Learn', links: [{ label: 'Hero Academy', href: '/learning' }, { label: 'Market Data', href: '/market' }, { label: 'EOD Replay', href: '/demo/eod' }] },
+              { title: 'Learn', links: [{ label: 'Abaci Academy', href: '/learning' }, { label: 'Market Data', href: '/market' }, { label: 'EOD Replay', href: '/demo/eod' }] },
               { title: 'Tools', links: [{ label: 'Cash Ledger', href: '/demo/ledger' }, { label: 'Reports', href: '/demo/reports' }, { label: 'Halal Stocks', href: '/halal' }] },
               { title: 'More', links: [{ label: 'DSE History', href: '/market-history' }, { label: 'BSEC Rules', href: '/bsec-rules' }, { label: 'Investor Bios', href: '/trader-bios' }] },
             ].map(col => (

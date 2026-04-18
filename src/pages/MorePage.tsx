@@ -13,7 +13,7 @@ const moreItems = [
   { to: '/social', icon: Activity, label: 'Social Feed', desc: 'Discuss stocks with investors', color: 'text-info', bg: 'bg-info/10' },
   { to: '/bsec-rules', icon: ShieldCheck, label: 'BSEC Rules', desc: 'Regulations & compliance', color: 'text-danger', bg: 'bg-danger/10' },
   { to: '/trader-bios', icon: BookOpen, label: 'Trader Bios', desc: 'Legendary investor profiles', color: 'text-gold', bg: 'bg-warning/10' },
-  { to: '/zero-to-hero', icon: Zap, label: 'Zero to Hero', desc: 'Gamified learning journey', color: 'text-warning', bg: 'bg-warning/10' },
+  { to: '/investor-journey', icon: Zap, label: 'Investor Journey', desc: 'Gamified learning journey', color: 'text-warning', bg: 'bg-warning/10' },
   { to: '/investors', icon: Trophy, label: 'Top Investors', desc: 'Leaderboard & profiles', color: 'text-success', bg: 'bg-success/10' },
   { to: '/finance', icon: Wallet, label: 'Finance Tracker', desc: 'Track income & expenses', color: 'text-info', bg: 'bg-info/10' },
   { to: '/portfolio/analysis', icon: PieChart, label: 'Portfolio Analysis', desc: 'Risk & diversification tools', color: 'text-purple', bg: 'bg-purple/10' },

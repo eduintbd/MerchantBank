@@ -30,11 +30,10 @@ const IpoPage = lazy(() => import('@/pages/IpoPage').then(m => ({ default: m.Ipo
 const StockDetailPage = lazy(() => import('@/pages/StockDetailPage').then(m => ({ default: m.StockDetailPage })));
 const FinanceTrackerPage = lazy(() => import('@/pages/FinanceTrackerPage').then(m => ({ default: m.FinanceTrackerPage })));
 const TopInvestorsPage = lazy(() => import('@/pages/TopInvestorsPage').then(m => ({ default: m.TopInvestorsPage })));
-const ZeroToHeroPage = lazy(() => import('@/pages/ZeroToHeroPage').then(m => ({ default: m.ZeroToHeroPage })));
+const InvestorJourneyPage = lazy(() => import('@/pages/InvestorJourneyPage').then(m => ({ default: m.InvestorJourneyPage })));
 const MorePage = lazy(() => import('@/pages/MorePage').then(m => ({ default: m.MorePage })));
 const PortfolioAnalysisPage = lazy(() => import('@/pages/PortfolioAnalysisPage').then(m => ({ default: m.PortfolioAnalysisPage })));
 const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
-const MarketPage = lazy(() => import('@/pages/MarketPage').then(m => ({ default: m.MarketPage })));
 
 // Demo Trading + Learning pages
 const OnboardingPage = lazy(() => import('@/pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })));
@@ -128,7 +127,7 @@ function AppRoutes() {
         <Route path="/stock/:symbol" element={<Suspense fallback={<PageLoader />}><StockDetailPage /></Suspense>} />
         <Route path="/finance" element={<Suspense fallback={<PageLoader />}><FinanceTrackerPage /></Suspense>} />
         <Route path="/investors" element={<Suspense fallback={<PageLoader />}><TopInvestorsPage /></Suspense>} />
-        <Route path="/zero-to-hero" element={<Suspense fallback={<PageLoader />}><ZeroToHeroPage /></Suspense>} />
+        <Route path="/investor-journey" element={<Suspense fallback={<PageLoader />}><InvestorJourneyPage /></Suspense>} />
         <Route path="/more" element={<Suspense fallback={<PageLoader />}><MorePage /></Suspense>} />
         <Route path="/portfolio/analysis" element={<Suspense fallback={<PageLoader />}><PortfolioAnalysisPage /></Suspense>} />
         <Route path="/notifications/settings" element={<Suspense fallback={<PageLoader />}><NotificationSettingsPage /></Suspense>} />

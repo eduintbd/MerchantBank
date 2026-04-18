@@ -8,10 +8,10 @@ const MILESTONES = [
   { level: 2, title: 'Learner', description: 'Complete basic courses and make first trade', xpRequired: 100, icon: Target, color: 'text-info', bg: 'bg-info/10' },
   { level: 3, title: 'Trader', description: 'Build a diversified portfolio', xpRequired: 500, icon: Award, color: 'text-warning', bg: 'bg-warning/10' },
   { level: 4, title: 'Expert', description: 'Consistent returns and community contribution', xpRequired: 1500, icon: Shield, color: 'text-success', bg: 'bg-success/10' },
-  { level: 5, title: 'Hero', description: 'Master investor with proven track record', xpRequired: 5000, icon: Crown, color: 'text-yellow-600', bg: 'bg-yellow-50' },
+  { level: 5, title: 'Champion', description: 'Master investor with proven track record', xpRequired: 5000, icon: Crown, color: 'text-yellow-600', bg: 'bg-yellow-50' },
 ];
 
-export function ZeroToHeroPage() {
+export function InvestorJourneyPage() {
   const { data: userXp } = useUserXp();
   const { data: achievements } = useAchievements();
   const { data: leaderboard } = useLeaderboard();
@@ -31,7 +31,7 @@ export function ZeroToHeroPage() {
       <div style={{ maxWidth: 1400, margin: '0 auto' }} className="px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Zero to Hero</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">Investor Journey</h1>
         <p className="text-muted text-sm sm:text-base mt-1">Your investment learning journey</p>
       </div>
 
