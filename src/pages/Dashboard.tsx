@@ -15,6 +15,7 @@ import {
   Clock, Globe, Flame, Volume2,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { GlobalMarketsBar, CommoditiesAndForex, MarketNewsFeed, EnhancedSectorHeatmap, StockHeatmap, DseMarketSummary } from '@/components/dashboard/EnhancedSections';
 
 /* ─── Clean Palette Constants (Groww-inspired) ─── */
 const GREEN = '#00b386';
@@ -630,20 +631,31 @@ export function Dashboard() {
             {isMarketOpen ? 'Market Open' : 'Market Closed'}
           </div>
 
-          {/* 3. Index Cards */}
+          {/* 3. DSE Index Cards */}
           {marketLoading ? (
             <div className="rounded-2xl h-44" style={{ background: SURFACE }} />
           ) : market && (
             <IndexOverview indices={market.indices} stats={market.stats} isMarketOpen={isMarketOpen} lastUpdated={market.lastUpdated} />
           )}
 
-          {/* 4. Key Stats Row */}
-          {market && <KeyStatsRow stats={market.stats} />}
+          {/* 4. DSE Market Summary + Key Stats */}
+          {market && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <DseMarketSummary stats={market.stats} />
+              <KeyStatsRow stats={market.stats} />
+            </div>
+          )}
 
-          {/* 5. Market Breadth + Sentiment */}
+          {/* 5. Global Markets Overview */}
+          <GlobalMarketsBar />
+
+          {/* 6. Commodities & Forex */}
+          <CommoditiesAndForex />
+
+          {/* 7. Market Breadth + Sentiment */}
           {market && <MarketBreadth stats={market.stats} />}
 
-          {/* 6. Portfolio Overview (only if user has data) */}
+          {/* 8. Portfolio Overview (only if user has data) */}
           {hasPortfolio && (
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -656,7 +668,13 @@ export function Dashboard() {
             </div>
           )}
 
-          {/* 7. Top Movers */}
+          {/* 9. Sector Heatmap */}
+          <EnhancedSectorHeatmap />
+
+          {/* 10. Market Heatmap (stock-level treemap) */}
+          {market && <StockHeatmap prices={market.livePrices} />}
+
+          {/* 11. Top Movers */}
           {market && (
             <div>
               <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Top Movers</h2>
@@ -664,7 +682,13 @@ export function Dashboard() {
             </div>
           )}
 
-          {/* 8. All Stocks Table */}
+          {/* 12. Market News Feed */}
+          <div>
+            <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Market News & Insights</h2>
+            <MarketNewsFeed />
+          </div>
+
+          {/* 13. All Stocks Table */}
           {market && (
             <div>
               <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>All Stocks</h2>
@@ -672,7 +696,7 @@ export function Dashboard() {
             </div>
           )}
 
-          {/* 9. Quick Action Cards */}
+          {/* 14. Quick Action Cards */}
           <div>
             <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Quick Actions</h2>
             <QuickActions />
