@@ -64,11 +64,11 @@ function LoadingScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#fafbfd]">
       <div className="text-center animate-fade-in">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1a2744] to-[#2a3f6b] flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <span className="text-[#c9a96e] font-bold text-2xl">A</span>
+        <div className="w-16 h-16 rounded-full bg-[#00b386] flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <span className="text-white font-bold text-2xl">A</span>
         </div>
-        <div className="w-6 h-6 border-2 border-[#c9a96e] border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-[11px] text-[#9ba3b5] mt-3 font-medium tracking-wide">LOADING</p>
+        <div className="w-6 h-6 border-2 border-[#00b386] border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-[11px] text-[#a1a3ad] mt-3 font-medium tracking-wide">LOADING</p>
       </div>
     </div>
   );

@@ -9,12 +9,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: 'bg-gradient-to-r from-[#1a2744] to-[#2a3f6b] text-white shadow-sm shadow-[#1a2744]/15 hover:shadow-md hover:shadow-[#1a2744]/20 hover:brightness-110 active:brightness-95',
-  secondary: 'bg-white border border-[#e1e5ee] text-[#2d3348] hover:bg-[#f0f2f7] hover:border-[#c9a96e]/30 shadow-[0_1px_2px_rgba(26,33,56,0.04)]',
-  danger: 'bg-[#c53030]/8 text-[#c53030] border border-[#c53030]/15 hover:bg-[#c53030]/15',
-  ghost: 'text-[#7c8498] hover:text-[#2d3348] hover:bg-[#f0f2f7]',
-  success: 'bg-[#0d9b5c]/8 text-[#0d9b5c] border border-[#0d9b5c]/15 hover:bg-[#0d9b5c]/15',
-  gold: 'bg-gradient-to-r from-[#c9a96e] to-[#dcc18e] text-[#1a2744] shadow-sm hover:shadow-md font-bold',
+  primary: 'bg-[#00b386] text-white shadow-sm shadow-[#00b386]/15 hover:bg-[#00a87d] hover:shadow-md active:bg-[#009973]',
+  secondary: 'bg-white border border-[#e9e9eb] text-[#44475b] hover:bg-[#f8f8f8] hover:border-[#c7c8ce] shadow-[0_1px_2px_rgba(0,0,0,0.04)]',
+  danger: 'bg-[#eb5b3c]/8 text-[#eb5b3c] border border-[#eb5b3c]/15 hover:bg-[#eb5b3c]/15',
+  ghost: 'text-[#7c7e8c] hover:text-[#44475b] hover:bg-[#f8f8f8]',
+  success: 'bg-[#00b386]/8 text-[#00b386] border border-[#00b386]/15 hover:bg-[#00b386]/15',
+  gold: 'bg-[#00b386] text-white shadow-sm hover:bg-[#00a87d] hover:shadow-md font-bold',
 };
 
 const sizes = {
@@ -36,8 +36,8 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a96e]/40 focus-visible:ring-offset-1',
+        'inline-flex items-center justify-center font-semibold rounded-full transition-all duration-200',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00b386]/40 focus-visible:ring-offset-1',
         'hover:scale-[1.01] active:scale-[0.99]',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100',
         variants[variant],

@@ -6,27 +6,30 @@ import {
   Menu, X, AlertTriangle, Brain, Target, Layers,
 } from 'lucide-react';
 
-/* ─── Design tokens ─── */
+/* ─── Design tokens (Groww-inspired) ─── */
 const T = {
   bg:        '#ffffff',
-  bgLight:   '#f8f9fb',
+  bgLight:   '#f8f8f8',
   bgCard:    'rgba(255,255,255,0.85)',
-  accent:    '#05a003',
-  accentDim: 'rgba(5,160,3,0.08)',
-  blue:      '#2563eb',
+  accent:    '#00b386',
+  accentDim: 'rgba(0,179,134,0.08)',
+  accentHover: '#00a87d',
+  blue:      '#5367ff',
   amber:     '#d97706',
   amberBg:   '#fffbeb',
   amberBorder: '#fde68a',
   white:     '#ffffff',
-  title:     '#111827',
-  titleSub:  '#6b7280',
-  text:      '#374151',
-  border:    'rgba(0,0,0,0.08)',
-  fontTitle: "'Ubuntu', sans-serif",
+  title:     '#121212',
+  titleSub:  '#7c7e8c',
+  text:      '#44475b',
+  border:    '#e9e9eb',
+  borderLight: '#f0f0f2',
+  fontTitle: "'Inter', sans-serif",
   fontBody:  "'Inter', sans-serif",
   fontMono:  "'JetBrains Mono', monospace",
   radius:    16,
   radiusSm:  10,
+  radiusPill: 99,
 };
 
 const NAV_LINKS = [
@@ -94,13 +97,13 @@ export function LandingPage() {
       <header style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
         background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: `1px solid ${T.border}`, boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        borderBottom: `1px solid ${T.border}`,
       }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 40, height: 40, borderRadius: T.radiusSm, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 18 }}>A</span></div>
+            <div style={{ width: 40, height: 40, borderRadius: '50%', background: T.accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: T.white, fontWeight: 700, fontSize: 18 }}>A</span></div>
             <div>
-              <div style={{ fontFamily: T.fontTitle, fontWeight: 700, color: T.title, fontSize: 16, lineHeight: 1.2 }}>Abaci Investments</div>
+              <div style={{ fontFamily: T.fontTitle, fontWeight: 600, color: T.title, fontSize: 16, lineHeight: 1.2 }}>Abaci Investments</div>
               <div style={{ fontSize: 10, color: T.amber, fontWeight: 600, lineHeight: 1 }}>Demo Trading & Learning</div>
             </div>
           </div>
@@ -116,16 +119,16 @@ export function LandingPage() {
           </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Link to="/market" className="hidden sm:block" style={{ padding: '8px 16px', fontSize: 14, fontWeight: 500, color: T.titleSub, textDecoration: 'none', borderRadius: T.radiusSm }}>
+            <Link to="/market" className="hidden sm:block" style={{ padding: '8px 16px', fontSize: 14, fontWeight: 500, color: T.titleSub, textDecoration: 'none', borderRadius: T.radiusPill }}>
               Market Data
             </Link>
             <Link to="/dashboard" className="hidden sm:flex" style={{
-              padding: '10px 20px', fontSize: 13, fontWeight: 600, color: T.white,
-              background: T.accent, borderRadius: T.radiusSm, textDecoration: 'none',
-              display: 'flex', alignItems: 'center', gap: 6, transition: 'opacity .3s', whiteSpace: 'nowrap',
+              padding: '10px 22px', fontSize: 13, fontWeight: 600, color: T.white,
+              background: T.accent, borderRadius: T.radiusPill, textDecoration: 'none',
+              display: 'flex', alignItems: 'center', gap: 6, transition: 'background .3s', whiteSpace: 'nowrap',
             }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+              onMouseEnter={e => (e.currentTarget.style.background = T.accentHover)}
+              onMouseLeave={e => (e.currentTarget.style.background = T.accent)}>
               Go to Dashboard <ArrowRight size={14} />
             </Link>
             <button onClick={() => setMobileNav(!mobileNav)} className="md:hidden"
@@ -140,16 +143,16 @@ export function LandingPage() {
             <nav style={{ display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
               {NAV_LINKS.map(l => (
                 <a key={l.href} href={l.href} onClick={() => setMobileNav(false)}
-                  style={{ padding: '14px 20px', fontSize: 15, fontWeight: 500, color: T.titleSub, textDecoration: 'none', borderBottom: `1px solid ${T.border}` }}>
+                  style={{ padding: '14px 20px', fontSize: 15, fontWeight: 500, color: T.titleSub, textDecoration: 'none', borderBottom: `1px solid ${T.borderLight}` }}>
                   {l.label}
                 </a>
               ))}
             </nav>
             <div style={{ padding: '12px 16px 16px', display: 'flex', gap: 10, borderTop: `1px solid ${T.border}` }}>
-              <Link to="/market" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.titleSub, background: T.bg, border: `1px solid ${T.border}`, borderRadius: T.radiusSm, textDecoration: 'none', textAlign: 'center' }}>
+              <Link to="/market" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.titleSub, background: T.bg, border: `1px solid ${T.border}`, borderRadius: T.radiusPill, textDecoration: 'none', textAlign: 'center' }}>
                 Market Data
               </Link>
-              <Link to="/dashboard" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.white, background: T.accent, borderRadius: T.radiusSm, textDecoration: 'none', textAlign: 'center' }}>
+              <Link to="/dashboard" onClick={() => setMobileNav(false)} style={{ flex: 1, padding: '12px 0', fontSize: 14, fontWeight: 600, color: T.white, background: T.accent, borderRadius: T.radiusPill, textDecoration: 'none', textAlign: 'center' }}>
                 Dashboard
               </Link>
             </div>
@@ -179,20 +182,13 @@ export function LandingPage() {
       {/* ══════════ HERO ══════════ */}
       <section style={{
         minHeight: 'calc(100vh - 120px)', display: 'flex', alignItems: 'center',
-        background: `linear-gradient(170deg, ${T.bg} 0%, ${T.bgLight} 100%)`,
+        background: T.bg,
         position: 'relative',
       }}>
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          width: 300, height: 300, borderRadius: 60, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.03, zIndex: 0, pointerEvents: 'none',
-        }}>
-          <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 160 }}>A</span>
-        </div>
-
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto', position: 'relative', zIndex: 2 }} className="py-8 sm:py-12 lg:py-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 16px', borderRadius: 999, background: 'rgba(217, 119, 6, 0.1)', border: '1px solid rgba(217, 119, 6, 0.25)', marginBottom: 28 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 16px', borderRadius: T.radiusPill, background: 'rgba(217, 119, 6, 0.1)', border: '1px solid rgba(217, 119, 6, 0.25)', marginBottom: 28 }}>
                 <Shield size={13} color={T.amber} />
                 <span style={{ fontSize: 12, fontWeight: 600, color: T.amber }}>Demo Platform — No Real Money</span>
               </div>
@@ -211,20 +207,20 @@ export function LandingPage() {
               <div style={{ marginTop: 28 }} className="flex flex-col sm:flex-row flex-wrap gap-3">
                 <Link to="/dashboard" style={{
                   padding: '14px 30px', fontSize: 15, fontWeight: 700, color: T.white,
-                  background: T.accent, borderRadius: 12, textDecoration: 'none',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'opacity .3s',
+                  background: T.accent, borderRadius: T.radiusPill, textDecoration: 'none',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'background .3s',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+                  onMouseEnter={e => (e.currentTarget.style.background = T.accentHover)}
+                  onMouseLeave={e => (e.currentTarget.style.background = T.accent)}>
                   Start Demo Trading <ArrowRight size={16} />
                 </Link>
                 <Link to="/learning" style={{
                   padding: '14px 30px', fontSize: 15, fontWeight: 600, color: T.titleSub,
-                  background: 'rgba(0,0,0,0.03)', border: `1px solid ${T.border}`,
-                  borderRadius: 12, textDecoration: 'none',
+                  background: 'transparent', border: `1px solid ${T.border}`,
+                  borderRadius: T.radiusPill, textDecoration: 'none',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'border-color .3s',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)')}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = '#b0b2ba')}
                   onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}>
                   <GraduationCap size={16} /> Explore Academy
                 </Link>
@@ -242,12 +238,12 @@ export function LandingPage() {
 
             {/* Right: Logo + highlights */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-              <div className="w-32 sm:w-40 lg:w-48 aspect-square" style={{ borderRadius: 32, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 16px 40px rgba(26,39,68,0.25)' }}>
-                <span style={{ color: '#c9a96e', fontWeight: 800, fontSize: '4rem' }}>A</span>
+              <div className="w-32 sm:w-40 lg:w-48 aspect-square" style={{ borderRadius: '50%', background: T.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 16px 40px rgba(0,179,134,0.25)' }}>
+                <span style={{ color: T.white, fontWeight: 800, fontSize: '4rem' }}>A</span>
               </div>
 
-              <div style={{ width: '100%', background: T.bgCard, borderRadius: 20, padding: 20, border: `1px solid ${T.border}`, boxShadow: '0 10px 40px rgba(0,0,0,0.04)' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.titleSub, marginBottom: 16 }}>What You'll Learn</div>
+              <div style={{ width: '100%', background: T.bgCard, borderRadius: 20, padding: 20, border: `1px solid ${T.border}`, boxShadow: '0 4px 12px rgba(0,0,0,0.06)' }}>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.titleSub, marginBottom: 16 }}>What You'll Learn</div>
                 {[
                   { icon: BarChart3, text: 'How DSE indices (DSEX, DSES, DS30) work' },
                   { icon: TrendingUp, text: 'Market & limit orders, order lifecycle' },
@@ -255,8 +251,8 @@ export function LandingPage() {
                   { icon: Target, text: 'Technical indicators: RSI, MACD, candlesticks' },
                   { icon: Layers, text: 'Position sizing, stop-loss, diversification' },
                 ].map(item => (
-                  <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: `1px solid ${T.border}` }}>
-                    <div style={{ width: 32, height: 32, borderRadius: 8, background: T.accentDim, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: `1px solid ${T.borderLight}` }}>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: T.accentDim, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <item.icon size={14} color={T.accent} />
                     </div>
                     <span style={{ fontSize: 13, color: T.text, fontWeight: 500 }}>{item.text}</span>
@@ -272,22 +268,22 @@ export function LandingPage() {
       <section id="features" style={{ padding: 'clamp(56px, 8vw, 96px) 0', background: T.bgLight }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>Platform Features</div>
+            <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>Platform Features</div>
             <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 700, color: T.title, margin: '0 0 14px' }}>Everything you need to learn trading</h2>
             <p style={{ fontSize: 16, color: T.titleSub, maxWidth: 520, margin: '0 auto' }}>A complete simulated brokerage environment for Bangladesh stock market education.</p>
           </div>
           <div style={{ display: 'grid', gap: 16 }} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map(f => (
               <div key={f.title} style={{
-                background: T.bgCard, borderRadius: 18, padding: '28px',
-                border: `1px solid ${T.border}`, transition: 'border-color .3s, transform .3s',
+                background: T.bgCard, borderRadius: 20, padding: '28px',
+                border: `1px solid ${T.border}`, transition: 'border-color .3s, transform .3s, box-shadow .3s',
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.15)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: T.accentDim, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#c7c8ce'; e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = T.border; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: T.accentDim, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
                   <f.icon size={20} color={T.accent} />
                 </div>
-                <h3 style={{ fontFamily: T.fontTitle, fontSize: 16, fontWeight: 700, color: T.title, margin: '0 0 8px' }}>{f.title}</h3>
+                <h3 style={{ fontFamily: T.fontTitle, fontSize: 16, fontWeight: 600, color: T.title, margin: '0 0 8px' }}>{f.title}</h3>
                 <p style={{ fontSize: 14, color: T.text, lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
               </div>
             ))}
@@ -299,7 +295,7 @@ export function LandingPage() {
       <section id="how" style={{ padding: 'clamp(56px, 8vw, 96px) 0', background: T.bg }}>
         <div style={{ width: '95%', maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>How It Works</div>
+            <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>How It Works</div>
             <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 700, color: T.title, margin: '0 0 14px' }}>Three steps to market literacy</h2>
           </div>
           <div style={{ display: 'grid', gap: 24 }} className="grid-cols-1 md:grid-cols-3">
@@ -310,7 +306,7 @@ export function LandingPage() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px',
                   fontFamily: T.fontMono, fontSize: 18, fontWeight: 800, color: T.accent,
                 }}>{s.num}</div>
-                <h3 style={{ fontFamily: T.fontTitle, fontSize: 18, fontWeight: 700, color: T.title, margin: '0 0 10px' }}>{s.title}</h3>
+                <h3 style={{ fontFamily: T.fontTitle, fontSize: 18, fontWeight: 600, color: T.title, margin: '0 0 10px' }}>{s.title}</h3>
                 <p style={{ fontSize: 14, color: T.text, lineHeight: 1.65 }}>{s.desc}</p>
               </div>
             ))}
@@ -324,7 +320,7 @@ export function LandingPage() {
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 14 }}>
               <GraduationCap size={18} color={T.accent} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Abaci Academy</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: T.accent, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Abaci Academy</span>
             </div>
             <h2 style={{ fontFamily: T.fontTitle, fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', fontWeight: 700, color: T.title, margin: '0 0 14px' }}>5 Courses. 20 Lessons. Completely Free.</h2>
             <p style={{ fontSize: 16, color: T.titleSub, maxWidth: 520, margin: '0 auto' }}>Structured education on the Bangladesh stock market — from absolute beginner to informed investor.</p>
@@ -332,16 +328,16 @@ export function LandingPage() {
           <div style={{ display: 'grid', gap: 16 }} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
             {COURSES.map(c => (
               <div key={c.title} style={{
-                background: T.bgCard, borderRadius: 16, padding: '24px 20px', textAlign: 'center',
-                border: `1px solid ${T.border}`, transition: 'transform .3s',
+                background: T.bgCard, borderRadius: 20, padding: '24px 20px', textAlign: 'center',
+                border: `1px solid ${T.border}`, transition: 'transform .3s, box-shadow .3s',
               }}
-                onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = 'translateY(0)')}>
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
                 <div style={{ fontSize: 32, marginBottom: 12 }}>{c.emoji}</div>
-                <h3 style={{ fontSize: 14, fontWeight: 700, color: T.title, margin: '0 0 6px' }}>{c.title}</h3>
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: T.title, margin: '0 0 6px' }}>{c.title}</h3>
                 <p style={{ fontSize: 12, color: T.titleSub, margin: '0 0 8px' }}>{c.lessons} lessons</p>
                 {c.required && (
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Required</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#eb5b3c', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Required</span>
                 )}
               </div>
             ))}
@@ -349,11 +345,11 @@ export function LandingPage() {
           <div style={{ textAlign: 'center', marginTop: 36 }}>
             <Link to="/learning" style={{
               padding: '14px 28px', background: T.accent, color: T.white,
-              fontWeight: 700, fontSize: 15, borderRadius: 12, textDecoration: 'none',
-              display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'opacity .3s',
+              fontWeight: 700, fontSize: 15, borderRadius: T.radiusPill, textDecoration: 'none',
+              display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'background .3s',
             }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+              onMouseEnter={e => (e.currentTarget.style.background = T.accentHover)}
+              onMouseLeave={e => (e.currentTarget.style.background = T.accent)}>
               Start Learning <ChevronRight size={16} />
             </Link>
           </div>
@@ -370,19 +366,19 @@ export function LandingPage() {
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
             <Link to="/dashboard" style={{
               padding: '14px 32px', fontSize: 15, fontWeight: 700, color: T.white,
-              background: T.accent, borderRadius: 12, textDecoration: 'none',
-              display: 'flex', alignItems: 'center', gap: 8, transition: 'opacity .3s',
+              background: T.accent, borderRadius: T.radiusPill, textDecoration: 'none',
+              display: 'flex', alignItems: 'center', gap: 8, transition: 'background .3s',
             }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
+              onMouseEnter={e => (e.currentTarget.style.background = T.accentHover)}
+              onMouseLeave={e => (e.currentTarget.style.background = T.accent)}>
               Start Demo Trading <ArrowRight size={16} />
             </Link>
             <Link to="/market" style={{
               padding: '14px 28px', fontSize: 15, fontWeight: 600, color: T.titleSub,
-              background: 'rgba(0,0,0,0.03)', border: `1px solid ${T.border}`,
-              borderRadius: 12, textDecoration: 'none', transition: 'border-color .3s',
+              background: 'transparent', border: `1px solid ${T.border}`,
+              borderRadius: T.radiusPill, textDecoration: 'none', transition: 'border-color .3s',
             }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)')}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = '#b0b2ba')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}>
               Browse Market Data
             </Link>
@@ -394,9 +390,9 @@ export function LandingPage() {
       <footer style={{ background: T.bgLight, padding: '56px 0 32px', borderTop: `1px solid ${T.border}` }}>
         <div style={{ width: '95%', maxWidth: 1320, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-            <div style={{ width: 36, height: 36, borderRadius: T.radiusSm, background: 'linear-gradient(135deg, #1a2744, #2a3f6b)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: '#c9a96e', fontWeight: 800, fontSize: 16 }}>A</span></div>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: T.accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ color: T.white, fontWeight: 700, fontSize: 16 }}>A</span></div>
             <div>
-              <div style={{ fontFamily: T.fontTitle, fontWeight: 700, fontSize: 15, color: T.title }}>Abaci Investments</div>
+              <div style={{ fontFamily: T.fontTitle, fontWeight: 600, fontSize: 15, color: T.title }}>Abaci Investments</div>
               <div style={{ fontSize: 10, color: T.amber, fontWeight: 600 }}>Demo Trading & Learning Platform</div>
             </div>
           </div>
@@ -409,7 +405,7 @@ export function LandingPage() {
               { title: 'More', links: [{ label: 'DSE History', href: '/market-history' }, { label: 'BSEC Rules', href: '/bsec-rules' }, { label: 'Investor Bios', href: '/trader-bios' }] },
             ].map(col => (
               <div key={col.title}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: T.titleSub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{col.title}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: T.titleSub, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{col.title}</div>
                 <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {col.links.map(l => (
                     <li key={l.label}>

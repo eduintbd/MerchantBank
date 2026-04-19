@@ -90,14 +90,21 @@ async function brokerFetch(
 }
 
 export class BrokerApiClientError extends Error {
+  code: string;
+  httpStatus: number;
+  details?: Record<string, unknown>;
+
   constructor(
-    public code: string,
+    code: string,
     message: string,
-    public httpStatus: number,
-    public details?: Record<string, unknown>
+    httpStatus: number,
+    details?: Record<string, unknown>
   ) {
     super(message);
     this.name = 'BrokerApiClientError';
+    this.code = code;
+    this.httpStatus = httpStatus;
+    this.details = details;
   }
 }
 

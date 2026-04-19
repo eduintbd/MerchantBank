@@ -16,41 +16,42 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
-/* ─── Premium Palette Constants ─── */
-const NAVY = '#1a2744';
-const GOLD = '#c9a96e';
-const SUCCESS = '#0d9b5c';
-const DANGER = '#c53030';
-const TEXT = '#2d3348';
-const MUTED = '#7c8498';
-const MUTED_LIGHT = '#9ba3b5';
-const BORDER = '#e1e5ee';
-const SURFACE = '#f0f2f7';
-const BG = '#fafbfd';
+/* ─── Clean Palette Constants (Groww-inspired) ─── */
+const GREEN = '#00b386';
+const GREEN_DARK = '#009973';
+const RED = '#eb5b3c';
+const TEXT_PRIMARY = '#121212';
+const TEXT = '#44475b';
+const MUTED = '#7c7e8c';
+const MUTED_LIGHT = '#a1a3ad';
+const BORDER = '#e9e9eb';
+const SURFACE = '#f8f8f8';
+const BG = '#ffffff';
+const BLUE = '#5367ff';
 
 /* ═══════════════════════════════════════════════════════════
-   1. PREMIUM STOCK TICKER
+   1. STOCK TICKER
    ═══════════════════════════════════════════════════════════ */
 function StockTicker({ prices }: { prices: LivePrice[] }) {
   const items = prices.slice(0, 30);
   if (!items.length) return null;
   return (
-    <div className="relative overflow-hidden" style={{ background: NAVY, borderBottom: `1px solid rgba(201,169,110,0.15)` }}>
+    <div className="relative overflow-hidden" style={{ background: TEXT_PRIMARY, borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
       <div className="flex animate-marquee whitespace-nowrap" style={{ padding: '8px 0' }}>
         {[...items, ...items].map((p, i) => (
           <Link key={`${p.symbol}-${i}`} to={`/stock/${p.symbol}`}
             className="inline-flex items-center gap-1.5 mx-4 text-xs hover:opacity-80 transition-opacity">
-            <span className="font-semibold text-white/90">{p.symbol}</span>
-            <span className="text-white/40 font-num">{p.ltp.toFixed(2)}</span>
-            <span className="font-num font-semibold"
-              style={{ color: p.change_pct > 0 ? GOLD : p.change_pct < 0 ? '#f87171' : 'rgba(255,255,255,0.3)' }}>
+            <span className="font-medium text-white/90">{p.symbol}</span>
+            <span className="text-white/35 font-num">{p.ltp.toFixed(2)}</span>
+            <span className="font-num font-medium"
+              style={{ color: p.change_pct > 0 ? '#34d399' : p.change_pct < 0 ? '#f87171' : 'rgba(255,255,255,0.3)' }}>
               {p.change_pct >= 0 ? '+' : ''}{p.change_pct.toFixed(2)}%
             </span>
           </Link>
         ))}
       </div>
-      <div className="absolute inset-y-0 left-0 w-16 pointer-events-none" style={{ background: `linear-gradient(to right, ${NAVY}, transparent)` }} />
-      <div className="absolute inset-y-0 right-0 w-16 pointer-events-none" style={{ background: `linear-gradient(to left, ${NAVY}, transparent)` }} />
+      <div className="absolute inset-y-0 left-0 w-16 pointer-events-none" style={{ background: `linear-gradient(to right, ${TEXT_PRIMARY}, transparent)` }} />
+      <div className="absolute inset-y-0 right-0 w-16 pointer-events-none" style={{ background: `linear-gradient(to left, ${TEXT_PRIMARY}, transparent)` }} />
       <style>{`
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { animation: marquee 45s linear infinite; }
@@ -75,7 +76,7 @@ function IndexOverview({ indices, stats, isMarketOpen, lastUpdated }: {
   const up = selected.change >= 0;
 
   return (
-    <div className="border rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(26,33,56,0.04)]" style={{ borderColor: BORDER }}>
+    <div className="border rounded-2xl overflow-hidden" style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
       {/* Index Tabs */}
       <div className="flex overflow-x-auto" style={{ borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
         {indices.map((idx, i) => {
@@ -86,13 +87,13 @@ function IndexOverview({ indices, stats, isMarketOpen, lastUpdated }: {
               className={cn('flex-1 px-2 sm:px-5 py-2.5 sm:py-3.5 text-center border-b-2 transition-all min-w-0',
                 isActive ? 'bg-white' : 'border-transparent hover:bg-white/60'
               )}
-              style={{ borderBottomColor: isActive ? GOLD : 'transparent' }}>
-              <div className="text-[10px] sm:text-xs font-semibold truncate" style={{ color: MUTED_LIGHT }}>{idx.index_name}</div>
-              <div className="text-sm sm:text-base font-bold font-num mt-0.5 truncate" style={{ color: TEXT }}>
+              style={{ borderBottomColor: isActive ? GREEN : 'transparent' }}>
+              <div className="text-[10px] sm:text-xs font-medium truncate" style={{ color: MUTED_LIGHT }}>{idx.index_name}</div>
+              <div className="text-sm sm:text-base font-bold font-num mt-0.5 truncate" style={{ color: TEXT_PRIMARY }}>
                 {idx.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className={cn('text-[10px] sm:text-xs font-semibold font-num mt-0.5 truncate')}
-                style={{ color: idxUp ? SUCCESS : DANGER }}>
+                style={{ color: idxUp ? GREEN : RED }}>
                 {idxUp ? '+' : ''}{idx.change.toFixed(2)} ({idxUp ? '+' : ''}{idx.change_pct.toFixed(2)}%)
               </div>
             </button>
@@ -103,31 +104,30 @@ function IndexOverview({ indices, stats, isMarketOpen, lastUpdated }: {
       {/* Selected Index Detail */}
       <div className="p-4 sm:p-6 bg-white">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          {/* Left --- Main Index */}
           <div>
             <div className="flex items-center gap-2 sm:gap-3 mb-1.5">
-              <h2 className="text-base sm:text-lg font-bold" style={{ color: TEXT }}>{selected.index_name} Index</h2>
+              <h2 className="text-base sm:text-lg font-bold" style={{ color: TEXT_PRIMARY }}>{selected.index_name} Index</h2>
               <span className={cn('text-[11px] font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5')}
                 style={{
-                  background: isMarketOpen ? 'rgba(13,155,92,0.1)' : 'rgba(197,48,48,0.1)',
-                  color: isMarketOpen ? SUCCESS : DANGER,
+                  background: isMarketOpen ? 'rgba(0,179,134,0.1)' : 'rgba(235,91,60,0.1)',
+                  color: isMarketOpen ? GREEN : RED,
                 }}>
                 <span className="w-1.5 h-1.5 rounded-full" style={{
-                  background: isMarketOpen ? GOLD : DANGER,
-                  boxShadow: isMarketOpen ? `0 0 6px ${GOLD}` : 'none',
+                  background: isMarketOpen ? GREEN : RED,
+                  boxShadow: isMarketOpen ? `0 0 6px ${GREEN}` : 'none',
                 }} />
                 {isMarketOpen ? 'OPEN' : 'CLOSED'}
               </span>
             </div>
             <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap">
-              <span className="text-3xl sm:text-4xl font-bold font-num" style={{ color: TEXT }}>
+              <span className="text-3xl sm:text-4xl font-bold font-num" style={{ color: TEXT_PRIMARY }}>
                 {selected.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
-              <span className="text-base sm:text-xl font-bold font-num" style={{ color: up ? SUCCESS : DANGER }}>
+              <span className="text-base sm:text-xl font-bold font-num" style={{ color: up ? GREEN : RED }}>
                 {up ? '+' : ''}{selected.change.toFixed(2)}
               </span>
-              <span className="text-xs sm:text-sm font-bold font-num px-2.5 py-1 rounded-lg text-white"
-                style={{ background: up ? SUCCESS : DANGER }}>
+              <span className="text-xs sm:text-sm font-bold font-num px-2.5 py-1 rounded-full text-white"
+                style={{ background: up ? GREEN : RED }}>
                 {up ? '+' : ''}{selected.change_pct.toFixed(2)}%
               </span>
             </div>
@@ -148,17 +148,17 @@ function IndexOverview({ indices, stats, isMarketOpen, lastUpdated }: {
    ═══════════════════════════════════════════════════════════ */
 function KeyStatsRow({ stats }: { stats: { totalVolume: number; totalValue: number; totalTrades: number; advancers: number; decliners: number } }) {
   const items = [
-    { label: 'Volume', value: formatVolume(stats.totalVolume), icon: <BarChart2 size={14} style={{ color: GOLD }} /> },
-    { label: 'Value', value: `${(stats.totalValue / 1e9).toFixed(2)}B`, icon: <DollarSign size={14} style={{ color: GOLD }} /> },
-    { label: 'Trades', value: formatVolume(stats.totalTrades), icon: <Activity size={14} style={{ color: GOLD }} /> },
+    { label: 'Volume', value: formatVolume(stats.totalVolume), icon: <BarChart2 size={14} style={{ color: GREEN }} /> },
+    { label: 'Value', value: `${(stats.totalValue / 1e9).toFixed(2)}B`, icon: <DollarSign size={14} style={{ color: GREEN }} /> },
+    { label: 'Trades', value: formatVolume(stats.totalTrades), icon: <Activity size={14} style={{ color: GREEN }} /> },
     {
-      label: 'Adv / Dec', icon: <TrendingUp size={14} style={{ color: GOLD }} />,
+      label: 'Adv / Dec', icon: <TrendingUp size={14} style={{ color: GREEN }} />,
       value: '',
       custom: (
         <span className="text-sm sm:text-base font-bold font-num">
-          <span style={{ color: SUCCESS }}>{stats.advancers}</span>
+          <span style={{ color: GREEN }}>{stats.advancers}</span>
           <span style={{ color: MUTED_LIGHT }} className="mx-1">/</span>
-          <span style={{ color: DANGER }}>{stats.decliners}</span>
+          <span style={{ color: RED }}>{stats.decliners}</span>
         </span>
       ),
     },
@@ -167,14 +167,14 @@ function KeyStatsRow({ stats }: { stats: { totalVolume: number; totalValue: numb
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {items.map(item => (
-        <div key={item.label} className="border rounded-2xl p-3 sm:p-4 bg-white shadow-[0_1px_3px_rgba(26,33,56,0.04)]"
-          style={{ borderColor: BORDER }}>
+        <div key={item.label} className="border rounded-2xl p-3 sm:p-4 bg-white"
+          style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-1.5">
             {item.icon}
-            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>{item.label}</span>
+            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>{item.label}</span>
           </div>
           {item.custom || (
-            <div className="text-sm sm:text-base font-bold font-num" style={{ color: TEXT }}>{item.value}</div>
+            <div className="text-sm sm:text-base font-bold font-num" style={{ color: TEXT_PRIMARY }}>{item.value}</div>
           )}
         </div>
       ))}
@@ -189,22 +189,22 @@ function MarketBreadth({ stats }: { stats: { advancers: number; decliners: numbe
   const { advancers, decliners, unchanged, totalStocks } = stats;
   const bullPct = totalStocks > 0 ? Math.round((advancers / totalStocks) * 100) : 50;
   let sentiment = 'Neutral', sColor = MUTED;
-  if (bullPct >= 65) { sentiment = 'Bullish'; sColor = SUCCESS; }
-  else if (bullPct >= 55) { sentiment = 'Mild Bull'; sColor = NAVY; }
-  else if (bullPct <= 35) { sentiment = 'Bearish'; sColor = DANGER; }
+  if (bullPct >= 65) { sentiment = 'Bullish'; sColor = GREEN; }
+  else if (bullPct >= 55) { sentiment = 'Mild Bull'; sColor = GREEN_DARK; }
+  else if (bullPct <= 35) { sentiment = 'Bearish'; sColor = RED; }
   else if (bullPct <= 45) { sentiment = 'Mild Bear'; sColor = '#e65100'; }
 
   const donutData = [
-    { name: 'Advancers', value: advancers, color: NAVY },
-    { name: 'Decliners', value: decliners, color: DANGER },
-    { name: 'Unchanged', value: unchanged, color: '#d1d5de' },
+    { name: 'Advancers', value: advancers, color: GREEN },
+    { name: 'Decliners', value: decliners, color: RED },
+    { name: 'Unchanged', value: unchanged, color: '#dddee1' },
   ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Breadth Donut */}
-      <div className="border rounded-2xl p-4 sm:p-5 bg-white shadow-[0_1px_3px_rgba(26,33,56,0.04)]" style={{ borderColor: BORDER }}>
-        <h3 className="text-sm font-semibold mb-4" style={{ color: TEXT }}>Market Breadth</h3>
+      <div className="border rounded-2xl p-4 sm:p-5 bg-white" style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+        <h3 className="text-sm font-semibold mb-4" style={{ color: TEXT_PRIMARY }}>Market Breadth</h3>
         <div className="flex items-center gap-5">
           <div className="relative w-24 h-24 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
@@ -215,7 +215,7 @@ function MarketBreadth({ stats }: { stats: { advancers: number; decliners: numbe
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-sm font-bold" style={{ color: TEXT }}>{totalStocks}</span>
+              <span className="text-sm font-bold" style={{ color: TEXT_PRIMARY }}>{totalStocks}</span>
               <span className="text-[9px]" style={{ color: MUTED_LIGHT }}>stocks</span>
             </div>
           </div>
@@ -234,19 +234,19 @@ function MarketBreadth({ stats }: { stats: { advancers: number; decliners: numbe
       </div>
 
       {/* Sentiment Gauge */}
-      <div className="border rounded-2xl p-4 sm:p-5 bg-white shadow-[0_1px_3px_rgba(26,33,56,0.04)]" style={{ borderColor: BORDER }}>
-        <h3 className="text-sm font-semibold mb-4" style={{ color: TEXT }}>Market Sentiment</h3>
+      <div className="border rounded-2xl p-4 sm:p-5 bg-white" style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+        <h3 className="text-sm font-semibold mb-4" style={{ color: TEXT_PRIMARY }}>Market Sentiment</h3>
         <div className="flex flex-col items-center gap-4 pt-1">
           <span className="text-xl font-bold" style={{ color: sColor }}>{sentiment}</span>
           <div className="w-full">
-            <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: '#ebeef5' }}>
-              <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${DANGER}, #ffa726, ${SUCCESS})` }} />
+            <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: '#f0f0f2' }}>
+              <div className="absolute inset-0" style={{ background: `linear-gradient(to right, ${RED}, #ffa726, ${GREEN})` }} />
               <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full shadow-md"
                 style={{
                   left: `calc(${bullPct}% - 8px)`,
-                  background: GOLD,
+                  background: GREEN,
                   border: '2px solid white',
-                  boxShadow: `0 0 8px rgba(201,169,110,0.5)`,
+                  boxShadow: `0 0 8px rgba(0,179,134,0.4)`,
                 }} />
             </div>
             <div className="flex justify-between mt-1.5 text-[10px]" style={{ color: MUTED_LIGHT }}>
@@ -272,40 +272,40 @@ function PortfolioOverview({ portfolio, learning }: { portfolio: any; learning: 
       val: formatCurrency(portfolio?.current_value || 0),
       sub: portfolio ? `${portfolio.total_profit_loss_percent >= 0 ? '+' : ''}${portfolio.total_profit_loss_percent.toFixed(2)}%` : undefined,
       subUp: portfolio?.total_profit_loss_percent >= 0,
-      icon: <Wallet size={16} style={{ color: GOLD }} />,
+      icon: <Wallet size={16} style={{ color: GREEN }} />,
     },
     {
       label: 'Invested',
       val: formatCurrency(portfolio?.total_invested || 0),
       sub: `${portfolio?.total_stocks || 0} stocks`,
-      icon: <Briefcase size={16} style={{ color: GOLD }} />,
+      icon: <Briefcase size={16} style={{ color: BLUE }} />,
     },
     {
       label: 'Day P&L',
       val: formatCurrency(portfolio?.total_profit_loss || 0),
       subUp: portfolio?.total_profit_loss >= 0,
-      icon: <TrendingUp size={16} style={{ color: GOLD }} />,
+      icon: <TrendingUp size={16} style={{ color: GREEN }} />,
     },
     {
       label: 'Learning',
       val: `${learning?.progressPercent || 0}%`,
       sub: learning?.isQualified ? 'Qualified' : 'In progress',
-      icon: <GraduationCap size={16} style={{ color: GOLD }} />,
+      icon: <GraduationCap size={16} style={{ color: BLUE }} />,
     },
   ];
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {items.map(c => (
-        <div key={c.label} className="border rounded-2xl p-3 sm:p-4 bg-white shadow-[0_1px_3px_rgba(26,33,56,0.04)]"
-          style={{ borderColor: BORDER }}>
+        <div key={c.label} className="border rounded-2xl p-3 sm:p-4 bg-white"
+          style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2 mb-2">
             {c.icon}
             <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.06em] truncate" style={{ color: MUTED_LIGHT }}>{c.label}</div>
           </div>
-          <div className="text-base sm:text-lg font-bold font-num truncate" style={{ color: TEXT }}>{c.val}</div>
+          <div className="text-base sm:text-lg font-bold font-num truncate" style={{ color: TEXT_PRIMARY }}>{c.val}</div>
           {c.sub && (
             <div className={cn('text-xs font-num mt-1')}
-              style={{ color: c.subUp === true ? SUCCESS : c.subUp === false ? DANGER : MUTED }}>
+              style={{ color: c.subUp === true ? GREEN : c.subUp === false ? RED : MUTED }}>
               {c.sub}
             </div>
           )}
@@ -342,16 +342,16 @@ function TopMovers({ prices }: { prices: LivePrice[] }) {
   }, [prices, tab]);
 
   return (
-    <div className="border rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(26,33,56,0.04)]" style={{ borderColor: BORDER }}>
+    <div className="border rounded-2xl overflow-hidden" style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
       <div className="flex items-center overflow-x-auto" style={{ borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
         {MOVER_TABS.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={cn('px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 transition-all',
+            className={cn('px-4 py-2.5 text-xs font-medium whitespace-nowrap border-b-2 transition-all',
               tab === t.key ? 'bg-white' : 'border-transparent hover:bg-white/60'
             )}
             style={{
-              borderBottomColor: tab === t.key ? GOLD : 'transparent',
-              color: tab === t.key ? NAVY : MUTED,
+              borderBottomColor: tab === t.key ? GREEN : 'transparent',
+              color: tab === t.key ? GREEN : MUTED,
             }}>
             {t.label}
           </button>
@@ -360,12 +360,12 @@ function TopMovers({ prices }: { prices: LivePrice[] }) {
       <table className="w-full">
         <thead>
           <tr style={{ background: SURFACE, borderBottom: `1px solid ${BORDER}` }}>
-            <th className="w-8 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>#</th>
-            <th className="px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>Symbol</th>
-            <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>LTP</th>
-            <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>Chg %</th>
+            <th className="w-8 px-3 py-2.5 text-left text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>#</th>
+            <th className="px-3 py-2.5 text-left text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>Symbol</th>
+            <th className="px-3 py-2.5 text-right text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>LTP</th>
+            <th className="px-3 py-2.5 text-right text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>Chg %</th>
             {(tab === 'volume' || tab === 'trade') && (
-              <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>
+              <th className="px-3 py-2.5 text-right text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>
                 {tab === 'volume' ? 'Volume' : 'Trades'}
               </th>
             )}
@@ -376,16 +376,14 @@ function TopMovers({ prices }: { prices: LivePrice[] }) {
             const up = s.change_pct >= 0;
             return (
               <tr key={s.symbol}
-                className="cursor-pointer transition-colors"
-                style={{ borderBottom: `1px solid #ebeef5` }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#f7f8fb')}
-                onMouseLeave={e => (e.currentTarget.style.background = '')}
+                className="cursor-pointer transition-colors hover:bg-[#f8f8f8]"
+                style={{ borderBottom: `1px solid #f0f0f2` }}
                 onClick={() => navigate(`/stock/${s.symbol}`)}>
                 <td className="px-3 py-2.5 text-xs font-num" style={{ color: MUTED_LIGHT }}>{i + 1}</td>
-                <td className="px-3 py-2.5 font-semibold" style={{ color: NAVY }}>{s.symbol}</td>
-                <td className="px-3 py-2.5 text-right font-num font-semibold" style={{ color: TEXT }}>{s.ltp.toFixed(2)}</td>
+                <td className="px-3 py-2.5 font-semibold" style={{ color: TEXT_PRIMARY }}>{s.symbol}</td>
+                <td className="px-3 py-2.5 text-right font-num font-semibold" style={{ color: TEXT_PRIMARY }}>{s.ltp.toFixed(2)}</td>
                 <td className="px-3 py-2.5 text-right">
-                  <span className="font-num font-semibold" style={{ color: up ? SUCCESS : DANGER }}>
+                  <span className="font-num font-semibold" style={{ color: up ? GREEN : RED }}>
                     {up ? '+' : ''}{s.change_pct.toFixed(2)}%
                   </span>
                 </td>
@@ -431,23 +429,23 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
   };
 
   const Th = ({ label, k, right }: { label: string; k: SortKey; right?: boolean }) => (
-    <th className={cn('px-3 py-2.5 text-[11px] font-semibold uppercase tracking-[0.06em] cursor-pointer select-none', right ? 'text-right' : 'text-left')}
+    <th className={cn('px-3 py-2.5 text-[11px] font-medium uppercase tracking-[0.06em] cursor-pointer select-none', right ? 'text-right' : 'text-left')}
       style={{ color: MUTED_LIGHT }}
       onClick={() => handleSort(k)}>
-      {label}{sortKey === k && <span className="ml-0.5" style={{ color: NAVY }}>{sortDir === 'asc' ? '\u2191' : '\u2193'}</span>}
+      {label}{sortKey === k && <span className="ml-0.5" style={{ color: GREEN }}>{sortDir === 'asc' ? '\u2191' : '\u2193'}</span>}
     </th>
   );
 
   return (
-    <div className="border rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(26,33,56,0.04)]" style={{ borderColor: BORDER }}>
+    <div className="border rounded-2xl overflow-hidden" style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
       <div className="px-4 py-3 flex items-center justify-between gap-3" style={{ borderBottom: `1px solid ${BORDER}`, background: SURFACE }}>
         <div className="relative max-w-xs flex-1">
           <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: MUTED_LIGHT }} />
           <input type="text" placeholder="Search stocks..." value={search}
             onChange={e => { setSearch(e.target.value); setPage(0); }}
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-white text-sm placeholder:text-[#c0c5d0] focus:outline-none focus:ring-1"
-            style={{ border: `1px solid ${BORDER}`, color: TEXT, boxShadow: 'none' }}
-            onFocus={e => (e.target.style.borderColor = NAVY)}
+            className="w-full pl-9 pr-3 py-2 rounded-lg bg-white text-sm placeholder:text-[#c7c8ce] focus:outline-none focus:ring-1"
+            style={{ border: `1px solid ${BORDER}`, color: TEXT_PRIMARY, boxShadow: 'none' }}
+            onFocus={e => (e.target.style.borderColor = GREEN)}
             onBlur={e => (e.target.style.borderColor = BORDER)}
           />
         </div>
@@ -460,10 +458,10 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
               <Th label="Symbol" k="symbol" />
               <Th label="LTP" k="ltp" right />
               <Th label="Chg %" k="change_pct" right />
-              <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>Change</th>
+              <th className="px-3 py-2.5 text-right text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: MUTED_LIGHT }}>Change</th>
               <Th label="Volume" k="volume" right />
-              <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.06em] hidden lg:table-cell" style={{ color: MUTED_LIGHT }}>High</th>
-              <th className="px-3 py-2.5 text-right text-[11px] font-semibold uppercase tracking-[0.06em] hidden lg:table-cell" style={{ color: MUTED_LIGHT }}>Low</th>
+              <th className="px-3 py-2.5 text-right text-[11px] font-medium uppercase tracking-[0.06em] hidden lg:table-cell" style={{ color: MUTED_LIGHT }}>High</th>
+              <th className="px-3 py-2.5 text-right text-[11px] font-medium uppercase tracking-[0.06em] hidden lg:table-cell" style={{ color: MUTED_LIGHT }}>Low</th>
             </tr>
           </thead>
           <tbody>
@@ -471,19 +469,17 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
               const up = s.change_pct >= 0;
               return (
                 <tr key={s.symbol}
-                  className={cn('cursor-pointer transition-colors', i % 2 === 1 && 'bg-[#fafbfd]')}
-                  style={{ borderBottom: '1px solid #ebeef5' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#f7f8fb')}
-                  onMouseLeave={e => (e.currentTarget.style.background = i % 2 === 1 ? BG : '')}
+                  className="cursor-pointer transition-colors hover:bg-[#f8f8f8]"
+                  style={{ borderBottom: '1px solid #f0f0f2' }}
                   onClick={() => navigate(`/stock/${s.symbol}`)}>
-                  <td className="px-3 py-2.5 font-semibold" style={{ color: NAVY }}>{s.symbol}</td>
-                  <td className="px-3 py-2.5 text-right font-num font-semibold" style={{ color: TEXT }}>{s.ltp.toFixed(2)}</td>
+                  <td className="px-3 py-2.5 font-semibold" style={{ color: TEXT_PRIMARY }}>{s.symbol}</td>
+                  <td className="px-3 py-2.5 text-right font-num font-semibold" style={{ color: TEXT_PRIMARY }}>{s.ltp.toFixed(2)}</td>
                   <td className="px-3 py-2.5 text-right">
-                    <span className="font-num font-semibold" style={{ color: up ? SUCCESS : DANGER }}>
+                    <span className="font-num font-semibold" style={{ color: up ? GREEN : RED }}>
                       {up ? '+' : ''}{s.change_pct.toFixed(2)}%
                     </span>
                   </td>
-                  <td className="px-3 py-2.5 text-right font-num text-xs" style={{ color: up ? SUCCESS : DANGER }}>
+                  <td className="px-3 py-2.5 text-right font-num text-xs" style={{ color: up ? GREEN : RED }}>
                     {up ? '+' : ''}{s.change.toFixed(2)}
                   </td>
                   <td className="px-3 py-2.5 text-right text-xs font-num" style={{ color: MUTED }}>{formatVolume(s.volume)}</td>
@@ -502,13 +498,13 @@ function AllStocksTable({ prices }: { prices: LivePrice[] }) {
           </span>
           <div className="flex gap-1.5">
             <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-40"
-              style={{ border: `1px solid ${BORDER}`, color: NAVY, background: 'white' }}>
+              className="px-3 py-1.5 text-xs font-medium rounded-full transition-colors disabled:opacity-40"
+              style={{ border: `1px solid ${BORDER}`, color: TEXT_PRIMARY, background: 'white' }}>
               Prev
             </button>
             <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-40"
-              style={{ border: `1px solid ${BORDER}`, color: NAVY, background: 'white' }}>
+              className="px-3 py-1.5 text-xs font-medium rounded-full transition-colors disabled:opacity-40"
+              style={{ border: `1px solid ${BORDER}`, color: TEXT_PRIMARY, background: 'white' }}>
               Next
             </button>
           </div>
@@ -535,13 +531,13 @@ function QuickActions() {
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
       {QUICK_ACTIONS.map(item => (
         <Link key={item.to} to={item.to}
-          className="group border rounded-2xl p-4 bg-white text-center transition-all hover:shadow-md hover:border-[#c9a96e]/30"
+          className="group border rounded-2xl p-4 bg-white text-center transition-all hover:shadow-md hover:border-[#00b386]/30"
           style={{ borderColor: BORDER }}>
-          <div className="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center transition-colors"
-            style={{ background: `rgba(26,39,68,0.06)`, color: NAVY }}>
+          <div className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center transition-colors"
+            style={{ background: `rgba(0,179,134,0.08)`, color: GREEN }}>
             {item.icon}
           </div>
-          <div className="text-sm font-semibold" style={{ color: TEXT }}>{item.label}</div>
+          <div className="text-sm font-semibold" style={{ color: TEXT_PRIMARY }}>{item.label}</div>
           <div className="text-[10px] mt-0.5" style={{ color: MUTED_LIGHT }}>{item.desc}</div>
         </Link>
       ))}
@@ -564,7 +560,7 @@ export function Dashboard() {
   // Show Demo Dashboard when in demo mode
   if (isDemoMode) {
     return (
-      <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-[#c9a96e] border-t-transparent rounded-full animate-spin" /></div>}>
+      <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-[#00b386] border-t-transparent rounded-full animate-spin" /></div>}>
         <DemoDashboard />
       </Suspense>
     );
@@ -575,7 +571,7 @@ export function Dashboard() {
 
   return (
     <div className="animate-fade-in min-h-screen" style={{ background: BG }}>
-      {/* 1. Premium Stock Ticker */}
+      {/* 1. Stock Ticker */}
       {market && <StockTicker prices={market.livePrices} />}
 
       <div style={{ maxWidth: 1280, margin: '0 auto' }} className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -584,13 +580,12 @@ export function Dashboard() {
           {/* 2. Welcome Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              {/* Brand mark */}
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
-                style={{ background: `linear-gradient(135deg, ${NAVY}, #2a3f6b)` }}>
-                <span className="font-bold text-sm" style={{ color: GOLD }}>A</span>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: GREEN }}>
+                <span className="font-bold text-sm text-white">A</span>
               </div>
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-xl font-bold truncate" style={{ color: TEXT }}>
+                <h1 className="text-lg sm:text-xl font-bold truncate" style={{ color: TEXT_PRIMARY }}>
                   Welcome back, {user?.full_name?.split(' ')[0] || 'Investor'}
                 </h1>
                 <div className="flex items-center gap-2 text-xs" style={{ color: MUTED_LIGHT }}>
@@ -599,13 +594,13 @@ export function Dashboard() {
                   <span className="hidden sm:inline">&middot;</span>
                   <span className={cn('hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide border')}
                     style={{
-                      borderColor: isMarketOpen ? 'rgba(13,155,92,0.3)' : 'rgba(197,48,48,0.3)',
-                      background: isMarketOpen ? 'rgba(13,155,92,0.08)' : 'rgba(197,48,48,0.08)',
-                      color: isMarketOpen ? SUCCESS : DANGER,
+                      borderColor: isMarketOpen ? 'rgba(0,179,134,0.3)' : 'rgba(235,91,60,0.3)',
+                      background: isMarketOpen ? 'rgba(0,179,134,0.08)' : 'rgba(235,91,60,0.08)',
+                      color: isMarketOpen ? GREEN : RED,
                     }}>
                     <span className="w-1.5 h-1.5 rounded-full" style={{
-                      background: isMarketOpen ? GOLD : DANGER,
-                      boxShadow: isMarketOpen ? `0 0 6px ${GOLD}` : 'none',
+                      background: isMarketOpen ? GREEN : RED,
+                      boxShadow: isMarketOpen ? `0 0 6px ${GREEN}` : 'none',
                     }} />
                     {isMarketOpen ? 'Market Open' : 'Market Closed'}
                   </span>
@@ -614,8 +609,8 @@ export function Dashboard() {
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <Link to="/trading"
-                className="px-5 py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:shadow-lg"
-                style={{ background: `linear-gradient(to right, ${NAVY}, #2a3f6b)` }}>
+                className="px-5 py-2.5 rounded-full text-white text-sm font-semibold transition-all hover:shadow-lg"
+                style={{ background: GREEN }}>
                 Trade Now
               </Link>
             </div>
@@ -624,13 +619,13 @@ export function Dashboard() {
           {/* Mobile market status badge */}
           <div className="sm:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border w-fit"
             style={{
-              borderColor: isMarketOpen ? 'rgba(13,155,92,0.3)' : 'rgba(197,48,48,0.3)',
-              background: isMarketOpen ? 'rgba(13,155,92,0.08)' : 'rgba(197,48,48,0.08)',
-              color: isMarketOpen ? SUCCESS : DANGER,
+              borderColor: isMarketOpen ? 'rgba(0,179,134,0.3)' : 'rgba(235,91,60,0.3)',
+              background: isMarketOpen ? 'rgba(0,179,134,0.08)' : 'rgba(235,91,60,0.08)',
+              color: isMarketOpen ? GREEN : RED,
             }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{
-              background: isMarketOpen ? GOLD : DANGER,
-              boxShadow: isMarketOpen ? `0 0 6px ${GOLD}` : 'none',
+              background: isMarketOpen ? GREEN : RED,
+              boxShadow: isMarketOpen ? `0 0 6px ${GREEN}` : 'none',
             }} />
             {isMarketOpen ? 'Market Open' : 'Market Closed'}
           </div>
@@ -652,8 +647,8 @@ export function Dashboard() {
           {hasPortfolio && (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold" style={{ color: TEXT }}>Portfolio Overview</h2>
-                <Link to="/portfolio" className="text-xs font-semibold flex items-center gap-0.5 hover:underline" style={{ color: NAVY }}>
+                <h2 className="text-sm font-semibold" style={{ color: TEXT_PRIMARY }}>Portfolio Overview</h2>
+                <Link to="/portfolio" className="text-xs font-semibold flex items-center gap-0.5 hover:underline" style={{ color: GREEN }}>
                   Details <ChevronRight size={12} />
                 </Link>
               </div>
@@ -664,7 +659,7 @@ export function Dashboard() {
           {/* 7. Top Movers */}
           {market && (
             <div>
-              <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT }}>Top Movers</h2>
+              <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Top Movers</h2>
               <TopMovers prices={market.livePrices} />
             </div>
           )}
@@ -672,14 +667,14 @@ export function Dashboard() {
           {/* 8. All Stocks Table */}
           {market && (
             <div>
-              <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT }}>All Stocks</h2>
+              <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>All Stocks</h2>
               <AllStocksTable prices={market.livePrices} />
             </div>
           )}
 
           {/* 9. Quick Action Cards */}
           <div>
-            <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT }}>Quick Actions</h2>
+            <h2 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Quick Actions</h2>
             <QuickActions />
           </div>
 

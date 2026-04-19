@@ -5,71 +5,72 @@
   --font-title: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-  /* ── Premium Wealth Management Palette (Light) ── */
-  --color-background: #fafbfd;
-  --color-surface: #f0f2f7;
+  /* ── Groww-Inspired Clean Palette (Light) ── */
+  --color-background: #ffffff;
+  --color-surface: #f8f8f8;
   --color-card: #ffffff;
   --color-card-solid: #ffffff;
-  --color-card-hover: #f7f8fb;
-  --color-border: #e1e5ee;
-  --color-border-light: #ebeef5;
+  --color-card-hover: #f4f4f6;
+  --color-border: #e9e9eb;
+  --color-border-light: #f0f0f2;
 
-  /* Navy + Gold brand */
-  --color-primary: #1a2744;
-  --color-primary-light: #2a3f6b;
-  --color-primary-dark: #0f1a30;
+  /* Primary green accent */
+  --color-primary: #00b386;
+  --color-primary-light: #00c994;
+  --color-primary-dark: #009973;
 
-  --color-accent: #c9a96e;
-  --color-accent-light: #dcc18e;
-  --color-accent-dark: #a88a4e;
+  /* Secondary accent */
+  --color-accent: #5367ff;
+  --color-accent-light: #7b8cff;
+  --color-accent-dark: #3d4fd6;
 
-  --color-foreground: #1a2138;
-  --color-muted: #7c8498;
-  --color-muted-foreground: #9ba3b5;
-  --color-text: #2d3348;
+  --color-foreground: #121212;
+  --color-muted: #7c7e8c;
+  --color-muted-foreground: #a1a3ad;
+  --color-text: #44475b;
 
-  --color-success: #0d9b5c;
-  --color-success-dim: rgba(13, 155, 92, 0.07);
-  --color-danger: #c53030;
-  --color-danger-dim: rgba(197, 48, 48, 0.06);
-  --color-warning: #c27803;
-  --color-warning-dim: rgba(194, 120, 3, 0.06);
-  --color-info: #2563eb;
-  --color-info-dim: rgba(37, 99, 235, 0.06);
-  --color-gold: #c9a96e;
+  --color-success: #00b386;
+  --color-success-dim: rgba(0, 179, 134, 0.07);
+  --color-danger: #eb5b3c;
+  --color-danger-dim: rgba(235, 91, 60, 0.06);
+  --color-warning: #f0b429;
+  --color-warning-dim: rgba(240, 180, 41, 0.06);
+  --color-info: #5367ff;
+  --color-info-dim: rgba(83, 103, 255, 0.06);
+  --color-gold: #c7a865;
   --color-purple: #6d28d9;
   --color-purple-dim: rgba(109, 40, 217, 0.06);
 
   --color-sidebar: #ffffff;
-  --color-sidebar-active: rgba(26, 39, 68, 0.06);
+  --color-sidebar-active: rgba(0, 179, 134, 0.08);
 
-  --shadow-card: 0 1px 3px rgba(26, 33, 56, 0.04), 0 1px 2px rgba(26, 33, 56, 0.02);
-  --shadow-elevated: 0 4px 16px rgba(26, 33, 56, 0.08), 0 1px 4px rgba(26, 33, 56, 0.04);
+  --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-glow: none;
 }
 
-/* ── DARK MODE (Premium Dark) ── */
+/* ── DARK MODE ── */
 [data-theme="dark"] {
-  --color-background: #0c1020;
-  --color-surface: #131829;
-  --color-card: #171d30;
-  --color-card-solid: #1a2037;
-  --color-card-hover: #1f2640;
-  --color-border: #252d44;
-  --color-border-light: #1e2539;
+  --color-background: #060809;
+  --color-surface: #151819;
+  --color-card: #1e2224;
+  --color-card-solid: #1e2224;
+  --color-card-hover: #252828;
+  --color-border: #2e2e2e;
+  --color-border-light: #222425;
 
-  --color-primary: #8b9dc3;
-  --color-primary-light: #a8b8d8;
-  --color-primary-dark: #6b82ad;
+  --color-primary: #00d4a0;
+  --color-primary-light: #33e0b5;
+  --color-primary-dark: #00b386;
 
-  --color-accent: #d4b77a;
-  --color-accent-light: #e0c994;
-  --color-accent-dark: #b89a5a;
+  --color-accent: #7b8cff;
+  --color-accent-light: #9aa6ff;
+  --color-accent-dark: #5367ff;
 
-  --color-foreground: #e8ecf4;
-  --color-muted: #7b849c;
-  --color-muted-foreground: #5a6378;
-  --color-text: #c5cce0;
+  --color-foreground: #f2f5f7;
+  --color-muted: #989ea0;
+  --color-muted-foreground: #44494b;
+  --color-text: #d1d5db;
 
   --color-success: #34d399;
   --color-success-dim: rgba(52, 211, 153, 0.1);
@@ -77,18 +78,18 @@
   --color-danger-dim: rgba(248, 113, 113, 0.08);
   --color-warning: #fbbf24;
   --color-warning-dim: rgba(251, 191, 36, 0.08);
-  --color-info: #60a5fa;
-  --color-info-dim: rgba(96, 165, 250, 0.08);
+  --color-info: #818cf8;
+  --color-info-dim: rgba(129, 140, 248, 0.08);
   --color-gold: #d4b77a;
   --color-purple: #a78bfa;
   --color-purple-dim: rgba(167, 139, 250, 0.08);
 
-  --color-sidebar: #131829;
-  --color-sidebar-active: rgba(212, 183, 122, 0.08);
+  --color-sidebar: #151819;
+  --color-sidebar-active: rgba(0, 212, 160, 0.1);
 
   --shadow-card: 0 1px 4px rgba(0, 0, 0, 0.3);
   --shadow-elevated: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 12px rgba(212, 183, 122, 0.06);
+  --shadow-glow: 0 0 12px rgba(0, 212, 160, 0.06);
 
   color-scheme: dark;
 }
@@ -98,12 +99,12 @@
   color: var(--color-text);
 }
 
-[data-theme="dark"] ::-webkit-scrollbar-track { background: #131829; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #252d44; }
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #333d58; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #151819; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #2e2e2e; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
 
 [data-theme="dark"] .skeleton {
-  background: linear-gradient(90deg, #1a2037 25%, #252d44 50%, #1a2037 75%);
+  background: linear-gradient(90deg, #1e2224 25%, #2e2e2e 50%, #1e2224 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
@@ -138,9 +139,9 @@ body {
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #f0f2f7; }
-::-webkit-scrollbar-thumb { background: #c5cce0; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #9ba3b5; }
+::-webkit-scrollbar-track { background: #f8f8f8; }
+::-webkit-scrollbar-thumb { background: #c7c8ce; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #a1a3ad; }
 
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -164,7 +165,7 @@ body {
   100% { background-position: 200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, #ebeef5 25%, #e1e5ee 50%, #ebeef5 75%);
+  background: linear-gradient(90deg, #f0f0f2 25%, #e9e9eb 50%, #f0f0f2 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
@@ -175,8 +176,8 @@ body {
 }
 
 @keyframes stat-pulse-anim {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(13, 155, 92, 0.3); }
-  50% { box-shadow: 0 0 0 4px rgba(13, 155, 92, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 179, 134, 0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(0, 179, 134, 0); }
 }
 
 @keyframes gold-shimmer {
@@ -185,20 +186,20 @@ body {
 }
 
 /* ── UTILITY ── */
-.text-gain { color: #0d9b5c; }
-.text-loss { color: #c53030; }
+.text-gain { color: #00b386; }
+.text-loss { color: #eb5b3c; }
 
 .stat-pulse {
   display: inline-block;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #0d9b5c;
+  background-color: #00b386;
   animation: stat-pulse-anim 2s ease-in-out infinite;
 }
 
 .gold-text {
-  background: linear-gradient(135deg, #c9a96e 0%, #e6d5a8 50%, #c9a96e 100%);
+  background: linear-gradient(135deg, #00b386 0%, #00d4a0 50%, #00b386 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -206,7 +207,7 @@ body {
 }
 
 .premium-border {
-  border-image: linear-gradient(135deg, #c9a96e20, #c9a96e60, #c9a96e20) 1;
+  border-image: linear-gradient(135deg, #00b38620, #00b38660, #00b38620) 1;
 }
 
 /* Safe area */
