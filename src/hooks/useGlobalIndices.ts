@@ -23,34 +23,46 @@ const INDEX_SYMBOLS: Record<string, { yahoo: string; exchange: string }> = {
   ASPI:    { yahoo: 'CSEALL.CMB',  exchange: 'CSE' },
 };
 
-const CORS_PROXY = 'https://corsproxy.io/?url=';
+function proxyUrl(url: string): string {
+  return `/api/proxy?url=${encodeURIComponent(url)}`;
+}
+
+async function fetchChart(symbol: string): Promise<{ price: number; prevClose: number } | null> {
+  try {
+    const url = proxyUrl(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`);
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const meta = json.chart?.result?.[0]?.meta;
+    if (!meta) return null;
+    return {
+      price: meta.regularMarketPrice ?? 0,
+      prevClose: meta.chartPreviousClose ?? meta.regularMarketPrice ?? 0,
+    };
+  } catch {
+    return null;
+  }
+}
 
 async function fetchYahooQuotes(symbols: string[]): Promise<Record<string, GlobalIndex>> {
-  const joined = symbols.join(',');
-  const url = `${CORS_PROXY}${encodeURIComponent(
-    `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${joined}&fields=regularMarketPrice,regularMarketChange,regularMarketChangePercent,shortName`
-  )}`;
-
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Yahoo API error: ${res.status}`);
-
-  const json = await res.json();
   const results: Record<string, GlobalIndex> = {};
 
-  for (const q of json.quoteResponse?.result || []) {
-    const sym = q.symbol as string;
-    const entry = Object.entries(INDEX_SYMBOLS).find(([, v]) => v.yahoo === sym);
-    if (!entry) continue;
-
-    results[entry[0]] = {
-      symbol: sym,
-      name: entry[0],
-      exchange: entry[1].exchange,
-      value: q.regularMarketPrice ?? 0,
-      change: q.regularMarketChange ?? 0,
-      changePct: q.regularMarketChangePercent ?? 0,
-    };
-  }
+  const fetches = await Promise.allSettled(
+    Object.entries(INDEX_SYMBOLS).map(async ([key, val]) => {
+      const data = await fetchChart(val.yahoo);
+      if (!data || data.price === 0) return;
+      const change = data.price - data.prevClose;
+      const changePct = data.prevClose > 0 ? (change / data.prevClose) * 100 : 0;
+      results[key] = {
+        symbol: val.yahoo,
+        name: key,
+        exchange: val.exchange,
+        value: data.price,
+        change,
+        changePct,
+      };
+    })
+  );
 
   return results;
 }

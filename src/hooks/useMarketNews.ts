@@ -8,7 +8,9 @@ export interface NewsItem {
   category: 'global' | 'capital' | 'ai' | 'commodity' | 'dse';
 }
 
-const CORS_PROXY = 'https://corsproxy.io/?url=';
+function proxyUrl(url: string): string {
+  return `/api/proxy?url=${encodeURIComponent(url)}`;
+}
 
 interface FeedConfig {
   url: string;
@@ -54,7 +56,7 @@ function parseRSSItems(xml: string, source: string, category: NewsItem['category
 async function fetchAllNews(): Promise<NewsItem[]> {
   const results = await Promise.allSettled(
     NEWS_FEEDS.map(async (feed) => {
-      const url = `${CORS_PROXY}${encodeURIComponent(feed.url)}`;
+      const url = proxyUrl(feed.url);
       const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
       if (!res.ok) return [];
       const xml = await res.text();

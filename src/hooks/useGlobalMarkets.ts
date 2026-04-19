@@ -27,7 +27,26 @@ export interface ForexRate {
   flag: string;
 }
 
-const CORS_PROXY = 'https://corsproxy.io/?url=';
+function proxyUrl(url: string): string {
+  return `/api/proxy?url=${encodeURIComponent(url)}`;
+}
+
+async function fetchChart(symbol: string): Promise<{ price: number; prevClose: number } | null> {
+  try {
+    const url = proxyUrl(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`);
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const meta = json.chart?.result?.[0]?.meta;
+    if (!meta) return null;
+    return {
+      price: meta.regularMarketPrice ?? 0,
+      prevClose: meta.chartPreviousClose ?? meta.regularMarketPrice ?? 0,
+    };
+  } catch {
+    return null;
+  }
+}
 
 /* ─── Global Indices ─── */
 const GLOBAL_INDICES = [
@@ -41,34 +60,29 @@ const GLOBAL_INDICES = [
   { yahoo: '000001.SS', name: 'Shanghai', region: 'China' },
 ];
 
-async function fetchYahooQuotes(symbols: string[]): Promise<any[]> {
-  const joined = symbols.join(',');
-  const url = `${CORS_PROXY}${encodeURIComponent(
-    `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${joined}&fields=regularMarketPrice,regularMarketChange,regularMarketChangePercent,shortName`
-  )}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Yahoo API error: ${res.status}`);
-  const json = await res.json();
-  return json.quoteResponse?.result || [];
-}
-
 export function useGlobalMarkets() {
   return useQuery<GlobalMarketIndex[]>({
     queryKey: ['globalMarkets'],
     queryFn: async () => {
-      const symbols = GLOBAL_INDICES.map(i => i.yahoo);
-      const quotes = await fetchYahooQuotes(symbols);
-      return GLOBAL_INDICES.map(idx => {
-        const q = quotes.find((q: any) => q.symbol === idx.yahoo);
-        return {
-          symbol: idx.yahoo,
-          name: idx.name,
-          region: idx.region,
-          value: q?.regularMarketPrice ?? 0,
-          change: q?.regularMarketChange ?? 0,
-          changePct: q?.regularMarketChangePercent ?? 0,
-        };
-      }).filter(i => i.value > 0);
+      const results = await Promise.allSettled(
+        GLOBAL_INDICES.map(async (idx) => {
+          const data = await fetchChart(idx.yahoo);
+          if (!data || data.price === 0) return null;
+          const change = data.price - data.prevClose;
+          const changePct = data.prevClose > 0 ? (change / data.prevClose) * 100 : 0;
+          return {
+            symbol: idx.yahoo,
+            name: idx.name,
+            region: idx.region,
+            value: data.price,
+            change,
+            changePct,
+          };
+        })
+      );
+      return results
+        .map(r => r.status === 'fulfilled' ? r.value : null)
+        .filter((r): r is GlobalMarketIndex => r !== null);
     },
     refetchInterval: 120_000,
     staleTime: 60_000,
@@ -90,19 +104,25 @@ export function useCommodities() {
   return useQuery<CommodityPrice[]>({
     queryKey: ['commodities'],
     queryFn: async () => {
-      const symbols = COMMODITIES.map(c => c.yahoo);
-      const quotes = await fetchYahooQuotes(symbols);
-      return COMMODITIES.map(com => {
-        const q = quotes.find((q: any) => q.symbol === com.yahoo);
-        return {
-          symbol: com.yahoo,
-          name: com.name,
-          price: q?.regularMarketPrice ?? 0,
-          change: q?.regularMarketChange ?? 0,
-          changePct: q?.regularMarketChangePercent ?? 0,
-          unit: com.unit,
-        };
-      }).filter(c => c.price > 0);
+      const results = await Promise.allSettled(
+        COMMODITIES.map(async (com) => {
+          const data = await fetchChart(com.yahoo);
+          if (!data || data.price === 0) return null;
+          const change = data.price - data.prevClose;
+          const changePct = data.prevClose > 0 ? (change / data.prevClose) * 100 : 0;
+          return {
+            symbol: com.yahoo,
+            name: com.name,
+            price: data.price,
+            change,
+            changePct,
+            unit: com.unit,
+          };
+        })
+      );
+      return results
+        .map(r => r.status === 'fulfilled' ? r.value : null)
+        .filter((r): r is CommodityPrice => r !== null);
     },
     refetchInterval: 120_000,
     staleTime: 60_000,
@@ -126,19 +146,26 @@ export function useForexRates() {
   return useQuery<ForexRate[]>({
     queryKey: ['forexRates'],
     queryFn: async () => {
-      const symbols = FOREX_PAIRS.map(f => f.yahoo);
-      const quotes = await fetchYahooQuotes(symbols);
-      return FOREX_PAIRS.map(fx => {
-        const q = quotes.find((q: any) => q.symbol === fx.yahoo);
-        return {
-          pair: fx.pair,
-          name: fx.name,
-          rate: q?.regularMarketPrice ?? 0,
-          change: q?.regularMarketChange ?? 0,
-          changePct: q?.regularMarketChangePercent ?? 0,
-          flag: fx.flag,
-        };
-      }).filter(f => f.rate > 0);
+      const results = await Promise.allSettled(
+        FOREX_PAIRS.map(async (fx) => {
+          const data = await fetchChart(fx.yahoo);
+          if (!data || data.price === 0) return null;
+          const price = data.price;
+          const change = price - data.prevClose;
+          const changePct = data.prevClose > 0 ? (change / data.prevClose) * 100 : 0;
+          return {
+            pair: fx.pair,
+            name: fx.name,
+            rate: price,
+            change,
+            changePct,
+            flag: fx.flag,
+          };
+        })
+      );
+      return results
+        .map(r => r.status === 'fulfilled' ? r.value : null)
+        .filter((r): r is ForexRate => r !== null);
     },
     refetchInterval: 300_000,
     staleTime: 120_000,
