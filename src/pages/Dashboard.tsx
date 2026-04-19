@@ -558,15 +558,6 @@ export function Dashboard() {
   const { data: market, isLoading: marketLoading } = useMarketData();
   const { data: learning } = useLearningProgress();
 
-  // Show Demo Dashboard when in demo mode
-  if (isDemoMode) {
-    return (
-      <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-[#00b386] border-t-transparent rounded-full animate-spin" /></div>}>
-        <DemoDashboard />
-      </Suspense>
-    );
-  }
-
   const isMarketOpen = isDseMarketOpen(market?.lastUpdated);
   const hasPortfolio = portfolio && (portfolio.current_value > 0 || portfolio.total_invested > 0);
 
@@ -616,6 +607,23 @@ export function Dashboard() {
               </Link>
             </div>
           </div>
+
+          {/* Demo mode quick access */}
+          {isDemoMode && (
+            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(0,179,134,0.06)', border: '1px solid rgba(0,179,134,0.15)' }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: GREEN }}>
+                <GraduationCap size={14} className="text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-xs font-semibold" style={{ color: TEXT_PRIMARY }}>Demo Trading Active</span>
+                <span className="text-[10px] block" style={{ color: MUTED }}>Practice with ৳100K virtual BDT</span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <Link to="/demo/trading" className="px-3 py-1.5 text-[10px] font-semibold rounded-full text-white" style={{ background: GREEN }}>Trade</Link>
+                <Link to="/demo/portfolio" className="px-3 py-1.5 text-[10px] font-semibold rounded-full" style={{ border: `1px solid ${BORDER}`, color: TEXT }}>Portfolio</Link>
+              </div>
+            </div>
+          )}
 
           {/* Mobile market status badge */}
           <div className="sm:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wide border w-fit"
