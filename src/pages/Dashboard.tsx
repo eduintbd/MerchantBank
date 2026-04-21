@@ -15,7 +15,7 @@ import {
   Clock, Globe, Flame, Volume2,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { GlobalMarketsBar, CommoditiesAndForex, MarketNewsFeed, EnhancedSectorHeatmap, StockHeatmap, DseMarketSummary } from '@/components/dashboard/EnhancedSections';
+import { GlobalMarketsBar, CommoditiesAndForex, MarketNewsFeed, UnifiedMarketHeatmap, DseMarketSummary } from '@/components/dashboard/EnhancedSections';
 
 /* ─── Clean Palette Constants (Groww-inspired) ─── */
 const GREEN = '#00b386';
@@ -676,11 +676,8 @@ export function Dashboard() {
             </div>
           )}
 
-          {/* 9. Sector Heatmap */}
-          <EnhancedSectorHeatmap />
-
-          {/* 10. Market Heatmap (stock-level treemap) */}
-          {market && <StockHeatmap prices={market.livePrices} />}
+          {/* 9. Unified Market Heatmap (sector-grouped with stocks) */}
+          <UnifiedMarketHeatmap />
 
           {/* 11. Top Movers */}
           {market && (

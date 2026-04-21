@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { useGlobalMarkets, useCommodities, useForexRates } from '@/hooks/useGlobalMarkets';
 import { useMarketNews, type NewsItem } from '@/hooks/useMarketNews';
 import { useSectorPerformance } from '@/hooks/useSectorPerformance';
+import { dseSupabase } from '@/lib/supabase';
 import { cn, formatVolume } from '@/lib/utils';
 import type { LivePrice } from '@/types';
 import {
   Globe, TrendingUp, TrendingDown, Newspaper, Cpu, Landmark,
   BarChart3, ArrowUpRight, ExternalLink, Fuel, Gem,
   DollarSign, ChevronRight, Layers, Flame, Sparkles,
+  ChevronDown,
 } from 'lucide-react';
 
 const GREEN = '#00b386';
@@ -298,8 +301,48 @@ export function MarketNewsFeed() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SECTOR HEATMAP (enhanced visual)
+   UNIFIED MARKET HEATMAP (sector-grouped with stocks)
    ═══════════════════════════════════════════════════════════ */
+interface SectorStock { symbol: string; sector: string; change_pct: number; volume: number; value_traded: number; }
+
+function useStocksBySector() {
+  return useQuery<Map<string, SectorStock[]>>({
+    queryKey: ['stocksBySector'],
+    enabled: !!dseSupabase,
+    queryFn: async () => {
+      if (!dseSupabase) return new Map();
+      const [stocksRes, pricesRes] = await Promise.all([
+        dseSupabase.from('stocks').select('symbol, sector').eq('is_active', true),
+        dseSupabase.from('live_prices').select('symbol, change_pct, volume, value_traded'),
+      ]);
+      if (stocksRes.error || pricesRes.error) return new Map();
+      const priceMap = new Map<string, any>();
+      for (const p of pricesRes.data || []) priceMap.set(p.symbol, p);
+
+      const sectorMap = new Map<string, SectorStock[]>();
+      for (const s of stocksRes.data || []) {
+        const p = priceMap.get(s.symbol);
+        if (!p || !p.volume) continue;
+        const sector = s.sector || 'Others';
+        if (!sectorMap.has(sector)) sectorMap.set(sector, []);
+        sectorMap.get(sector)!.push({
+          symbol: s.symbol,
+          sector,
+          change_pct: p.change_pct || 0,
+          volume: p.volume || 0,
+          value_traded: p.value_traded || 0,
+        });
+      }
+      // Sort stocks within each sector by value_traded desc
+      for (const stocks of sectorMap.values()) {
+        stocks.sort((a, b) => b.value_traded - a.value_traded);
+      }
+      return sectorMap;
+    },
+    refetchInterval: 60000,
+  });
+}
+
 function getHeatColor(change: number): { bg: string; text: string } {
   if (change >= 3) return { bg: '#00b386', text: '#fff' };
   if (change >= 1.5) return { bg: 'rgba(0,179,134,0.7)', text: '#fff' };
@@ -311,14 +354,29 @@ function getHeatColor(change: number): { bg: string; text: string } {
   return { bg: '#eb5b3c', text: '#fff' };
 }
 
-export function EnhancedSectorHeatmap() {
-  const { data: sectors, isLoading } = useSectorPerformance();
+function getSectorAvg(stocks: SectorStock[]): number {
+  if (stocks.length === 0) return 0;
+  return stocks.reduce((sum, s) => sum + s.change_pct, 0) / stocks.length;
+}
 
-  if (isLoading || !sectors || sectors.length === 0) {
+export function UnifiedMarketHeatmap() {
+  const { data: sectorMap, isLoading } = useStocksBySector();
+  const { data: sectors } = useSectorPerformance();
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  // Sort sectors by avg change descending
+  const sortedSectors = useMemo(() => {
+    if (!sectorMap) return [];
+    return Array.from(sectorMap.entries())
+      .map(([sector, stocks]) => ({ sector, stocks, avgChange: getSectorAvg(stocks), totalVolume: stocks.reduce((s, st) => s + st.volume, 0) }))
+      .sort((a, b) => b.avgChange - a.avgChange);
+  }, [sectorMap]);
+
+  if (isLoading || sortedSectors.length === 0) {
     return (
       <div className="border rounded-2xl p-4 sm:p-5 bg-white" style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-        <h3 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Sector Heatmap</h3>
-        <div className="skeleton h-[200px] rounded-xl" />
+        <h3 className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Market Heatmap</h3>
+        <div className="skeleton h-[240px] rounded-xl" />
       </div>
     );
   }
@@ -328,89 +386,60 @@ export function EnhancedSectorHeatmap() {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Layers size={16} style={{ color: GREEN }} />
-          <h3 className="text-sm font-semibold" style={{ color: TEXT_PRIMARY }}>Sector Heatmap</h3>
+          <h3 className="text-sm font-semibold" style={{ color: TEXT_PRIMARY }}>Market Heatmap</h3>
         </div>
         <div className="flex items-center gap-3 text-[9px]" style={{ color: MUTED_LIGHT }}>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ background: RED }} /> Bearish</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm" style={{ background: GREEN }} /> Bullish</span>
         </div>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5">
-        {sectors.map(s => {
-          const c = getHeatColor(s.avgChange);
+
+      <div className="space-y-1.5">
+        {sortedSectors.map(({ sector, stocks, avgChange, totalVolume }) => {
+          const c = getHeatColor(avgChange);
+          const isExpanded = expanded === sector;
+          const topStocks = stocks.slice(0, 8); // show top 8 when expanded
+
           return (
-            <div key={s.sector}
-              className="rounded-xl p-2.5 sm:p-3 transition-all hover:scale-[1.02] cursor-default"
-              style={{ background: c.bg, color: c.text }}>
-              <p className="text-[10px] font-semibold truncate leading-tight opacity-90">{s.sector}</p>
-              <p className="text-sm sm:text-base font-bold font-num mt-0.5">
-                {s.avgChange >= 0 ? '+' : ''}{s.avgChange.toFixed(2)}%
-              </p>
-              <div className="flex items-center gap-2 mt-1 text-[9px] opacity-75">
-                <span>{s.stockCount} stocks</span>
-                <span>Vol: {formatVolume(s.totalVolume)}</span>
-              </div>
+            <div key={sector}>
+              {/* Sector header row */}
+              <button
+                onClick={() => setExpanded(isExpanded ? null : sector)}
+                className="w-full flex items-center gap-2 rounded-xl p-2.5 sm:p-3 transition-all hover:opacity-90"
+                style={{ background: c.bg, color: c.text }}>
+                <ChevronDown size={14} className={cn('shrink-0 transition-transform', isExpanded && 'rotate-180')} style={{ opacity: 0.7 }} />
+                <span className="text-[11px] sm:text-xs font-semibold truncate flex-1 text-left">{sector}</span>
+                <span className="text-xs sm:text-sm font-bold font-num shrink-0">
+                  {avgChange >= 0 ? '+' : ''}{avgChange.toFixed(2)}%
+                </span>
+                <span className="text-[9px] opacity-70 shrink-0 hidden sm:inline">{stocks.length} stocks</span>
+                <span className="text-[9px] opacity-70 shrink-0 hidden sm:inline">Vol: {formatVolume(totalVolume)}</span>
+              </button>
+
+              {/* Expanded: show individual stocks */}
+              {isExpanded && (
+                <div className="flex flex-wrap gap-1 pt-1.5 pl-4">
+                  {topStocks.map(stock => {
+                    const sc = getHeatColor(stock.change_pct);
+                    return (
+                      <Link key={stock.symbol} to={`/stock/${stock.symbol}`}
+                        className="rounded-lg px-2.5 py-1.5 text-center transition-all hover:scale-105"
+                        style={{ background: sc.bg, color: sc.text, minWidth: 64 }}>
+                        <span className="text-[10px] font-bold block">{stock.symbol}</span>
+                        <span className="text-[9px] font-semibold font-num">
+                          {stock.change_pct >= 0 ? '+' : ''}{stock.change_pct.toFixed(1)}%
+                        </span>
+                      </Link>
+                    );
+                  })}
+                  {stocks.length > 8 && (
+                    <span className="text-[9px] self-center px-2" style={{ color: MUTED_LIGHT }}>
+                      +{stocks.length - 8} more
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   STOCK MARKET HEATMAP (treemap-style)
-   ═══════════════════════════════════════════════════════════ */
-export function StockHeatmap({ prices }: { prices: LivePrice[] }) {
-  // Group by sector and pick top stocks by volume
-  const top = [...prices]
-    .filter(p => p.volume > 0)
-    .sort((a, b) => b.value_traded - a.value_traded)
-    .slice(0, 40);
-
-  if (top.length === 0) return null;
-
-  // Determine max value_traded for sizing
-  const maxVal = Math.max(...top.map(t => t.value_traded));
-
-  return (
-    <div className="border rounded-2xl p-4 sm:p-5 bg-white" style={{ borderColor: BORDER, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <BarChart3 size={16} style={{ color: GREEN }} />
-          <h3 className="text-sm font-semibold" style={{ color: TEXT_PRIMARY }}>Market Heatmap</h3>
-        </div>
-        <span className="text-[10px]" style={{ color: MUTED_LIGHT }}>Top 40 by value traded</span>
-      </div>
-      <div className="flex flex-wrap gap-1">
-        {top.map(stock => {
-          const up = stock.change_pct >= 0;
-          const ratio = stock.value_traded / maxVal;
-          // Size classes based on relative value
-          const sizeClass = ratio > 0.5 ? 'w-[calc(25%-4px)] h-20'
-            : ratio > 0.2 ? 'w-[calc(16.66%-4px)] h-16'
-            : ratio > 0.08 ? 'w-[calc(12.5%-4px)] h-14'
-            : 'w-[calc(10%-4px)] h-12';
-
-          const change = stock.change_pct;
-          let bg = 'rgba(0,179,134,0.12)';
-          let color = GREEN;
-          if (change >= 3) { bg = GREEN; color = '#fff'; }
-          else if (change >= 1) { bg = 'rgba(0,179,134,0.45)'; color = '#fff'; }
-          else if (change >= 0) { bg = 'rgba(0,179,134,0.12)'; color = GREEN; }
-          else if (change >= -1) { bg = 'rgba(235,91,60,0.12)'; color = RED; }
-          else if (change >= -3) { bg = 'rgba(235,91,60,0.45)'; color = '#fff'; }
-          else { bg = RED; color = '#fff'; }
-
-          return (
-            <Link key={stock.symbol} to={`/stock/${stock.symbol}`}
-              className={cn('rounded-lg flex flex-col items-center justify-center transition-all hover:scale-105 cursor-pointer', sizeClass)}
-              style={{ background: bg, color, minWidth: 48 }}>
-              <span className="text-[9px] sm:text-[10px] font-bold truncate max-w-full px-1">{stock.symbol}</span>
-              <span className="text-[9px] font-semibold font-num">
-                {up ? '+' : ''}{stock.change_pct.toFixed(1)}%
-              </span>
-            </Link>
           );
         })}
       </div>

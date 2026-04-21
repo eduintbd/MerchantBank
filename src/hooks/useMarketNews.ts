@@ -22,45 +22,99 @@ const NEWS_FEEDS: FeedConfig[] = [
   { url: 'https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US', source: 'Yahoo Finance', category: 'global' },
   { url: 'https://feeds.finance.yahoo.com/rss/2.0/headline?s=GC=F,CL=F&region=US&lang=en-US', source: 'Yahoo Finance', category: 'commodity' },
   { url: 'https://news.google.com/rss/search?q=artificial+intelligence+investment+stock+market&hl=en-US&gl=US&ceid=US:en', source: 'Google News', category: 'ai' },
-  { url: 'https://news.google.com/rss/search?q=Dhaka+Stock+Exchange+DSE+Bangladesh&hl=en&gl=BD&ceid=BD:en', source: 'Google News', category: 'dse' },
-  { url: 'https://news.google.com/rss/search?q=capital+market+bond+treasury+money+market&hl=en-US&gl=US&ceid=US:en', source: 'Google News', category: 'capital' },
+  { url: 'https://news.google.com/rss/search?q=Dhaka+Stock+Exchange+DSE+Bangladesh+market&hl=en&gl=BD&ceid=BD:en', source: 'Google News', category: 'dse' },
+  { url: 'https://news.google.com/rss/search?q=capital+market+bond+treasury+money+market+finance&hl=en-US&gl=US&ceid=US:en', source: 'Google News', category: 'capital' },
 ];
 
-function parseRSSItems(xml: string, source: string, category: NewsItem['category']): NewsItem[] {
+function extractSource(title: string): { cleanTitle: string; source: string } {
+  // Google News titles end with " - SourceName"
+  const match = title.match(/^(.+?)\s+-\s+([^-]+)$/);
+  if (match) return { cleanTitle: match[1].trim(), source: match[2].trim() };
+  return { cleanTitle: title, source: '' };
+}
+
+function parseRSSItems(xmlText: string, defaultSource: string, category: NewsItem['category']): NewsItem[] {
   const items: NewsItem[] = [];
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(xml, 'text/xml');
-  const entries = doc.querySelectorAll('item');
 
-  entries.forEach((item, i) => {
-    if (i >= 5) return; // max 5 per feed
-    const title = item.querySelector('title')?.textContent?.trim() || '';
-    const link = item.querySelector('link')?.textContent?.trim() || '';
-    const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, 'text/xml');
 
-    if (title && link) {
-      // Clean Google News titles (remove " - Source" suffix)
-      const cleanTitle = title.replace(/\s*-\s*[^-]+$/, '').trim();
+    // Check for parse errors
+    const parseError = doc.querySelector('parsererror');
+    if (parseError) {
+      // Try parsing as HTML fallback (some proxies return text/html)
+      const htmlDoc = parser.parseFromString(xmlText, 'text/html');
+      const htmlItems = htmlDoc.querySelectorAll('item');
+      if (htmlItems.length === 0) return [];
+    }
+
+    const entries = doc.querySelectorAll('item');
+
+    entries.forEach((item, i) => {
+      if (i >= 6) return;
+      const rawTitle = item.querySelector('title')?.textContent?.trim() || '';
+      const link = item.querySelector('link')?.textContent?.trim() || '';
+      const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
+
+      if (!rawTitle || !link) return;
+
+      const { cleanTitle, source: extractedSource } = extractSource(rawTitle);
+
       items.push({
-        title: cleanTitle || title,
+        title: cleanTitle,
         link,
-        source,
+        source: extractedSource || defaultSource,
         published: pubDate,
         category,
       });
+    });
+  } catch {
+    // Regex fallback for malformed XML
+    const titleRegex = /<title><!\[CDATA\[(.*?)\]\]>|<title>(.*?)<\/title>/g;
+    const linkRegex = /<link>(.*?)<\/link>/g;
+    const pubDateRegex = /<pubDate>(.*?)<\/pubDate>/g;
+
+    const titles: string[] = [];
+    const links: string[] = [];
+    const dates: string[] = [];
+
+    let m;
+    while ((m = titleRegex.exec(xmlText)) !== null) titles.push(m[1] || m[2] || '');
+    while ((m = linkRegex.exec(xmlText)) !== null) links.push(m[1] || '');
+    while ((m = pubDateRegex.exec(xmlText)) !== null) dates.push(m[1] || '');
+
+    // Skip the first title/link (channel-level)
+    for (let i = 1; i < Math.min(titles.length, 7); i++) {
+      const rawTitle = titles[i];
+      if (!rawTitle) continue;
+      const { cleanTitle, source: extractedSource } = extractSource(rawTitle);
+      items.push({
+        title: cleanTitle,
+        link: links[i] || '',
+        source: extractedSource || defaultSource,
+        published: dates[i - 1] || '',
+        category,
+      });
     }
-  });
+  }
+
   return items;
 }
 
 async function fetchAllNews(): Promise<NewsItem[]> {
   const results = await Promise.allSettled(
     NEWS_FEEDS.map(async (feed) => {
-      const url = proxyUrl(feed.url);
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) return [];
-      const xml = await res.text();
-      return parseRSSItems(xml, feed.source, feed.category);
+      try {
+        const url = proxyUrl(feed.url);
+        const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+        if (!res.ok) return [];
+        const text = await res.text();
+        if (!text || text.length < 100) return [];
+        return parseRSSItems(text, feed.source, feed.category);
+      } catch {
+        return [];
+      }
     })
   );
 
@@ -73,6 +127,9 @@ async function fetchAllNews(): Promise<NewsItem[]> {
   allNews.sort((a, b) => {
     const da = a.published ? new Date(a.published).getTime() : 0;
     const db = b.published ? new Date(b.published).getTime() : 0;
+    if (isNaN(da) && isNaN(db)) return 0;
+    if (isNaN(da)) return 1;
+    if (isNaN(db)) return -1;
     return db - da;
   });
 
@@ -84,7 +141,7 @@ export function useMarketNews() {
     queryKey: ['marketNews'],
     queryFn: fetchAllNews,
     refetchInterval: 300_000,
-    staleTime: 180_000,
-    retry: 1,
+    staleTime: 120_000,
+    retry: 2,
   });
 }
