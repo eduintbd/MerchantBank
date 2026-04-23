@@ -140,7 +140,7 @@ export function AuthPage() {
               background: 'rgba(0,179,134,0.06)', border: '1px solid rgba(0,179,134,0.2)', borderRadius: 12,
               padding: '12px 16px', marginBottom: 20, fontSize: 13, color: '#009973', lineHeight: 1.5,
             }}>
-              You're currently using Abaci as a guest. Create an account to save your trading history and progress permanently.
+              You're currently using Abaci Investments as a guest. Create an account to save your trading history and progress permanently.
             </div>
           )}
 

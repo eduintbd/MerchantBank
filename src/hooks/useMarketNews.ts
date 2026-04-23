@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
 
 export interface NewsItem {
   title: string;
@@ -102,8 +103,28 @@ function parseRSSItems(xmlText: string, defaultSource: string, category: NewsIte
   return items;
 }
 
+async function fetchIngestedNews(): Promise<NewsItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('news_items')
+      .select('title, link, source, published_at, category')
+      .order('published_at', { ascending: false })
+      .limit(30);
+    if (error || !data) return [];
+    return data.map((row: any) => ({
+      title: row.title,
+      link: row.link || '',
+      source: row.source || 'Email',
+      published: row.published_at || '',
+      category: (row.category || 'capital') as NewsItem['category'],
+    }));
+  } catch {
+    return [];
+  }
+}
+
 async function fetchAllNews(): Promise<NewsItem[]> {
-  const results = await Promise.allSettled(
+  const rssPromise = Promise.allSettled(
     NEWS_FEEDS.map(async (feed) => {
       try {
         const url = proxyUrl(feed.url);
@@ -118,7 +139,9 @@ async function fetchAllNews(): Promise<NewsItem[]> {
     })
   );
 
-  const allNews: NewsItem[] = [];
+  const [results, ingested] = await Promise.all([rssPromise, fetchIngestedNews()]);
+
+  const allNews: NewsItem[] = [...ingested];
   for (const r of results) {
     if (r.status === 'fulfilled') allNews.push(...r.value);
   }

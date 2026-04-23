@@ -7,7 +7,7 @@ export function OnboardingPage() {
       <div className="mb-8 text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
           <div className="w-10 h-10 rounded-xl bg-[#0b8a00] flex items-center justify-center">
-            <span className="text-white font-bold text-lg">H</span>
+            <span className="text-white font-bold text-lg">A</span>
           </div>
           <span className="text-xl font-bold text-gray-900 tracking-tight">Abaci Investments</span>
         </div>

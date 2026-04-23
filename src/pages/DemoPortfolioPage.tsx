@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDemo } from '@/contexts/DemoContext';
 import { useDemoPortfolioSummary } from '@/hooks/useDemoPortfolio';
+import { useDemoCashLedger } from '@/hooks/useDemoCashLedger';
 import { StatCard } from '@/components/ui/Card';
 import { DemoPortfolioView } from '@/components/portfolio/DemoPortfolioView';
 import { ActivityTimeline } from '@/components/portfolio/ActivityTimeline';
@@ -11,14 +12,17 @@ import {
   TrendingDown,
   BarChart3,
   Wallet,
-  Clock,
+  ArrowDownRight,
+  ArrowUpRight,
+  ListChecks,
 } from 'lucide-react';
 
-type TabKey = 'holdings' | 'activity';
+type TabKey = 'holdings' | 'ledger';
 
 export function DemoPortfolioPage() {
   const { demoAccount } = useDemo();
   const { data: summary } = useDemoPortfolioSummary();
+  const { data: ledgerEntries } = useDemoCashLedger();
   const [activeTab, setActiveTab] = useState<TabKey>('holdings');
 
   const portfolioValue = (demoAccount?.available_cash ?? 0) + (summary?.totalMarketValue ?? 0);
@@ -27,6 +31,14 @@ export function DemoPortfolioPage() {
     demoAccount?.starting_cash && demoAccount.starting_cash > 0
       ? (totalPnl / demoAccount.starting_cash) * 100
       : 0;
+
+  const ledgerSummary = useMemo(() => {
+    if (!ledgerEntries) return { totalCredits: 0, totalDebits: 0 };
+    return {
+      totalCredits: ledgerEntries.reduce((s, e) => s + Number(e.credit), 0),
+      totalDebits: ledgerEntries.reduce((s, e) => s + Number(e.debit), 0),
+    };
+  }, [ledgerEntries]);
 
   return (
     <div className="min-h-screen bg-white animate-fade-in">
@@ -74,7 +86,7 @@ export function DemoPortfolioPage() {
         <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl mb-6 overflow-x-auto">
           {([
             { key: 'holdings' as TabKey, label: 'Holdings & Charts', icon: Briefcase },
-            { key: 'activity' as TabKey, label: 'Activity Timeline', icon: Clock },
+            { key: 'ledger' as TabKey, label: 'Cash Ledger', icon: ListChecks },
           ]).map((tab) => {
             const Icon = tab.icon;
             return (
@@ -95,11 +107,33 @@ export function DemoPortfolioPage() {
           })}
         </div>
 
-        {/* Holdings Tab — uses shared DemoPortfolioView component */}
         {activeTab === 'holdings' && <DemoPortfolioView />}
 
-        {/* Activity Tab — uses shared ActivityTimeline component */}
-        {activeTab === 'activity' && <ActivityTimeline />}
+        {activeTab === 'ledger' && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-6">
+              <StatCard
+                title="Available Cash"
+                value={formatCurrency(demoAccount?.available_cash ?? 0)}
+                icon={<Wallet size={20} />}
+                iconColor="bg-[#0b8a00]/15 text-[#0b8a00]"
+              />
+              <StatCard
+                title="Total Credits"
+                value={formatCurrency(ledgerSummary.totalCredits)}
+                icon={<ArrowDownRight size={20} />}
+                iconColor="bg-green-100 text-green-600"
+              />
+              <StatCard
+                title="Total Debits"
+                value={formatCurrency(ledgerSummary.totalDebits)}
+                icon={<ArrowUpRight size={20} />}
+                iconColor="bg-red-100 text-red-600"
+              />
+            </div>
+            <ActivityTimeline />
+          </>
+        )}
       </div>
     </div>
   );

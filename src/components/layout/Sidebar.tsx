@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils';
 import {
   LayoutDashboard, TrendingUp, Briefcase, GraduationCap, ShieldCheck,
   Users, LogOut, ClipboardList, Menu, X, MessageSquare, Rocket,
-  MoreHorizontal, PlayCircle, FileText, Wallet, UserCog,
-  UserPlus, Search,
+  PlayCircle, FileText, UserCog,
+  UserPlus, Search, Mail,
 } from 'lucide-react';
 
 const liveNavItems = [
@@ -25,7 +25,6 @@ const demoNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
   { to: '/demo/trading', icon: TrendingUp, label: 'Trade' },
   { to: '/demo/portfolio', icon: Briefcase, label: 'Portfolio' },
-  { to: '/demo/ledger', icon: Wallet, label: 'Ledger' },
   { to: '/demo/eod', icon: PlayCircle, label: 'EOD' },
   { to: '/demo/reports', icon: FileText, label: 'Reports' },
   { to: '/learning', icon: GraduationCap, label: 'Learn' },
@@ -33,7 +32,7 @@ const demoNavItems = [
 
 const adminNavItem = { to: '/admin/orders', icon: ClipboardList, label: 'Orders' };
 const adminLearnersItem = { to: '/admin/learners', icon: UserCog, label: 'Learners' };
-const moreNavItem = { to: '/more', icon: MoreHorizontal, label: 'More' };
+const adminNewsItem = { to: '/admin/news', icon: Mail, label: 'News' };
 
 export function TopNav() {
   const { user, isAdmin, isGuest, signOut } = useAuth();
@@ -42,10 +41,10 @@ export function TopNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const baseNavItems = isDemoMode ? demoNavItems : liveNavItems;
-  const adminItems = isAdmin ? [adminNavItem, ...(isDemoMode ? [adminLearnersItem] : [])] : [];
-  const navItems = [...baseNavItems, ...adminItems, moreNavItem];
+  const adminItems = isAdmin ? [adminNavItem, adminNewsItem, ...(isDemoMode ? [adminLearnersItem] : [])] : [];
+  const navItems = [...baseNavItems, ...adminItems];
   const desktopNavItems = navItems;
-  const mobileBottomItems = [baseNavItems[0], baseNavItems[1], baseNavItems[2], baseNavItems[3], moreNavItem];
+  const mobileBottomItems = baseNavItems.slice(0, 5);
 
   const displayName = isGuest ? 'Guest' : (user?.full_name || 'User');
   const displayInitial = isGuest ? 'G' : (user?.full_name?.charAt(0)?.toUpperCase() || 'U');

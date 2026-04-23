@@ -31,7 +31,6 @@ const StockDetailPage = lazy(() => import('@/pages/StockDetailPage').then(m => (
 const FinanceTrackerPage = lazy(() => import('@/pages/FinanceTrackerPage').then(m => ({ default: m.FinanceTrackerPage })));
 const TopInvestorsPage = lazy(() => import('@/pages/TopInvestorsPage').then(m => ({ default: m.TopInvestorsPage })));
 const InvestorJourneyPage = lazy(() => import('@/pages/InvestorJourneyPage').then(m => ({ default: m.InvestorJourneyPage })));
-const MorePage = lazy(() => import('@/pages/MorePage').then(m => ({ default: m.MorePage })));
 const PortfolioAnalysisPage = lazy(() => import('@/pages/PortfolioAnalysisPage').then(m => ({ default: m.PortfolioAnalysisPage })));
 const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettingsPage').then(m => ({ default: m.NotificationSettingsPage })));
 
@@ -39,7 +38,6 @@ const NotificationSettingsPage = lazy(() => import('@/pages/NotificationSettings
 const OnboardingPage = lazy(() => import('@/pages/OnboardingPage').then(m => ({ default: m.OnboardingPage })));
 const DemoTradingPage = lazy(() => import('@/pages/DemoTradingPage').then(m => ({ default: m.DemoTradingPage })));
 const DemoPortfolioPage = lazy(() => import('@/pages/DemoPortfolioPage').then(m => ({ default: m.DemoPortfolioPage })));
-const CashLedgerPage = lazy(() => import('@/pages/CashLedgerPage').then(m => ({ default: m.CashLedgerPage })));
 const EodReplayPage = lazy(() => import('@/pages/EodReplayPage').then(m => ({ default: m.EodReplayPage })));
 const DemoReportsPage = lazy(() => import('@/pages/DemoReportsPage').then(m => ({ default: m.DemoReportsPage })));
 const AdminLearnersPage = lazy(() => import('@/pages/AdminLearnersPage').then(m => ({ default: m.AdminLearnersPage })));
@@ -50,6 +48,8 @@ const FundAccountingPage = lazy(() => import('@/pages/FundAccountingPage').then(
 const CustodianOpsPage = lazy(() => import('@/pages/CustodianOpsPage').then(m => ({ default: m.CustodianOpsPage })));
 const ReconciliationPage = lazy(() => import('@/pages/ReconciliationPage').then(m => ({ default: m.ReconciliationPage })));
 const BrokerOrdersPage = lazy(() => import('@/pages/BrokerOrdersPage').then(m => ({ default: m.BrokerOrdersPage })));
+const AdminNewsPage = lazy(() => import('@/pages/AdminNewsPage').then(m => ({ default: m.AdminNewsPage })));
+const BillingPage = lazy(() => import('@/pages/BillingPage').then(m => ({ default: m.BillingPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -102,6 +102,10 @@ function AppRoutes() {
       {/* Market page — redirects to home (unified single page) */}
       <Route path="/market" element={<Navigate to="/dashboard" replace />} />
 
+      {/* Merged pages: /more → /learning, /demo/ledger → /demo/portfolio */}
+      <Route path="/more" element={<Navigate to="/learning" replace />} />
+      <Route path="/demo/ledger" element={<Navigate to="/demo/portfolio" replace />} />
+
       {/* All app routes — no auth gate, guest auto-login handles it */}
       <Route element={<AppLayout />}>
         {/* Default: send / to dashboard */}
@@ -128,14 +132,12 @@ function AppRoutes() {
         <Route path="/finance" element={<Suspense fallback={<PageLoader />}><FinanceTrackerPage /></Suspense>} />
         <Route path="/investors" element={<Suspense fallback={<PageLoader />}><TopInvestorsPage /></Suspense>} />
         <Route path="/investor-journey" element={<Suspense fallback={<PageLoader />}><InvestorJourneyPage /></Suspense>} />
-        <Route path="/more" element={<Suspense fallback={<PageLoader />}><MorePage /></Suspense>} />
         <Route path="/portfolio/analysis" element={<Suspense fallback={<PageLoader />}><PortfolioAnalysisPage /></Suspense>} />
         <Route path="/notifications/settings" element={<Suspense fallback={<PageLoader />}><NotificationSettingsPage /></Suspense>} />
 
         {/* Demo Trading + Learning routes */}
         <Route path="/demo/trading" element={<Suspense fallback={<PageLoader />}><DemoTradingPage /></Suspense>} />
         <Route path="/demo/portfolio" element={<Suspense fallback={<PageLoader />}><DemoPortfolioPage /></Suspense>} />
-        <Route path="/demo/ledger" element={<Suspense fallback={<PageLoader />}><CashLedgerPage /></Suspense>} />
         <Route path="/demo/eod" element={<Suspense fallback={<PageLoader />}><EodReplayPage /></Suspense>} />
         <Route path="/demo/reports" element={<Suspense fallback={<PageLoader />}><DemoReportsPage /></Suspense>} />
         <Route path="/admin/learners" element={<Suspense fallback={<PageLoader />}><AdminLearnersPage /></Suspense>} />
@@ -146,6 +148,8 @@ function AppRoutes() {
         <Route path="/admin/custodian" element={<Suspense fallback={<PageLoader />}><CustodianOpsPage /></Suspense>} />
         <Route path="/admin/reconciliation" element={<Suspense fallback={<PageLoader />}><ReconciliationPage /></Suspense>} />
         <Route path="/admin/broker-orders" element={<Suspense fallback={<PageLoader />}><BrokerOrdersPage /></Suspense>} />
+        <Route path="/admin/news" element={<Suspense fallback={<PageLoader />}><AdminNewsPage /></Suspense>} />
+        <Route path="/billing" element={<Suspense fallback={<PageLoader />}><BillingPage /></Suspense>} />
       </Route>
 
       {/* Onboarding — standalone page */}

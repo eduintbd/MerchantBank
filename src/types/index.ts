@@ -9,6 +9,8 @@ export type InvestorCategory = 'RB' | 'MB' | 'FI' | 'NRB' | 'MF' | 'AMC' | 'EMP'
 export type AccountType = 'Cash' | 'Margin';
 export type AmlRiskLevel = 'low' | 'medium' | 'high';
 
+export type SubscriptionTier = 'starter' | 'pro' | 'elite';
+
 export interface User {
   id: string;
   email: string;
@@ -18,6 +20,7 @@ export interface User {
   kyc_status: KycStatus;
   is_approved: boolean;
   avatar_url?: string;
+  subscription_tier?: SubscriptionTier;
   created_at: string;
   updated_at: string;
 }
