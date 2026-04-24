@@ -4,7 +4,7 @@ import { X, MessageCircle, Phone, CheckCircle, ArrowLeft, Loader2 } from 'lucide
 import { useAuth } from '@/contexts/AuthContext';
 import { shouldShowLeadCapture, getExistingLead, saveLead } from '@/services/visitorTracker';
 
-const WHATSAPP_NUMBER = '8801324686540';
+const WHATSAPP_NUMBER = '8801324686530';
 const WHATSAPP_MESSAGE = encodeURIComponent('Hi, I want to open an Abaci Investments account.');
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
 

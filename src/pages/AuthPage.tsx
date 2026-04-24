@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { MessageCircle, Phone, Mail, ArrowLeft, Loader2 } from 'lucide-react';
 
-const WHATSAPP_NUMBER = '8801324686540';
+const WHATSAPP_NUMBER = '8801324686530';
 const WHATSAPP_MESSAGE = encodeURIComponent('Hi, I want to open an Abaci Investments account.');
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`;
 
