@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Eduint Limited — Client Experience, Audit & Automation Proposal for Merchant Banks, Brokerage Houses & Asset Management Companies</title>
+<style>
+  :root {
+    --brand: #00a578;
+    --brand-dark: #007a59;
+    --brand-light: #d4f4e8;
+    --ink: #0b1120;
+    --ink-soft: #1f2937;
+    --ink-muted: #64748b;
+    --ink-faint: #94a3b8;
+    --rule: #e9edf2;
+    --rule-soft: #f1f5f9;
+    --bg: #ffffff;
+    --bg-soft: #f8fafc;
+    --bg-tint: #fafbfd;
+    --bg-accent: #ecfdf5;
+    --gold: #b08900;
+    --gold-bg: #fffbeb;
+    --navy: #0b1120;
+    --navy-grad-1: #0b1120;
+    --navy-grad-2: #132340;
+    --navy-grad-3: #0c3e2e;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    color: var(--ink);
+    font-size: 12.5px;
+    line-height: 1.72;
+    background: var(--bg-tint);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'ss01', 'cv11', 'kern', 'liga';
+  }
+
+  /* ============= Page shell ============= */
+  .page {
+    max-width: 880px;
+    margin: 24px auto;
+    padding: 68px 72px 80px;
+    background: #fff;
+    page-break-after: always;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(11,17,32,0.04), 0 8px 40px rgba(11,17,32,0.06);
+    border-radius: 2px;
+  }
+  .page::before {
+    /* Subtle top accent bar */
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--brand) 0%, var(--brand-dark) 100%);
+    border-radius: 2px 2px 0 0;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* Running page footer (decorative, for visible web view) */
+  .page-foot {
+    position: absolute;
+    bottom: 26px; left: 72px; right: 72px;
+    display: flex; justify-content: space-between;
+    font-size: 9.5px;
+    color: var(--ink-faint);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+  .page-foot .brand { color: var(--brand-dark); font-weight: 700; letter-spacing: 2px; }
+
+  /* ============= Cover page ============= */
+  .page.cover-page {
+    padding: 0;
+    overflow: hidden;
+  }
+  .page.cover-page::before { display: none; }
+  .cover {
+    min-height: 1100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background:
+      radial-gradient(circle at 85% 15%, rgba(0,165,120,0.22) 0%, transparent 45%),
+      radial-gradient(circle at 15% 85%, rgba(19,35,64,0.85) 0%, transparent 50%),
+      linear-gradient(135deg, var(--navy-grad-1) 0%, var(--navy-grad-2) 55%, var(--navy-grad-3) 100%);
+    color: #fff;
+    padding: 72px 76px 68px;
+    position: relative;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+    background-size: 24px 24px;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+  .cover > * { position: relative; z-index: 1; }
+  .cover .mark {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-weight: 700; font-size: 15px; letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .mark-bullet {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 22px; letter-spacing: 0;
+    box-shadow: 0 8px 24px rgba(0,165,120,0.35);
+  }
+  .cover .mark .co { opacity: 0.9; }
+  .cover .mark .tag {
+    font-size: 10px; letter-spacing: 2px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    margin-left: 6px;
+    font-weight: 500;
+  }
+
+  .cover-hero .ribbon {
+    display: inline-block;
+    font-size: 10.5px; letter-spacing: 3.5px; text-transform: uppercase;
+    opacity: 0.7; margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+  .cover h1 {
+    font-size: 48px;
+    line-height: 1.08;
+    margin: 0 0 28px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    max-width: 640px;
+  }
+  .cover h1 .accent {
+    background: linear-gradient(135deg, #5de3b3 0%, var(--brand) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cover .sub {
+    font-size: 15.5px; line-height: 1.65;
+    opacity: 0.82; max-width: 580px; margin: 0;
+    font-weight: 400;
+  }
+
+  .cover .meta {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 28px; margin-top: 0;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.14);
+  }
+  .cover .meta .label {
+    font-size: 9.5px; opacity: 0.55; letter-spacing: 2px;
+    text-transform: uppercase; font-weight: 600;
+  }
+  .cover .meta .val {
+    font-size: 13px; margin-top: 6px; font-weight: 500;
+    line-height: 1.45;
+  }
+  .cover .footer {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-top: 36px; font-size: 11px; opacity: 0.7;
+    letter-spacing: 0.3px;
+  }
+
+  /* ============= Typography ============= */
+  h1, h2, h3, h4 { color: var(--ink); margin-top: 0; font-weight: 700; }
+  h2.section {
+    font-size: 26px;
+    padding-bottom: 14px;
+    margin-bottom: 28px;
+    letter-spacing: -0.6px;
+    font-weight: 800;
+    line-height: 1.22;
+    border-bottom: none;
+    position: relative;
+  }
+  h2.section::after {
+    content: "";
+    display: block;
+    width: 48px; height: 3px;
+    background: var(--brand);
+    border-radius: 2px;
+    margin-top: 14px;
+  }
+  h3 {
+    font-size: 15.5px;
+    color: var(--ink);
+    margin-top: 30px;
+    margin-bottom: 12px;
+    letter-spacing: -0.2px;
+    font-weight: 700;
+  }
+  h4 {
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 2.2px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  p {
+    margin: 0 0 14px; color: var(--ink-soft);
+    line-height: 1.75;
+  }
+  ul { padding-left: 22px; margin: 0 0 16px; }
+  ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin: 6px 0; color: var(--ink-soft); line-height: 1.65; }
+  li::marker { color: var(--brand); }
+  strong { color: var(--ink); font-weight: 600; }
+  em { color: var(--ink-soft); }
+  a { color: var(--brand-dark); text-decoration: none; border-bottom: 1px solid var(--brand-light); }
+  hr { border: none; border-top: 1px solid var(--rule); margin: 32px 0; }
+
+  /* ============= Eyebrow label ============= */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center; gap: 8px;
+    font-size: 10px; letter-spacing: 2.8px; text-transform: uppercase;
+    color: var(--brand-dark); font-weight: 700;
+    margin-bottom: 16px;
+    padding: 0;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 28px; height: 1.5px;
+    background: var(--brand);
+    display: inline-block;
+  }
+
+  /* ============= Tables ============= */
+  table {
+    width: 100%; border-collapse: separate;
+    border-spacing: 0;
+    margin: 18px 0; font-size: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  th, td {
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 16px; text-align: left;
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  th:not(:last-child), td:not(:last-child) {
+    border-right: 1px solid var(--rule);
+  }
+  tr:last-child td { border-bottom: none; }
+  th {
+    background: var(--bg-soft);
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+  tr:nth-child(even) td { background: var(--bg-tint); }
+  tr:nth-child(even) td[colspan] { background: var(--bg-soft); }
+  td[colspan] { background: linear-gradient(90deg, var(--bg-accent) 0%, var(--bg-soft) 100%) !important; }
+  .tick { color: var(--brand); font-weight: 800; font-size: 15px; }
+  .dash { color: #cbd5e1; font-size: 15px; }
+
+  /* ============= Pricing cards ============= */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 26px 0; }
+  .card {
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 28px 24px;
+    background: #fff;
+    position: relative;
+    transition: transform .2s ease;
+  }
+  .card.featured {
+    border: 1.5px solid var(--brand);
+    background: linear-gradient(180deg, #fff 0%, #f0fbf6 100%);
+    box-shadow:
+      0 4px 12px rgba(0,165,120,0.08),
+      0 20px 48px rgba(0,165,120,0.10);
+    transform: translateY(-4px);
+  }
+  .card.featured::before {
+    content: "MOST POPULAR";
+    position: absolute; top: -12px; right: 20px;
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    color: #fff;
+    font-size: 9px; font-weight: 800; letter-spacing: 1.8px;
+    padding: 5px 12px; border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,165,120,0.3);
+  }
+  .card .tier-name {
+    font-size: 10px; letter-spacing: 2.8px;
+    text-transform: uppercase; color: var(--brand-dark);
+    font-weight: 800;
+  }
+  .card .price {
+    font-size: 30px; font-weight: 800;
+    color: var(--ink); margin: 8px 0 0;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+  }
+  .card .price .per {
+    font-size: 12px; color: var(--ink-muted);
+    font-weight: 500; letter-spacing: 0;
+  }
+  .card .six-month {
+    font-size: 10.5px; color: var(--brand-dark);
+    font-weight: 700; letter-spacing: 0.4px;
+    background: var(--bg-accent);
+    padding: 6px 12px; border-radius: 999px;
+    display: inline-block; margin-top: 10px;
+  }
+  .card .pitch {
+    font-size: 12px; color: var(--ink-muted);
+    margin: 16px 0 16px; min-height: 54px;
+    line-height: 1.6;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .card h4 {
+    margin-top: 16px; margin-bottom: 8px;
+    color: var(--ink);
+    font-size: 9.5px;
+  }
+  .card ul { padding-left: 18px; font-size: 11.5px; margin-bottom: 4px; }
+  .card li { margin: 6px 0; line-height: 1.55; }
+
+  /* ============= Pills ============= */
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 20px; }
+  .pill {
+    font-size: 10.5px; padding: 5px 12px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+
+  /* ============= Callouts ============= */
+  .callout {
+    background: linear-gradient(135deg, var(--bg-accent) 0%, #f6fefb 100%);
+    border: 1px solid var(--brand-light);
+    border-left: 4px solid var(--brand);
+    padding: 20px 24px;
+    border-radius: 10px;
+    margin: 22px 0;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+  .callout strong { color: var(--ink); }
+  .callout.warn {
+    border-left-color: var(--gold);
+    background: linear-gradient(135deg, var(--gold-bg) 0%, #fffef7 100%);
+    border-color: #fde68a;
+  }
+  .callout ul { margin-top: 10px; margin-bottom: 4px; }
+  .callout li { margin: 6px 0; }
+
+  /* ============= Layout helpers ============= */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 22px 0; }
+
+  /* ============= KPI tiles ============= */
+  .kpi {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 18px; margin: 24px 0;
+  }
+  .kpi .tile {
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 22px 20px;
+    background: linear-gradient(180deg, #fff 0%, var(--bg-tint) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi .tile::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--brand);
+    opacity: 0.7;
+  }
+  .kpi .num {
+    font-size: 30px; font-weight: 800;
+    color: var(--brand-dark);
+    letter-spacing: -1.2px;
+    line-height: 1.05;
+  }
+  .kpi .lbl {
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--ink-muted);
+    margin-top: 8px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  /* ============= Signature blocks ============= */
+  .sig-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 40px; margin-top: 48px;
+  }
+  .sig-block {
+    border-top: 1.5px solid var(--ink);
+    padding-top: 12px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    line-height: 1.75;
+  }
+
+  /* ============= Tag grid ============= */
+  .tag-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 18px 0 8px;
+  }
+  .tag-grid .tag {
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: #fff;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    transition: border-color .2s ease;
+  }
+  .tag-grid .tag b {
+    display: block;
+    color: var(--ink);
+    margin-bottom: 4px;
+    font-size: 12.5px;
+    font-weight: 700;
+  }
+
+  /* ============= TOC ============= */
+  .toc {
+    column-count: 2;
+    column-gap: 48px;
+    font-size: 12px;
+    margin-top: 14px;
+  }
+  .toc-item {
+    display: flex; justify-content: space-between;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px dashed var(--rule);
+    break-inside: avoid;
+    gap: 8px;
+  }
+  .toc-item > span:first-child { flex: 1 1 auto; }
+  .toc-item > span:last-child {
+    color: var(--ink-muted);
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .toc-item .n {
+    color: var(--brand-dark);
+    font-weight: 800;
+    margin-right: 10px;
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ============= Code ============= */
+  code {
+    background: var(--rule-soft);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--brand-dark);
+    font-family: 'SF Mono', Consolas, Monaco, monospace;
+  }
+
+  /* ============= Print overrides — tight A4 fit ============= */
+  @media print {
+    body {
+      background: #fff;
+      font-size: 9.3px;
+      line-height: 1.46;
+    }
+    .page {
+      margin: 0;
+      padding: 14px 22px 18px;
+      box-shadow: none;
+      border-radius: 0;
+      max-width: 100%;
+      min-height: 0;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+    .page::before { height: 2.5px; }
+    .page::before { height: 3px; }
+
+    /* Cover scales to exactly one page */
+    .page.cover-page {
+      padding: 0;
+      page-break-after: always;
+    }
+    .cover {
+      min-height: 0;
+      height: 27.3cm;
+      padding: 46px 52px 40px;
+    }
+    .cover h1 {
+      font-size: 38px;
+      line-height: 1.08;
+      margin: 0 0 22px;
+    }
+    .cover .sub { font-size: 12.5px; max-width: 520px; }
+    .cover .meta {
+      gap: 18px;
+      padding-top: 22px;
+      margin-top: 0;
+    }
+    .cover .meta .val { font-size: 11.5px; margin-top: 4px; }
+    .cover-hero .ribbon { margin-bottom: 20px; font-size: 9.5px; }
+    .mark-bullet { width: 38px; height: 38px; font-size: 18px; }
+    .cover .mark { font-size: 12.5px; gap: 10px; }
+    .cover .mark .tag { font-size: 8.5px; padding: 2px 8px; }
+    .cover .footer { margin-top: 24px; font-size: 10px; }
+
+    /* Headings */
+    h2.section {
+      font-size: 15px;
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      line-height: 1.18;
+    }
+    h2.section::after { margin-top: 6px; width: 28px; height: 2px; }
+    h3 {
+      font-size: 11.5px;
+      margin-top: 10px;
+      margin-bottom: 3px;
+    }
+    h4 {
+      font-size: 8px;
+      margin-top: 6px;
+      margin-bottom: 3px;
+      letter-spacing: 1.4px;
+    }
+
+    /* Copy */
+    p { margin: 0 0 6px; line-height: 1.48; }
+    ul, ol { margin: 0 0 7px; padding-left: 15px; }
+    li { margin: 1px 0; line-height: 1.42; }
+    hr { margin: 10px 0; }
+
+    /* Eyebrow */
+    .eyebrow { font-size: 8px; margin-bottom: 6px; letter-spacing: 2px; }
+    .eyebrow::before { width: 18px; height: 1.3px; }
+
+    /* Tables — tighter */
+    table {
+      font-size: 9.2px;
+      margin: 7px 0;
+    }
+    th, td {
+      padding: 4.5px 7px;
+      line-height: 1.36;
+    }
+    th { font-size: 7.8px; letter-spacing: 0.8px; }
+
+    /* KPI tiles */
+    .kpi { gap: 8px; margin: 8px 0; }
+    .kpi .tile { padding: 10px 10px; }
+    .kpi .num { font-size: 18px; letter-spacing: -0.6px; }
+    .kpi .lbl { font-size: 7.4px; margin-top: 3px; letter-spacing: 1.1px; }
+
+    /* Pricing cards */
+    .cards { gap: 9px; margin: 10px 0; }
+    .card {
+      padding: 14px 12px;
+      border-radius: 8px;
+    }
+    .card.featured {
+      box-shadow: none;
+      transform: none;
+    }
+    .card .tier-name { font-size: 8.5px; letter-spacing: 2px; }
+    .card .price { font-size: 21px; letter-spacing: -1px; }
+    .card .price .per { font-size: 10px; }
+    .card .six-month { font-size: 8.5px; padding: 3px 8px; margin-top: 5px; }
+    .card .pitch {
+      font-size: 9.8px;
+      min-height: 36px;
+      margin: 9px 0 9px;
+      padding-bottom: 9px;
+      line-height: 1.48;
+    }
+    .card h4 { margin-top: 8px; margin-bottom: 4px; font-size: 8px; }
+    .card ul { font-size: 9.5px; padding-left: 15px; }
+    .card li { margin: 2.5px 0; line-height: 1.42; }
+    .card.featured::before {
+      top: -8px; font-size: 7.5px;
+      padding: 3px 9px;
+      letter-spacing: 1.3px;
+    }
+
+    /* Pills */
+    .pill-row { gap: 5px; margin: 6px 0 8px; }
+    .pill {
+      font-size: 8.5px;
+      padding: 2.5px 8px;
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 9px 12px;
+      margin: 8px 0;
+      font-size: 9.5px;
+      line-height: 1.48;
+      border-radius: 6px;
+    }
+    .callout ul { margin-top: 4px; padding-left: 14px; }
+    .callout li { margin: 2px 0; }
+
+    /* Two-col */
+    .two-col { gap: 16px; margin: 8px 0; }
+
+    /* Tag grid */
+    .tag-grid { gap: 6px; margin: 8px 0 4px; }
+    .tag-grid .tag { padding: 8px 10px; font-size: 9px; line-height: 1.42; }
+    .tag-grid .tag b { font-size: 9.5px; margin-bottom: 2px; }
+
+    /* Signature */
+    .sig-row { gap: 26px; margin-top: 18px; }
+    .sig-block { font-size: 8.8px; line-height: 1.55; }
+
+    /* TOC */
+    .toc { font-size: 10px; column-gap: 28px; }
+    .toc-item { padding: 4px 0; }
+    .toc-item > span:last-child { font-size: 8.5px; }
+    .toc-item .n { font-size: 9.5px; margin-right: 6px; }
+
+    /* ======= Break-control ======= */
+    .page > *:first-child { margin-top: 0; }
+    .card, .callout, .kpi .tile, .tag-grid .tag { break-inside: avoid; page-break-inside: avoid; }
+    tr { break-inside: avoid; page-break-inside: avoid; }
+    thead { display: table-header-group; }
+    h2.section, h3, h4 { break-after: avoid; page-break-after: avoid; }
+    .kpi, .cards, .tag-grid, .two-col, .sig-row { break-inside: avoid; page-break-inside: avoid; }
+
+    /* Widows/orphans */
+    p, li { orphans: 2; widows: 2; }
+    h2, h3, h4 { orphans: 3; widows: 3; }
+  }
+  @page { size: A4; margin: 0.6cm; }
+</style>
+</head>
+<body>
+
+<!-- ============================================= -->
+<!-- COVER -->
+<!-- ============================================= -->
+<div class="page cover-page">
+  <div class="cover">
+    <div>
+      <div class="mark">
+        <span class="mark-bullet">E</span>
+        <span class="co">EDUINT &nbsp;LIMITED</span>
+        <span class="tag">AI · Capital Markets</span>
+      </div>
+    </div>
+
+    <div class="cover-hero">
+      <div class="ribbon">A Six-Month Engagement Proposal</div>
+      <h1>Client Experience,<br/>Monthly Audit &amp;<br/><span class="accent">Automation Platform</span></h1>
+      <p class="sub">A turnkey partnership for Bangladeshi merchant banks, brokerage houses and asset management companies — a client-facing web &amp; mobile experience, monthly compliance audits, and operations automation, delivered as a monthly subscription with no upfront capex.</p>
+    </div>
+
+    <div>
+      <div class="meta">
+        <div>
+          <div class="label">Prepared By</div>
+          <div class="val">Eduint Limited<br/><span style="opacity:0.7; font-weight:400;">Syed Adnan Huda, CFA</span></div>
+        </div>
+        <div>
+          <div class="label">Prepared For</div>
+          <div class="val">Merchant Banks,<br/>Brokers &amp; AMCs</div>
+        </div>
+        <div>
+          <div class="label">Engagement</div>
+          <div class="val">6-Month Minimum<br/><span style="opacity:0.7; font-weight:400;">Opex only</span></div>
+        </div>
+        <div>
+          <div class="label">Valid Until</div>
+          <div class="val">30 Jun 2026</div>
+        </div>
+      </div>
+      <div class="footer">
+        <div>founder@aibd.ai &nbsp;·&nbsp; support@aibd.ai &nbsp;·&nbsp; abaci.aibd.ai</div>
+        <div>V 2.1 &nbsp;·&nbsp; 24 April 2026</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Executive Summary -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">01 · Executive Summary</div>
+  <h2 class="section">The opportunity, in one page</h2>
+
+  <p>Bangladesh's capital market is at an inflection point. BSEC is pushing for
+  modern investor experiences, stronger compliance hygiene, and better retention of
+  retail investors. Yet most merchant banks, brokerage houses and asset management
+  companies still run on first-generation back-office systems, paper-driven
+  onboarding, spreadsheet-based NAV calculations, and Excel-driven monthly audits.</p>
+
+  <p><strong>Eduint Limited</strong> offers a ready-made path forward: a fully-built
+  fintech platform — proven in production as <em>Abaci Investments</em> — that your
+  firm can white-label, plus monthly compliance audits and operations automation,
+  delivered as an inclusive subscription.</p>
+
+  <div class="kpi">
+    <div class="tile">
+      <div class="num">40+</div>
+      <div class="lbl">Ready-to-Deploy Modules</div>
+    </div>
+    <div class="tile">
+      <div class="num">3</div>
+      <div class="lbl">Tiered Plans (1L / 1.8L / 3L)</div>
+    </div>
+    <div class="tile">
+      <div class="num">6 mo.</div>
+      <div class="lbl">Minimum Engagement</div>
+    </div>
+    <div class="tile">
+      <div class="num">0</div>
+      <div class="lbl">Capex — Pure OpEx Model</div>
+    </div>
+  </div>
+
+  <h3>What you get</h3>
+  <ul>
+    <li><strong>Client / Investor Experience Platform</strong> — a branded web + mobile portal: dashboard, portfolio, demo trading, learning, IPO, KYC, Halal screening — and for AMCs: multi-fund NAV, SIP, unit &amp; tax certificates, dividends.</li>
+    <li><strong>Monthly Compliance &amp; Operational Audit</strong> — a structured monthly report on trade exceptions, BSEC rule alignment, margin monitoring, reconciliation gaps, NAV approvals, and KYC freshness.</li>
+    <li><strong>Operations Automation</strong> — EOD replay, fund accounting, custodian ops, broker-order triage, reconciliation, fee/commission, NAV workflow, dividend runs and SIP collections.</li>
+    <li><strong>Joint Go-to-Market Partnership</strong> — we will co-sell with your firm so the platform can be offered to <em>your</em> downstream institutional, corporate and AMC clients as a revenue channel.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Why now:</strong> Every new retail investor you onboard today through a
+    1999-era portal is a retention risk. The cost of building this in-house is
+    8–10 crore BDT and 18 months. Eduint compresses that to one month of onboarding
+    and a fixed monthly fee.
+  </div>
+
+  <h3>Contents of this document</h3>
+  <div class="toc">
+    <div class="toc-item"><span><span class="n">02</span> About Eduint Limited</span><span>p.3</span></div>
+    <div class="toc-item"><span><span class="n">02a</span> Founder Spotlight — Syed Adnan Huda, CFA</span><span>p.4</span></div>
+    <div class="toc-item"><span><span class="n">03</span> Who This Proposal Is For</span><span>p.5</span></div>
+    <div class="toc-item"><span><span class="n">04</span> The Problem We Solve</span><span>p.6</span></div>
+    <div class="toc-item"><span><span class="n">05</span> Case Study — Ekush AMC</span><span>p.7</span></div>
+    <div class="toc-item"><span><span class="n">06</span> Platform Overview</span><span>p.8</span></div>
+    <div class="toc-item"><span><span class="n">07</span> Module Inventory</span><span>p.9</span></div>
+    <div class="toc-item"><span><span class="n">08</span> Pricing &amp; Plans</span><span>p.10</span></div>
+    <div class="toc-item"><span><span class="n">09</span> Plan Comparison Matrix</span><span>p.11</span></div>
+    <div class="toc-item"><span><span class="n">10</span> Monthly Audit Deliverable</span><span>p.12</span></div>
+    <div class="toc-item"><span><span class="n">11</span> Automation Scope</span><span>p.13</span></div>
+    <div class="toc-item"><span><span class="n">12</span> Joint GTM Partnership</span><span>p.14</span></div>
+    <div class="toc-item"><span><span class="n">13</span> Delivery Timeline</span><span>p.15</span></div>
+    <div class="toc-item"><span><span class="n">14</span> Commercial Terms</span><span>p.16</span></div>
+    <div class="toc-item"><span><span class="n">15</span> Next Steps &amp; Sign-off</span><span>p.17</span></div>
+  </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: About Eduint -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">02 · About Us</div>
+  <h2 class="section">Eduint Limited — the learning &amp; technology partner for Bangladesh's capital markets</h2>
+
+  <p>Eduint Limited is a Bangladesh-based <strong>AI-driven capital-markets
+  solutions company</strong>, founded by the former COO of UCB Stock Brokerage
+  Limited — Bangladesh's #1 brokerage house. We build, operate and license
+  production-grade software that bridges the gap between retail investors and
+  the institutions that serve them: merchant banks, brokerage houses, and asset
+  management companies.</p>
+
+  <div class="two-col">
+    <div>
+      <h3>Our focus</h3>
+      <ul>
+        <li>Client-facing investor platforms (web + mobile)</li>
+        <li>Trading &amp; portfolio management software</li>
+        <li>Investor education &amp; certification</li>
+        <li>Compliance automation (BSEC rule alignment)</li>
+        <li>Back-office automation (EOD, reconciliation, custody)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Our flagship product</h3>
+      <p><strong>Abaci Investments</strong> (abaci.aibd.ai) — a full-stack investor
+      education, demo trading, and portfolio management platform currently serving
+      as Eduint's reference implementation. All features described in this
+      proposal are live or have passed internal QA on the Abaci codebase.</p>
+    </div>
+  </div>
+
+  <h3>Why merchant banks and brokers choose Eduint</h3>
+  <div class="tag-grid">
+    <div class="tag"><b>No capex</b>Monthly subscription, opex-only.</div>
+    <div class="tag"><b>White-labeled</b>Your brand, logo, colors, domain.</div>
+    <div class="tag"><b>Local-first</b>Built for DSE/CSE, BDT, Bengali + English.</div>
+    <div class="tag"><b>BSEC-aware</b>Rules embedded in the product layer.</div>
+    <div class="tag"><b>Halal-ready</b>Shariah screening built in.</div>
+    <div class="tag"><b>Production-grade</b>Modern stack, audited codebase.</div>
+    <div class="tag"><b>Fast to launch</b>30 days from signature to go-live.</div>
+    <div class="tag"><b>Integrable</b>Plugs into your OMS &amp; CDBL.</div>
+    <div class="tag"><b>Scalable</b>Cloud-native, elastic by design.</div>
+  </div>
+
+  <h3>Corporate identity &amp; contact</h3>
+  <table>
+    <tr>
+      <th style="width:28%">Legal entity</th>
+      <td>Eduint Limited (registered in Bangladesh)</td>
+    </tr>
+    <tr>
+      <th>Brand / flagship product</th>
+      <td>Abaci Investments — <a href="https://abaci.aibd.ai">abaci.aibd.ai</a></td>
+    </tr>
+    <tr>
+      <th>Founder</th>
+      <td>Syed Adnan Huda, CFA — founder@aibd.ai</td>
+    </tr>
+    <tr>
+      <th>All client queries</th>
+      <td>support@aibd.ai &nbsp;<em>(single inbox for all sales, onboarding, technical &amp; compliance queries)</em></td>
+    </tr>
+    <tr>
+      <th>Website / domains</th>
+      <td>abaci.aibd.ai &nbsp;·&nbsp; aibd.ai &nbsp;·&nbsp; eduintbd.com</td>
+    </tr>
+    <tr>
+      <th>Office</th>
+      <td>Dhaka, Bangladesh</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Founder spotlight -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">02a · Leadership</div>
+  <h2 class="section">Founder spotlight — Syed Adnan Huda, CFA</h2>
+
+  <div class="two-col">
+    <div>
+      <p><strong>Syed Adnan Huda, CFA</strong> — known to partners and clients as
+      <strong>Adnan</strong> — is the Founder of Eduint Limited. After seven years as
+      Chief Operating Officer of <strong>UCB Stock Brokerage Limited</strong>, the
+      <em>number-one brokerage house in Bangladesh</em>, Adnan made the call very few
+      at his level in capital markets are willing to make: <strong>he stepped down
+      from the COO chair to build full-time</strong>.</p>
+
+      <p>The trigger was a first-hand realisation of just how much AI and
+      modern software were going to reshape investor experience, surveillance and
+      back-office operations — and how far behind Bangladesh's capital-markets
+      infrastructure was falling. He founded <strong>Eduint Limited</strong>,
+      acquired the <strong>aibd.ai</strong> domain, and set out with a single
+      mission: to become Bangladesh's leading AI-driven solution provider for
+      merchant banks, brokerage houses and asset management companies.</p>
+
+      <p>A CFA charterholder since 2013 and active member of CFA Society
+      Bangladesh, Adnan brings close to two decades of hands-on experience across
+      asset management, merchant banking, equity research, portfolio management
+      and brokerage — touching every segment this proposal is designed for.</p>
+
+      <h4>Career path</h4>
+      <ul>
+        <li>B.A. in Economics, City University of New York (CUNY), USA</li>
+        <li>Investment Analyst &amp; first employee, <em>Prime Finance Asset Management Co. Ltd.</em></li>
+        <li>Fund Manager, <em>Prime Finance AMC</em> — managed USD 10M AUM; co-launched Bangladesh's first private-sector open-ended mutual fund in 2010</li>
+        <li>CFA charterholder, 2013</li>
+        <li>Head of Research, <em>Prime Bank Investment Limited</em></li>
+        <li>Head of Portfolio Management Department, <em>BRAC EPL Investments Limited</em></li>
+        <li>Portfolio Rebalancing &amp; Fund Selection, <em>Minerva Planning Group</em>, Georgia, USA (remote)</li>
+        <li>Chief Operating Officer, <em>UCB Stock Brokerage Limited</em> (2018 – 2026) — Bangladesh's #1 brokerage house</li>
+        <li><strong>Founder, <em>Eduint Limited</em></strong> — acquired <em>aibd.ai</em>; full-time focus on AI-driven solutions for capital markets</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="callout">
+        <strong>Why this matters to you.</strong>
+        <ul style="margin:6px 0 0 0;">
+          <li>A CFA charterholder leads the product and compliance roadmap.</li>
+          <li>Seven years running the #1 DSE brokerage as COO — inside knowledge of every ops, risk and compliance workflow.</li>
+          <li>Experience across AMC, merchant bank and brokerage — under one roof.</li>
+          <li>Full-time focus on Eduint — not a side project.</li>
+        </ul>
+      </div>
+
+      <h4>Segments Adnan has built and run</h4>
+      <div class="pill-row">
+        <span class="pill">Asset Management</span>
+        <span class="pill">Mutual Funds</span>
+        <span class="pill">Equity Research</span>
+        <span class="pill">Portfolio Management</span>
+        <span class="pill">Investment Advisory</span>
+        <span class="pill">Brokerage / DSE</span>
+        <span class="pill">Merchant Banking</span>
+        <span class="pill">Fintech &amp; AI</span>
+      </div>
+
+      <h4>The founder's pledge</h4>
+      <p style="font-size:12px; font-style:italic; color:var(--ink-soft); border-left:3px solid var(--brand); padding:8px 12px; background:var(--bg-soft); border-radius:0 8px 8px 0;">
+        "I left the COO chair at Bangladesh's top brokerage house because the next
+        decade of capital markets will be written in software and AI — not in
+        spreadsheets. Eduint exists to make sure Bangladeshi merchant banks,
+        brokerages and AMCs aren't left behind."
+        <br/><br/>
+        <span style="font-style:normal; font-weight:600; color:var(--ink);">
+          — Syed Adnan Huda, CFA, Founder · Eduint Limited
+        </span>
+      </p>
+
+      <h4>Earlier, on the CFA journey</h4>
+      <p style="font-size:12px; font-style:italic; color:var(--ink-muted);">
+        "There is an immense need for young professionals to gain a deep
+        understanding of financial markets through structured training, and
+        emphasis on ethical judgement, in order to make more informed decisions."
+        <span style="font-style:normal;">— CFA Institute, Bangladesh Career Guide (2018)</span>
+      </p>
+    </div>
+  </div>
+
+  <hr/>
+  <p style="font-size:11px; color:var(--ink-muted); text-align:center;">
+    For any matter relating to this proposal, reach the founder directly at
+    <strong>founder@aibd.ai</strong>, or the Eduint team at <strong>support@aibd.ai</strong>.
+  </p>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Who This Proposal Is For -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">03 · Who This Proposal Is For</div>
+  <h2 class="section">Three kinds of capital-markets firms — one platform</h2>
+
+  <p>Eduint's platform has been built and hardened across three distinct business
+  models. Each inherits the same core, but turns on a different set of modules.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="tier-name">Merchant Bank</div>
+      <h3 style="margin-top:6px;">Regulated issue manager &amp; PMS provider</h3>
+      <p class="pitch">You run PMS, margin loan books, IPO issue management, trust
+      &amp; underwriting. You need a client portal, KYC, investor reporting and
+      BSEC-aligned compliance automation.</p>
+      <h4>Key modules</h4>
+      <ul>
+        <li>Client onboarding &amp; KYC</li>
+        <li>Portfolio management &amp; P&amp;L</li>
+        <li>Margin loan monitoring</li>
+        <li>IPO subscription workflow</li>
+        <li>BSEC rule library</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="tier-name">Brokerage House</div>
+      <h3 style="margin-top:6px;">DSE / CSE TREC holder</h3>
+      <p class="pitch">You execute trades, maintain BO accounts, settle with CDBL,
+      run dealer desks. You need a modern retail app, demo/paper trading, EOD
+      replay, and reconciliation automation.</p>
+      <h4>Key modules</h4>
+      <ul>
+        <li>Retail trading app (web + mobile)</li>
+        <li>Demo trading &amp; coaching</li>
+        <li>EOD replay &amp; statements</li>
+        <li>Broker-order triage console</li>
+        <li>Three-way reconciliation</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="tier-name">Asset Management Co.</div>
+      <h3 style="margin-top:6px;">Mutual fund / unit fund manager</h3>
+      <p class="pitch">You manage open-ended / closed-ended funds, calculate NAV,
+      accept SIPs, issue unit &amp; tax certificates, distribute dividends. You need
+      to replace spreadsheets with an investor portal and fund-accounting engine.</p>
+      <h4>Key modules</h4>
+      <ul>
+        <li>Multi-fund NAV entry &amp; history</li>
+        <li>Investor portal &amp; SIP</li>
+        <li>Unit &amp; tax certificates</li>
+        <li>Dividends &amp; statements</li>
+        <li>Fund reports &amp; audit log</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Shared spine — different audiences</h3>
+  <p>All three firm types share the same underlying technology spine, data model
+  and compliance engine. You inherit everything Eduint has built across all three
+  segments, even if you only turn on the modules relevant to your licence.</p>
+
+  <div class="callout">
+    <strong>Why this matters.</strong> Most Bangladesh vendors specialise in
+    <em>one</em> segment. If you're a group with a brokerage &amp; an AMC, or a
+    merchant bank that's applying for an AMC licence, Eduint is the only provider
+    that covers the full stack under one contract.
+  </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Problem -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">04 · Problem Statement</div>
+  <h2 class="section">What's hurting your firm today</h2>
+
+  <p>Through conversations with merchant bank and brokerage leadership across Dhaka and
+  Chattogram, we have consistently heard the same three pain points:</p>
+
+  <div class="two-col">
+    <div>
+      <h4>1. Client experience gap</h4>
+      <p>Retail investors expect the same quality of app they get from Nagad, bKash, or
+      Rocket. Most firms offer a Windows-only thick client with no learning, no demo,
+      no portfolio analysis. The churn rate on dormant BO accounts is 40%+ in year two.</p>
+    </div>
+    <div>
+      <h4>2. Compliance is reactive</h4>
+      <p>Monthly BSEC audit is a scramble of Excel files, PDFs, and phone calls.
+      Margin breaches, short-sale violations, and KYC staleness are caught <em>after</em>
+      they become findings — not before.</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4>3. Operations are manual</h4>
+      <p>EOD, fund accounting, custodian ops, and reconciliation are still
+      operated on spreadsheets. A single settlement error can wipe out a month of
+      brokerage margin.</p>
+    </div>
+    <div>
+      <h4>4. In-house build is too slow</h4>
+      <p>Building a modern investor platform requires 8–12 engineers, 18+ months, and
+      a product team that most firms do not have. DIY projects typically stall
+      around the EOD or KYC module.</p>
+    </div>
+  </div>
+
+  <h3>The cost of inaction</h3>
+  <table>
+    <tr><th style="width:35%">Leak</th><th>Annual impact (indicative)</th></tr>
+    <tr><td>Dormant BO account churn</td><td>1,000 accounts × 20,000 BDT avg brokerage/yr = <strong>2 Cr BDT</strong></td></tr>
+    <tr><td>BSEC findings &amp; remediation</td><td>2–4 audit findings/yr × avg cost = <strong>30–60 Lac BDT</strong></td></tr>
+    <tr><td>Reconciliation errors</td><td>0.1% of daily settlement = <strong>15–25 Lac BDT</strong></td></tr>
+    <tr><td>Missed IPO/Halal/women-investor segments</td><td>Lost AUM &amp; fee income = <strong>50 Lac+ BDT</strong></td></tr>
+  </table>
+
+  <div class="callout warn">
+    <strong>The insight.</strong> None of these leaks need a new product built from scratch.
+    They need a product assembled and deployed — which is exactly what Eduint has spent
+    the last 24 months doing. See §05 for exactly how we did this for Ekush AMC.
+  </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Case Study — Ekush -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">05 · Case Study</div>
+  <h2 class="section">How Eduint transformed Ekush Investments</h2>
+
+  <p><strong>Ekush Investments</strong> is a Bangladeshi asset management company
+  that manages three unit funds — <strong>EFUF</strong> (Ekush First Unit Fund),
+  <strong>EGF</strong> (Ekush Growth Fund), and <strong>ESRF</strong> (Ekush
+  Shariah Return Fund). Until 2025, Ekush — like most AMCs in Bangladesh — ran its
+  entire operation on spreadsheets.</p>
+
+  <h3>Before Eduint — the "Excel AMC"</h3>
+  <div class="two-col">
+    <div>
+      <h4>How things worked</h4>
+      <ul>
+        <li>NAV calculated manually in Excel by the fund accountant, once a day.</li>
+        <li>Three separate workbooks per fund — <code>FIN STATS.xlsx</code> and <code>INVESTORS.xlsx</code>.</li>
+        <li>Unit certificates printed on pre-stamped paper and couriered.</li>
+        <li>Tax certificates &amp; dividend warrants posted via Bangladesh Post.</li>
+        <li>Investor reporting: once-a-year factsheet PDF, printed and mailed.</li>
+        <li>SIP handled by bank standing order; collections reconciled by phone.</li>
+        <li>Investor complaints routed through the RM's personal WhatsApp.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>What it cost</h4>
+      <ul>
+        <li><strong>~6 people-days / month</strong> spent on NAV-to-investor pack.</li>
+        <li><strong>14-day delay</strong> between NAV publication and investor visibility.</li>
+        <li><strong>~3% SIP attrition</strong> driven by delayed acknowledgements.</li>
+        <li><strong>Audit findings</strong> on manual journal entries and unreconciled subscriptions.</li>
+        <li><strong>Zero digital touchpoints</strong> with investors — a retention liability.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The Eduint engagement</h3>
+  <p>In 8 weeks, Eduint built and rolled out a full digital AMC stack, branded
+  for Ekush, covering all three funds (EFUF / EGF / ESRF) — admin console, investor
+  portal, and compliance engine — on a modern cloud-native foundation.</p>
+
+  <h3>After Eduint — today's Ekush</h3>
+  <table>
+    <tr>
+      <th style="width:30%">Function</th>
+      <th style="width:35%">Before (Excel)</th>
+      <th>After (Eduint)</th>
+    </tr>
+    <tr>
+      <td>NAV calculation</td>
+      <td>Daily manual Excel</td>
+      <td>Admin NAV-entry workflow with audit log; history per fund</td>
+    </tr>
+    <tr>
+      <td>Unit certificates</td>
+      <td>Printed, signed, couriered</td>
+      <td>Self-serve download in investor portal, digitally signed</td>
+    </tr>
+    <tr>
+      <td>Tax certificates</td>
+      <td>Annual manual issue</td>
+      <td>Auto-generated PDF, year-end one-click dispatch</td>
+    </tr>
+    <tr>
+      <td>Dividends</td>
+      <td>Warrant + postal delivery</td>
+      <td>Dividend run inside admin, notifications + BEFTN instructions</td>
+    </tr>
+    <tr>
+      <td>SIP</td>
+      <td>Manual bank mandate</td>
+      <td>SIP module — setup, pause, resume, skip, statement</td>
+    </tr>
+    <tr>
+      <td>Investor statements</td>
+      <td>Annual PDF</td>
+      <td>Always-live portal + monthly PDF statement</td>
+    </tr>
+    <tr>
+      <td>Goals &amp; planning</td>
+      <td>None</td>
+      <td>Goal-based investing module (retirement, Hajj, education)</td>
+    </tr>
+    <tr>
+      <td>Fund reports</td>
+      <td>Printed factsheet (annual)</td>
+      <td>Per-fund dashboards: AUM, NAV history, holdings, returns</td>
+    </tr>
+    <tr>
+      <td>Investor support</td>
+      <td>RM's personal WhatsApp</td>
+      <td>Ticketing system, SLA-tracked, audit-logged</td>
+    </tr>
+    <tr>
+      <td>Compliance</td>
+      <td>Reactive at audit time</td>
+      <td>Continuous audit log, approvals workflow, investor KYC freshness</td>
+    </tr>
+  </table>
+
+  <h3>Measured outcomes</h3>
+  <div class="kpi">
+    <div class="tile">
+      <div class="num">-85%</div>
+      <div class="lbl">NAV-pack cycle time</div>
+    </div>
+    <div class="tile">
+      <div class="num">3×</div>
+      <div class="lbl">SIP book growth (6 mo.)</div>
+    </div>
+    <div class="tile">
+      <div class="num">T+1</div>
+      <div class="lbl">From NAV to investor visibility (was T+14)</div>
+    </div>
+    <div class="tile">
+      <div class="num">0</div>
+      <div class="lbl">Audit findings post-rollout</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>In Ekush's own words.</strong> "We went from three Excel workbooks and a
+    courier to a branded investor portal our unit-holders log into every week. Our
+    RMs now spend time selling, not filing. Our auditor now receives an export, not
+    a box of paper." &mdash; Head of Operations, Ekush Investments.
+  </div>
+
+  <h3>What your firm inherits</h3>
+  <p>Every module built for Ekush — NAV entry, SIP, unit/tax certificates, dividend
+  run, approvals, audit log, fund reports, investor portal — is part of the standard
+  Eduint platform. You don't pay for it to be built. You pay only for it to be
+  deployed, branded and operated for your firm.</p>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Platform Overview -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">06 · Platform Overview</div>
+  <h2 class="section">One platform. Three audiences. Fully white-labeled.</h2>
+
+  <p>The Eduint platform is a single codebase with role-based experiences for
+  your <strong>retail client</strong>, your <strong>operations staff</strong>, and
+  your <strong>compliance &amp; management</strong> team.</p>
+
+  <h3>Client-facing experience</h3>
+  <div class="pill-row">
+    <span class="pill">Dashboard (DSEX / DS30)</span>
+    <span class="pill">Market Watch</span>
+    <span class="pill">Sector Heatmap</span>
+    <span class="pill">Stock Detail</span>
+    <span class="pill">Top Movers / Breadth</span>
+    <span class="pill">Portfolio &amp; P&amp;L</span>
+    <span class="pill">Portfolio Analysis</span>
+    <span class="pill">Demo Trading</span>
+    <span class="pill">EOD Replay</span>
+    <span class="pill">Learning / Quizzes</span>
+    <span class="pill">Coaching Overlay</span>
+    <span class="pill">BSEC Rule Library</span>
+    <span class="pill">Halal Stocks</span>
+    <span class="pill">Women-Investors Hub</span>
+    <span class="pill">Investor Journey</span>
+    <span class="pill">Trader Biographies</span>
+    <span class="pill">IPO Subscription</span>
+    <span class="pill">Social Sentiment Feed</span>
+    <span class="pill">News Inbox</span>
+    <span class="pill">Finance Tracker</span>
+    <span class="pill">Notification Centre</span>
+    <span class="pill">KYC / Onboarding</span>
+    <span class="pill">WhatsApp + Email Alerts</span>
+  </div>
+
+  <h3>Asset management (AMC) modules</h3>
+  <div class="pill-row">
+    <span class="pill">Multi-Fund NAV Entry</span>
+    <span class="pill">NAV History &amp; Charts</span>
+    <span class="pill">Unit Certificates</span>
+    <span class="pill">Tax Certificates</span>
+    <span class="pill">Dividend Runs</span>
+    <span class="pill">SIP Setup / Pause / Skip</span>
+    <span class="pill">Goal-Based Investing</span>
+    <span class="pill">Fund Reports &amp; Factsheets</span>
+    <span class="pill">Investor Portal &amp; Statements</span>
+    <span class="pill">Approvals Workflow</span>
+    <span class="pill">Excel Bulk Import</span>
+    <span class="pill">Investor Support Tickets</span>
+  </div>
+
+  <h3>Operations console</h3>
+  <div class="pill-row">
+    <span class="pill">Client Management</span>
+    <span class="pill">KYC Admin</span>
+    <span class="pill">Broker Orders</span>
+    <span class="pill">Portfolio Management</span>
+    <span class="pill">Fund Accounting</span>
+    <span class="pill">Custodian Ops</span>
+    <span class="pill">Reconciliation</span>
+    <span class="pill">News Curator</span>
+    <span class="pill">Billing</span>
+    <span class="pill">Learners / Cohorts</span>
+    <span class="pill">Conversion Funnel</span>
+  </div>
+
+  <h3>Compliance &amp; management</h3>
+  <div class="pill-row">
+    <span class="pill">Monthly Audit Report</span>
+    <span class="pill">Margin Breach Log</span>
+    <span class="pill">Trade Exception Log</span>
+    <span class="pill">KYC Freshness Monitor</span>
+    <span class="pill">BSEC Rule Engine</span>
+    <span class="pill">Mistake Detector</span>
+    <span class="pill">Activity Timeline</span>
+    <span class="pill">Board-Ready Dashboards</span>
+  </div>
+
+  <h3>Technology stack</h3>
+  <table>
+    <tr><th style="width:30%">Layer</th><th>Technology</th></tr>
+    <tr><td>Front-end</td><td>React 19, TypeScript, Vite, Tailwind, React Query</td></tr>
+    <tr><td>Back-end / data</td><td>Supabase (Postgres + RLS), serverless API proxy</td></tr>
+    <tr><td>Market data</td><td>DSE feed via UCB Stock Brokerage execution bridge, shared market-data DB</td></tr>
+    <tr><td>Messaging</td><td>Twilio WhatsApp, Gmail ingest, transactional email</td></tr>
+    <tr><td>Auth</td><td>Supabase Auth + RLS per-tenant isolation</td></tr>
+    <tr><td>Hosting</td><td>Vercel edge network (HA, global CDN)</td></tr>
+  </table>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Module Inventory -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">07 · Module Inventory</div>
+  <h2 class="section">Everything that's ready to ship on Day 1</h2>
+
+  <table>
+    <tr>
+      <th style="width:24%">Module family</th>
+      <th style="width:38%">Capability</th>
+      <th>Why it matters to you</th>
+    </tr>
+    <tr>
+      <td rowspan="4"><strong>Investor Experience</strong></td>
+      <td>Dashboard, market indices, sector heatmap, movers, breadth</td>
+      <td>Replaces third-party tools your clients are paying for</td>
+    </tr>
+    <tr>
+      <td>Demo trading sandbox &amp; coaching overlay</td>
+      <td>Converts beginners into confident, repeat-trading clients</td>
+    </tr>
+    <tr>
+      <td>Portfolio, P&amp;L, sector exposure, analysis</td>
+      <td>Retention engine — clients log in even on non-trading days</td>
+    </tr>
+    <tr>
+      <td>Halal screening, Women-Investor hub, Investor Journey</td>
+      <td>Unlocks segments competitors ignore</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Learning &amp; Coaching</strong></td>
+      <td>Structured courses, quizzes, certificates</td>
+      <td>BSEC-aligned investor education as a retention lever</td>
+    </tr>
+    <tr>
+      <td>Scenario missions &amp; readiness score</td>
+      <td>Pre-qualifies clients before they touch live capital</td>
+    </tr>
+    <tr>
+      <td>Mistake detector &amp; reflection prompts</td>
+      <td>Reduces complaint volume and bad trades</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Operations</strong></td>
+      <td>EOD replay engine, fee calculator, order simulator</td>
+      <td>Replaces manual EOD spreadsheets</td>
+    </tr>
+    <tr>
+      <td>Fund accounting, custodian ops, reconciliation</td>
+      <td>Cuts back-office reconciliation time by 60–70%</td>
+    </tr>
+    <tr>
+      <td>Broker orders, admin news curator, billing</td>
+      <td>A single console replaces 4–5 departmental tools</td>
+    </tr>
+    <tr>
+      <td rowspan="4"><strong>Asset Management (AMC)</strong></td>
+      <td>Multi-fund NAV entry, history &amp; approvals</td>
+      <td>Replaces the "daily Excel NAV" — the #1 AMC operational risk</td>
+    </tr>
+    <tr>
+      <td>SIP setup, pause, skip &amp; dividend runs</td>
+      <td>Grows AUM via systematic investment; cuts RM load</td>
+    </tr>
+    <tr>
+      <td>Unit &amp; tax certificates (self-serve PDF)</td>
+      <td>Eliminates courier + stamp costs; investor gets instant delivery</td>
+    </tr>
+    <tr>
+      <td>Goal-based investing, fund reports, investor portal</td>
+      <td>Modern unit-holder experience; retention &amp; referral driver</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Compliance &amp; Audit</strong></td>
+      <td>BSEC rule library, KYC freshness, margin monitor</td>
+      <td>Makes the monthly audit a 1-click report</td>
+    </tr>
+    <tr>
+      <td>Mistake detector &amp; trade exception log</td>
+      <td>Turns compliance from reactive to pre-emptive</td>
+    </tr>
+    <tr>
+      <td>Monthly audit deliverable (see §08)</td>
+      <td>Signed, board-ready PDF every month</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><strong>Growth &amp; Intel</strong></td>
+      <td>Social sentiment scraper (Twitter, FB, YT, TikTok, Reddit)</td>
+      <td>See what the market is saying about your tickers in real time</td>
+    </tr>
+    <tr>
+      <td>News inbox (Gmail ingest) &amp; DSE filings feed</td>
+      <td>Front-runs manual news monitoring</td>
+    </tr>
+    <tr>
+      <td>Conversion funnel &amp; lead capture</td>
+      <td>Data-driven marketing, not intuition</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><strong>Messaging</strong></td>
+      <td>WhatsApp bot + email + push</td>
+      <td>Clients never miss a margin call or corporate action</td>
+    </tr>
+    <tr>
+      <td>Templated alerts for margin, settlement, IPO</td>
+      <td>Reduces phone-call volume to dealer desk</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Pricing tiers -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">08 · Pricing &amp; Plans</div>
+  <h2 class="section">Three plans · All plans 6 months minimum · All in BDT</h2>
+
+  <div class="cards">
+
+    <!-- STARTER -->
+    <div class="card">
+      <div class="tier-name">Essentials</div>
+      <div class="price">৳ 1,00,000<span class="per"> / month</span></div>
+      <div class="six-month">6-month commitment · ৳ 6,00,000 total</div>
+      <div class="pitch">For brokers and merchant banks who want a modern client portal and a monthly compliance pulse — fast.</div>
+      <h4 style="margin-top:6px;">Client Experience</h4>
+      <ul>
+        <li>White-labeled client web portal</li>
+        <li>Dashboard, market, portfolio, P&amp;L</li>
+        <li>Basic KYC onboarding flow</li>
+        <li>Learning library &amp; quizzes</li>
+        <li>Halal screening</li>
+      </ul>
+      <h4>Audit &amp; Automation</h4>
+      <ul>
+        <li>Monthly compliance audit report</li>
+        <li>KYC-freshness monitoring</li>
+        <li>Email support (business hours)</li>
+      </ul>
+    </div>
+
+    <!-- GROWTH -->
+    <div class="card featured">
+      <div class="tier-name">Growth</div>
+      <div class="price">৳ 1,80,000<span class="per"> / month</span></div>
+      <div class="six-month">6-month commitment · ৳ 10,80,000 total</div>
+      <div class="pitch">The recommended plan. Adds demo trading, EOD replay, coaching, and automation for a modern end-to-end client journey.</div>
+      <h4 style="margin-top:6px;">Everything in Essentials, plus</h4>
+      <ul>
+        <li>Demo trading sandbox + scenario missions</li>
+        <li>EOD replay engine &amp; statements</li>
+        <li>Coaching overlay &amp; mistake detector</li>
+        <li>Social sentiment + news inbox</li>
+        <li>IPO subscription module</li>
+        <li><strong>AMC:</strong> NAV entry, investor portal, SIP, unit/tax certificates, dividends</li>
+      </ul>
+      <h4>Audit &amp; Automation</h4>
+      <ul>
+        <li>Bi-weekly + monthly audit report</li>
+        <li>Margin breach &amp; trade-exception automation</li>
+        <li>WhatsApp + email alerts</li>
+        <li>Priority email &amp; WhatsApp support</li>
+      </ul>
+    </div>
+
+    <!-- PREMIER -->
+    <div class="card">
+      <div class="tier-name">Premier</div>
+      <div class="price">৳ 3,00,000<span class="per"> / month</span></div>
+      <div class="six-month">6-month commitment · ৳ 18,00,000 total</div>
+      <div class="pitch">Full-stack operations &amp; compliance automation with a named delivery engineer and co-sell partnership rights.</div>
+      <h4 style="margin-top:6px;">Everything in Growth, plus</h4>
+      <ul>
+        <li>Full operations console — fund accounting, custodian ops, reconciliation, broker orders</li>
+        <li>Admin console: learners, KYC, clients, news, billing</li>
+        <li>UCB Stock Brokerage OMS integration bridge</li>
+        <li><strong>AMC+:</strong> multi-fund approvals, goal-based investing, per-fund factsheets &amp; audit log</li>
+        <li>Custom BSEC rule-engine tuning</li>
+        <li>Per-tenant data isolation &amp; dedicated domain</li>
+      </ul>
+      <h4>Audit &amp; Automation</h4>
+      <ul>
+        <li>Weekly ops review + monthly board pack</li>
+        <li>Dedicated delivery engineer</li>
+        <li>24/7 priority support (4-hour P1 SLA)</li>
+        <li>Joint GTM co-sell rights (see §10)</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="callout">
+    <strong>All plans include:</strong> hosting, SSL, CDN, daily backups, RLS-isolated
+    database, ongoing product updates, security patching, and onboarding training
+    for up to 10 of your staff. No per-user licence fees. No per-trade fees.
+  </div>
+
+  <div class="callout warn">
+    <strong>Volume &amp; prepay discounts.</strong>
+    <ul style="margin:4px 0 0 0;">
+      <li><strong>5%</strong> off if full 6 months prepaid at signature.</li>
+      <li><strong>10%</strong> off on 12-month commitment (paid quarterly).</li>
+      <li><strong>Founding-partner discount</strong> — the first three firms to sign on Premier receive a locked rate of ৳ 2,50,000/mo for the full first year.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Plan comparison matrix -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">09 · Plan Comparison Matrix</div>
+  <h2 class="section">A feature-by-feature map across the three plans</h2>
+
+  <table>
+    <tr>
+      <th style="width:48%">Capability</th>
+      <th style="width:17%; text-align:center;">Essentials<br/><small>৳ 1L/mo</small></th>
+      <th style="width:17%; text-align:center;">Growth<br/><small>৳ 1.8L/mo</small></th>
+      <th style="width:18%; text-align:center;">Premier<br/><small>৳ 3L/mo</small></th>
+    </tr>
+    <tr><td colspan="4" style="background:var(--bg-soft);"><strong>Client Experience</strong></td></tr>
+    <tr><td>White-labeled client web portal</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Dashboard, market indices, sector heatmap</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Portfolio, P&amp;L, analysis</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Halal screening</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Learning library &amp; quizzes</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Demo trading sandbox + missions</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Coaching overlay &amp; mistake detector</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Women-Investor, Investor-Journey hubs</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>IPO subscription module</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Social sentiment feed (multi-platform)</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+
+    <tr><td colspan="4" style="background:var(--bg-soft);"><strong>Operations Automation</strong></td></tr>
+    <tr><td>Basic KYC workflow</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>EOD replay engine</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Fee calculator &amp; statements</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Fund accounting</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Custodian ops console</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Reconciliation automation</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Broker-order triage + OMS bridge</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Admin news curator &amp; billing</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+
+    <tr><td colspan="4" style="background:var(--bg-soft);"><strong>Asset Management (AMC)</strong></td></tr>
+    <tr><td>Multi-fund NAV entry &amp; history</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Investor portal &amp; monthly statements</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>SIP setup, pause, skip, dividends</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Unit &amp; tax certificates (self-serve)</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Goal-based investing &amp; fund reports</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Per-fund approvals workflow + audit log</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+
+    <tr><td colspan="4" style="background:var(--bg-soft);"><strong>Compliance &amp; Audit</strong></td></tr>
+    <tr><td>Monthly compliance audit PDF</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>KYC-freshness monitoring</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Bi-weekly audit cadence</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Weekly ops review + board pack</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Margin breach + trade-exception log</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Custom BSEC rule tuning</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+
+    <tr><td colspan="4" style="background:var(--bg-soft);"><strong>Support &amp; Partnership</strong></td></tr>
+    <tr><td>Email support (business hours)</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>WhatsApp + Email priority support</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Dedicated delivery engineer</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>24/7 support · 4-hour P1 SLA</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+    <tr><td>Joint GTM co-sell rights (see §10)</td><td class="dash" style="text-align:center;">—</td><td class="dash" style="text-align:center;">—</td><td class="tick" style="text-align:center;">✓</td></tr>
+  </table>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Monthly audit deliverable -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">10 · The Monthly Audit Deliverable</div>
+  <h2 class="section">What "Monthly Audit" actually means</h2>
+
+  <p>On the first business day of every month, Eduint delivers a signed, board-ready
+  PDF covering every regulated surface of your firm — pre-mapped to BSEC and DSE
+  guidelines.</p>
+
+  <h3>Sections of the monthly report</h3>
+  <table>
+    <tr>
+      <th style="width:28%">Section</th>
+      <th>What it contains</th>
+    </tr>
+    <tr>
+      <td>Executive summary</td>
+      <td>Traffic-light status across KYC, margin, settlement, complaints &amp; cyber hygiene.</td>
+    </tr>
+    <tr>
+      <td>KYC &amp; onboarding</td>
+      <td>Stale KYC count, expired IDs, pending document cases, re-KYC SLA adherence.</td>
+    </tr>
+    <tr>
+      <td>Trade surveillance</td>
+      <td>Margin breaches, short-sale exceptions, wash-trade candidates, crossed-market flags.</td>
+    </tr>
+    <tr>
+      <td>Settlement &amp; reconciliation</td>
+      <td>T+1/T+2 settlement success rate, failed settlements, broken reconciliations.</td>
+    </tr>
+    <tr>
+      <td>Client complaints &amp; NPS</td>
+      <td>Complaints opened/closed, median-time-to-resolution, NPS pulse from the portal.</td>
+    </tr>
+    <tr>
+      <td>BSEC rule alignment</td>
+      <td>Line-by-line mapping of trades, disclosures, and processes to BSEC rule IDs.</td>
+    </tr>
+    <tr>
+      <td>IT &amp; cyber hygiene</td>
+      <td>Auth logs, admin-action trail, failed-login anomalies, backup integrity checks.</td>
+    </tr>
+    <tr>
+      <td>Findings &amp; remediation</td>
+      <td>Open findings, target close-dates, owners, and links to tickets.</td>
+    </tr>
+  </table>
+
+  <h3>How the audit is produced</h3>
+  <ol>
+    <li><strong>Continuously collected</strong> — every event (trade, KYC update, margin call, reconciliation break) is logged into a structured audit trail as it happens.</li>
+    <li><strong>Auto-aggregated</strong> — on the 1st of the month, the rule engine runs over the prior 30 days of data and classifies findings.</li>
+    <li><strong>Eduint reviewed</strong> — a senior analyst spot-checks the auto-findings, adds narrative, and signs the PDF.</li>
+    <li><strong>Delivered</strong> — PDF dropped into your compliance email alias and SharePoint/Drive within 3 business days.</li>
+  </ol>
+
+  <div class="callout">
+    <strong>Board-ready.</strong> The audit PDF is formatted to be dropped
+    directly into your next board pack — no reformatting required.
+  </div>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Automation scope -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">11 · Automation Scope</div>
+  <h2 class="section">The manual work Eduint takes off your team's plate</h2>
+
+  <table>
+    <tr>
+      <th style="width:26%">Workflow</th>
+      <th style="width:36%">Today (manual)</th>
+      <th>With Eduint (automated)</th>
+    </tr>
+    <tr>
+      <td>Daily EOD closing</td>
+      <td>Ops team exports trades from OMS, reconciles manually with CDBL, emails statements to clients.</td>
+      <td>EOD replay engine runs at cut-off, statements auto-generated &amp; dispatched, exceptions routed to ops console.</td>
+    </tr>
+    <tr>
+      <td>Margin monitoring</td>
+      <td>Risk desk scans positions at 3pm; breaches often caught post-hoc.</td>
+      <td>Real-time margin engine; WhatsApp + email alert the moment a client crosses 70% utilisation.</td>
+    </tr>
+    <tr>
+      <td>KYC refresh</td>
+      <td>Tracked on a spreadsheet; renewal missed until auditor flags it.</td>
+      <td>Freshness monitor; 60/30/7-day reminders to client &amp; dealer; auto-lock on expiry.</td>
+    </tr>
+    <tr>
+      <td>Client reporting</td>
+      <td>Monthly P&amp;L generated by hand, emailed as Excel.</td>
+      <td>Self-serve in portal + monthly PDF auto-sent; includes sector exposure &amp; charges.</td>
+    </tr>
+    <tr>
+      <td>Complaint handling</td>
+      <td>Phone calls, ad-hoc emails, no SLA tracking.</td>
+      <td>Ticketed intake, assignment rules, SLA clock, NPS capture at close.</td>
+    </tr>
+    <tr>
+      <td>IPO subscription</td>
+      <td>Paper forms + dealer desk.</td>
+      <td>End-to-end digital IPO application with payment reconciliation.</td>
+    </tr>
+    <tr>
+      <td>Fund accounting</td>
+      <td>Spreadsheet NAV calculation.</td>
+      <td>Auto NAV + units + subscription/redemption workflow with audit trail.</td>
+    </tr>
+    <tr>
+      <td>Reconciliation</td>
+      <td>Analysts match broker, CDBL &amp; bank files manually.</td>
+      <td>Three-way reconciliation engine; only breaks surface to a human.</td>
+    </tr>
+    <tr>
+      <td>News &amp; disclosures</td>
+      <td>Compliance officer reads DSE filings PDFs.</td>
+      <td>Auto-ingest, categorise, alert impacted PMs and clients.</td>
+    </tr>
+    <tr>
+      <td>Social sentiment</td>
+      <td>None — firms are blind to retail buzz.</td>
+      <td>Multi-platform scraper (Twitter, FB, Reddit, YouTube, TikTok) scanning your tickers every 30 min.</td>
+    </tr>
+  </table>
+
+  <h3>Time saved per month (indicative)</h3>
+  <div class="kpi">
+    <div class="tile"><div class="num">120 h</div><div class="lbl">Ops team</div></div>
+    <div class="tile"><div class="num">40 h</div><div class="lbl">Risk / margin desk</div></div>
+    <div class="tile"><div class="num">60 h</div><div class="lbl">Compliance</div></div>
+    <div class="tile"><div class="num">220 h</div><div class="lbl">Total / month</div></div>
+  </div>
+  <p style="font-size:11px; color:var(--ink-muted);">
+    Based on observed savings in peer firms of 60–80 clients using comparable
+    automation modules. Actual savings vary with book size.
+  </p>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Partnership -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">12 · Joint Go-to-Market Partnership</div>
+  <h2 class="section">Beyond a vendor — a co-sell partner</h2>
+
+  <p>Eduint is not a traditional software vendor. We are building a long-term
+  capital-markets infrastructure business, and we want the merchant banks and
+  brokerages we serve to become <strong>revenue partners</strong> — not just
+  customers.</p>
+
+  <h3>The partnership model</h3>
+  <p>On signing any 6-month plan, your firm is eligible to become an
+  <strong>Eduint Authorized Partner</strong>. Under this arrangement:</p>
+  <ul>
+    <li>Your firm receives the right to <strong>co-sell the Eduint platform</strong> to downstream corporate, HNW and institutional clients.</li>
+    <li>Eduint trains 3–5 of your staff to pitch and demo the platform.</li>
+    <li>Co-branded collateral: joint deck, one-pager, demo environment, and case studies.</li>
+    <li>Eduint handles delivery, support and technical onboarding.</li>
+    <li>You own the client relationship &amp; billing on co-sold deals.</li>
+  </ul>
+
+  <h3>Commercial split on co-sold deals</h3>
+  <p>Every new deal signed under the joint go-to-market programme is split three
+  ways — rewarding the party that <em>introduces</em> the deal, the platform that
+  <em>delivers</em> it, and the person who <em>closes and services</em> it:</p>
+  <table>
+    <tr>
+      <th style="width:34%">Party</th>
+      <th style="width:22%; text-align:center;">Share of ARR</th>
+      <th>What they do</th>
+    </tr>
+    <tr>
+      <td><strong>Investor / Introducing firm</strong></td>
+      <td style="text-align:center; font-weight:700; color:var(--brand-dark);">30%</td>
+      <td>Brings the relationship, signs the MoU, opens the door.</td>
+    </tr>
+    <tr>
+      <td><strong>Eduint Limited</strong></td>
+      <td style="text-align:center; font-weight:700; color:var(--brand-dark);">30%</td>
+      <td>Delivers the platform, hosting, product roadmap, monthly audit and support.</td>
+    </tr>
+    <tr>
+      <td><strong>Employee (closer &amp; account manager)</strong></td>
+      <td style="text-align:center; font-weight:700; color:var(--brand-dark);">40%</td>
+      <td>Owns the sales close, relationship, onboarding and ongoing retention.</td>
+    </tr>
+  </table>
+  <p style="font-size:11px; color:var(--ink-muted);">
+    The split is applied to Year-1 ARR and to every renewal for the life of the
+    account. Employee share is paid monthly as the subscription is collected.
+  </p>
+
+  <h3>Partner-tier benefits</h3>
+  <div class="tag-grid">
+    <div class="tag"><b>Co-branded demo</b>Pitch with "Powered by Eduint" branding.</div>
+    <div class="tag"><b>Revenue share</b>30% ARR to you as introducer, every year — for life of account.</div>
+    <div class="tag"><b>Sales enablement</b>Eduint attends joint client meetings.</div>
+    <div class="tag"><b>Marketing credits</b>Eduint funds joint events &amp; digital.</div>
+    <div class="tag"><b>Preferred roadmap</b>Partner feature requests get priority.</div>
+    <div class="tag"><b>Exclusivity options</b>Geographic or segment exclusivity negotiable.</div>
+  </div>
+
+  <div class="callout">
+    <strong>Why this works.</strong> Merchant banks and brokerage houses already have
+    existing relationships with corporates, HNW families, family offices, and
+    cooperative banks that need exactly the capabilities Eduint builds. You monetise
+    a relationship you already own; we deliver the product.
+  </div>
+
+  <h3>Signed partnership — UCB Stock Brokerage Limited</h3>
+  <div class="callout">
+    <strong>Eduint Limited has signed a partnership with UCB Stock Brokerage Limited
+    to jointly onboard clients.</strong> This gives Eduint clients — and their
+    downstream investors — a frictionless path to a fully regulated DSE BO account,
+    trade execution, and settlement, <em>without</em> the client firm having to
+    negotiate brokerage, OMS or market-data contracts separately.
+  </div>
+
+  <p>In practice: investors can open a UCB-powered BO account directly from within
+  the Eduint-branded portal; KYC data flows digitally between your firm, UCB and
+  the exchange; trade execution, settlement and market data are delivered via a
+  single Eduint-built integration; and co-onboarding clients get priority
+  BO-opening SLAs.</p>
+
+  <p>The UCB partnership exists because of an unusual backstory. Adnan served as
+  <strong>Chief Operating Officer of UCB Stock Brokerage Limited</strong> — the
+  #1 brokerage house in Bangladesh — for seven years (2018–2026) before stepping
+  down to found Eduint Limited full-time. Rather than compete, UCB chose to
+  formalise the relationship, signing a co-onboarding partnership that gives
+  Eduint clients direct, preferred access to UCB's regulated DSE infrastructure.
+  That level of alignment — a former COO of the country's top broker on one side,
+  UCB's leadership on the other — is why a truly integrated, co-branded offering
+  is possible.</p>
+
+  <h3>Ecosystem at a glance</h3>
+  <table>
+    <tr>
+      <th style="width:26%">Partner</th>
+      <th style="width:24%">Relationship</th>
+      <th>What they bring</th>
+    </tr>
+    <tr>
+      <td><strong>UCB Stock Brokerage Ltd.</strong></td>
+      <td><span style="color:var(--brand-dark); font-weight:700;">Signed co-onboarding partnership</span></td>
+      <td>DSE TREC, BO account opening, trade execution, settlement, IPO processing, market data</td>
+    </tr>
+    <tr>
+      <td><strong>Abaci Investments</strong></td>
+      <td>Merchant-bank partner · flagship deployment</td>
+      <td>Regulated merchant banking, PMS, margin loan, the live reference platform at abaci.aibd.ai</td>
+    </tr>
+    <tr>
+      <td><strong>Ekush Investments</strong></td>
+      <td>AMC case study (see §05)</td>
+      <td>Multi-fund AMC running on Eduint — EFUF, EGF, ESRF</td>
+    </tr>
+    <tr>
+      <td>Supabase / Vercel</td>
+      <td>Cloud infrastructure</td>
+      <td>Postgres (row-level security), edge CDN, daily backups</td>
+    </tr>
+    <tr>
+      <td>Twilio</td>
+      <td>Messaging</td>
+      <td>WhatsApp Business &amp; SMS</td>
+    </tr>
+    <tr>
+      <td>Google Workspace</td>
+      <td>News &amp; mail</td>
+      <td>News ingestion pipeline &amp; transactional email</td>
+    </tr>
+  </table>
+
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Delivery timeline -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">13 · Delivery Timeline</div>
+  <h2 class="section">From signature to go-live in 30 days</h2>
+
+  <table>
+    <tr>
+      <th style="width:14%">Week</th>
+      <th style="width:30%">Eduint</th>
+      <th style="width:30%">Your team</th>
+      <th>Milestone</th>
+    </tr>
+    <tr>
+      <td><strong>Week 0</strong></td>
+      <td>Kick-off, brand assets, domain, SSL</td>
+      <td>Appoint project owner, share logo &amp; brand guidelines</td>
+      <td>Contract signed, project chartered</td>
+    </tr>
+    <tr>
+      <td><strong>Week 1</strong></td>
+      <td>White-label build, tenant DB provisioned, users imported</td>
+      <td>Share client list, org chart, escalation matrix</td>
+      <td>Staging environment live at yourbrand.aibd.ai</td>
+    </tr>
+    <tr>
+      <td><strong>Week 2</strong></td>
+      <td>KYC/onboarding tuned, fee rules configured, branding QA</td>
+      <td>Provide fee schedules, KYC templates, disclosures</td>
+      <td>UAT with 5 internal users begins</td>
+    </tr>
+    <tr>
+      <td><strong>Week 3</strong></td>
+      <td>OMS / CDBL integration, training of your staff (up to 10 seats)</td>
+      <td>Staff attend 4 × 90-min training sessions</td>
+      <td>Integration tested end-to-end</td>
+    </tr>
+    <tr>
+      <td><strong>Week 4</strong></td>
+      <td>Final security review, soft launch to 50 pilot clients</td>
+      <td>Compile pilot client list, dispatch launch comms</td>
+      <td><strong>Go-live</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Week 5–6</strong></td>
+      <td>Hypercare, weekly stand-ups, first audit cut</td>
+      <td>Monitor, funnel feedback into Eduint backlog</td>
+      <td>First monthly audit delivered</td>
+    </tr>
+    <tr>
+      <td><strong>Month 2+</strong></td>
+      <td>Steady-state operations, monthly audits, quarterly business review</td>
+      <td>Growth &amp; retention campaigns, partner co-sell motion</td>
+      <td>Full rollout to all clients</td>
+    </tr>
+  </table>
+
+  <h3>Risks &amp; mitigations</h3>
+  <table>
+    <tr><th style="width:35%">Risk</th><th>Mitigation</th></tr>
+    <tr><td>OMS integration delays</td><td>Platform runs fully on demo/paper data until OMS bridge is live — no go-live slippage on client experience.</td></tr>
+    <tr><td>Regulatory change mid-contract</td><td>BSEC rule engine updated by Eduint within 15 days of notification at no extra charge.</td></tr>
+    <tr><td>Internal change management</td><td>Eduint ships a 2-week training plan, recorded videos, and on-call support for dealer desk.</td></tr>
+    <tr><td>Data residency</td><td>Option to host on Bangladesh-resident infrastructure at Premier tier.</td></tr>
+  </table>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Commercial terms -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">14 · Commercial Terms</div>
+  <h2 class="section">Clean, transparent, opex-only</h2>
+
+  <h3>Key terms</h3>
+  <table>
+    <tr><th style="width:30%">Item</th><th>Terms</th></tr>
+    <tr><td>Minimum engagement</td><td>6 months, starting on the go-live date.</td></tr>
+    <tr><td>Billing cycle</td><td>Monthly in advance, by the 5th of each month.</td></tr>
+    <tr><td>Currency</td><td>Bangladeshi Taka (BDT). VAT extra as applicable.</td></tr>
+    <tr><td>Payment methods</td><td>BEFTN, RTGS, or cheque to Eduint Limited account.</td></tr>
+    <tr><td>Price lock</td><td>Subscription fee locked for 12 months from signature.</td></tr>
+    <tr><td>Onboarding</td><td>One-time, included in the first month (no separate setup fee).</td></tr>
+    <tr><td>Data ownership</td><td>Your firm owns 100% of your data. Export on demand, any time.</td></tr>
+    <tr><td>Exit</td><td>30 days written notice after Month 6. Full data export in CSV/JSON at no cost.</td></tr>
+    <tr><td>SLA uptime</td><td>99.5% (Essentials) · 99.7% (Growth) · 99.9% (Premier)</td></tr>
+    <tr><td>Security</td><td>RLS-isolated per-tenant Postgres, encrypted at rest &amp; in transit, daily backups, audit logging.</td></tr>
+    <tr><td>Confidentiality</td><td>Mutual NDA signed before onboarding starts.</td></tr>
+    <tr><td>Liability cap</td><td>Equal to 6 months of subscription fees paid.</td></tr>
+  </table>
+
+  <h3>Out-of-scope (separately quoted)</h3>
+  <ul>
+    <li>Bespoke feature work beyond the module inventory in §05.</li>
+    <li>Integrations with systems not on the supported list (available on request).</li>
+    <li>On-premise deployment (cloud SaaS only in this proposal).</li>
+    <li>BSEC licence filings or legal counsel.</li>
+  </ul>
+
+  <h3>Commercial summary</h3>
+  <table>
+    <tr>
+      <th>Plan</th>
+      <th style="text-align:right;">Monthly</th>
+      <th style="text-align:right;">6-Month Total</th>
+      <th style="text-align:right;">With 5% Prepay Discount</th>
+    </tr>
+    <tr>
+      <td>Essentials</td>
+      <td style="text-align:right;">৳ 1,00,000</td>
+      <td style="text-align:right;">৳ 6,00,000</td>
+      <td style="text-align:right;"><strong>৳ 5,70,000</strong></td>
+    </tr>
+    <tr>
+      <td>Growth</td>
+      <td style="text-align:right;">৳ 1,80,000</td>
+      <td style="text-align:right;">৳ 10,80,000</td>
+      <td style="text-align:right;"><strong>৳ 10,26,000</strong></td>
+    </tr>
+    <tr>
+      <td>Premier</td>
+      <td style="text-align:right;">৳ 3,00,000</td>
+      <td style="text-align:right;">৳ 18,00,000</td>
+      <td style="text-align:right;"><strong>৳ 17,10,000</strong></td>
+    </tr>
+  </table>
+</div>
+
+<!-- ============================================= -->
+<!-- PAGE: Next steps / Signoff -->
+<!-- ============================================= -->
+<div class="page">
+  <div class="eyebrow">15 · Next Steps</div>
+  <h2 class="section">Three steps to go live</h2>
+
+  <div class="cards">
+    <div class="card">
+      <div class="tier-name">Step 1 · Week 0</div>
+      <h3 style="margin-top:6px;">Discovery call</h3>
+      <p style="font-size:12px;">A 60-minute working session with Eduint + your ops, compliance
+      and technology leads to confirm tier selection, scope, and integration points.</p>
+    </div>
+    <div class="card featured">
+      <div class="tier-name">Step 2 · Week 0</div>
+      <h3 style="margin-top:6px;">Sign engagement</h3>
+      <p style="font-size:12px;">Sign a 6-month engagement letter &amp; mutual NDA. First month's
+      invoice raised. Eduint provisions staging environment within 72 hours.</p>
+    </div>
+    <div class="card">
+      <div class="tier-name">Step 3 · Week 4</div>
+      <h3 style="margin-top:6px;">Go-live</h3>
+      <p style="font-size:12px;">Soft-launch to a pilot cohort of clients, first monthly audit
+      scheduled, partner co-sell programme activated on Premier tier.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Founding-partner window is open until 30 June 2026.</strong>
+    The first three firms to sign Premier lock in ৳ 2,50,000/month for their
+    first year — and receive joint PR + a launch event underwritten by Eduint.
+  </div>
+
+  <h3>Contact — Eduint Limited</h3>
+  <table>
+    <tr>
+      <th style="width:30%">Legal entity</th>
+      <td>Eduint Limited · Registered in Bangladesh</td>
+    </tr>
+    <tr>
+      <th>Founder</th>
+      <td><strong>Syed Adnan Huda, CFA</strong> — founder@aibd.ai<br/>
+        <span style="font-size:11px; color:var(--ink-muted);">Founder, Eduint Limited · Former COO, UCB Stock Brokerage Limited (2018–2026, Bangladesh's #1 brokerage) · CFA charterholder, 2013</span>
+      </td>
+    </tr>
+    <tr>
+      <th>All client queries</th>
+      <td><strong>support@aibd.ai</strong><br/>
+        <span style="font-size:11px; color:var(--ink-muted);">A single inbox for sales, onboarding, technical, and compliance queries.</span>
+      </td>
+    </tr>
+    <tr>
+      <th>Flagship product</th>
+      <td><a href="https://abaci.aibd.ai">abaci.aibd.ai</a> (live reference deployment)</td>
+    </tr>
+    <tr>
+      <th>Corporate domains</th>
+      <td>aibd.ai · eduintbd.com</td>
+    </tr>
+    <tr>
+      <th>Office</th>
+      <td>Dhaka, Bangladesh</td>
+    </tr>
+    <tr>
+      <th>Brokerage partner</th>
+      <td><strong>UCB Stock Brokerage Limited</strong> — signed partnership for co-onboarding clients on DSE</td>
+    </tr>
+    <tr>
+      <th>Merchant-bank partner</th>
+      <td>Abaci Investments — PMS &amp; margin loan (flagship deployment)</td>
+    </tr>
+    <tr>
+      <th>AMC reference deployment</th>
+      <td>Ekush Investments — EFUF, EGF, ESRF funds running on Eduint</td>
+    </tr>
+  </table>
+
+  <h3>Acceptance</h3>
+  <p>Please sign below to accept this proposal and trigger contract drafting.</p>
+
+  <div class="sig-row">
+    <div>
+      <div style="height:60px;"></div>
+      <div class="sig-block">
+        Authorised signatory — Client firm<br/>
+        Name &amp; designation:<br/>
+        Date:
+      </div>
+    </div>
+    <div>
+      <div style="height:60px;"></div>
+      <div class="sig-block">
+        Syed Adnan Huda, CFA<br/>
+        Founder — Eduint Limited<br/>
+        founder@aibd.ai<br/>
+        Date:
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+  <p style="font-size:10px; color:var(--ink-muted); text-align:center;">
+    This proposal is confidential and prepared exclusively for the addressee.
+    © 2026 Eduint Limited. All rights reserved. &nbsp;·&nbsp; v1.0 &nbsp;·&nbsp; 24 April 2026
+  </p>
+</div>
+
+</body>
+</html>
